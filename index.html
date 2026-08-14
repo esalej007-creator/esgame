@@ -775,7 +775,7 @@
         let mainPart = "";
         let warningPart = "";
 
-        function loadRandomTask() {
+       function loadRandomTask() {
             if (allOffers.length === 0) {
                 alert("Нет заданий для этой категории!");
                 resetToScanner();
@@ -803,6 +803,14 @@
             } else {
                 mainPart = fullDescription;
                 warningPart = "";
+            }
+
+            // Проверка аудио
+            const audioTag = currentTask.getElementsByTagName('audio')[0];
+            if (audioTag && audioTag.textContent.trim() !== "") {
+                try {
+                    new Audio(audioTag.textContent).play();
+                } catch (e) { console.log(e); }
             }
 
             document.getElementById('desc-box').style.display = 'flex';
