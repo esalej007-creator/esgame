@@ -16,17 +16,17 @@
 
         body { 
             margin: 0; 
-            min-height: 50vh; 
+            min-height: 100vh; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; 
+            justify-content: space-between; 
             color: white; 
             font-family: 'Segoe UI', -apple-system, sans-serif; 
             overflow-x: hidden; 
             transition: background 1.5s ease;
             background: var(--bg-primary);
-            padding: 20px;
+            padding: 20px 20px 0 20px;
         }
         
         .bg-animate { 
@@ -84,6 +84,7 @@
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
+            margin: auto 0;
         }
 
         .logo { 
@@ -279,8 +280,198 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* --- Стили подвала (Footer) --- */
+        .site-footer {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 30px;
+            padding: 20px 10px 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Стеклянная разделительная полоска, сужающаяся по краям */
+        .footer-divider {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .footer-logo {
+            width: 140px;
+            max-width: 100%;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .social-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .social-icon:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .social-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+
+        .rules-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 10px 25px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .rules-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .footer-disclaimer {
+            font-size: 0.8rem;
+            opacity: 0.75;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            max-width: 450px;
+        }
+
+        .footer-copyright {
+            font-size: 0.75srem;
+            opacity: 0.6;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- Стили модального окна --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(20, 30, 25, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 24px;
+            padding: 25px 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            color: #fff;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Контейнер с текстом и скрытым скроллом */
+        .modal-body {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 5px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 10px;
+            
+            /* Скрытие скроллбара для разных браузеров */
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .modal-body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Edge */
+        }
+
         @media (max-width: 480px) {
-            body { padding: 10px; }
+            body { padding: 10px 10px 0 10px; }
             .main-card { padding: 20px 15px; border-radius: 24px; }
             h1 { font-size: 1.2rem; }
             #descText { font-size: 0.95rem; }
@@ -371,6 +562,47 @@
         </div>
     </div>
 
+    <!-- ПОДВАЛ САЙТА -->
+    <footer class="site-footer">
+        <div class="footer-divider"></div>
+        <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" alt="Logo" class="footer-logo">
+        
+        <div class="footer-socials">
+            <!-- VK Icon -->
+            <a href="https://vk.com" target="_blank" class="social-icon" title="VKontakte">
+                <svg viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.626 17.034h-1.68c-.624 0-.816-.504-1.92-1.608-1.008-.984-1.44-1.104-1.68-1.104-.336 0-.432.096-.432.576v1.512c0 .408-.12.672-1.224.672-1.8 0-3.792-1.08-5.184-3.096-2.112-2.976-2.688-5.184-2.688-5.64 0-.24.096-.48.576-.48h1.68c.432 0 .6.192.768.648.816 2.376 2.184 4.464 2.736 4.464.216 0 .312-.096.312-.624V9.666c-.072-1.08-.624-1.176-.624-1.56 0-.192.144-.384.384-.384h2.688c.36 0 .48.192.48.624v3.312c0 .36.144.48.24.48.192 0 .36-.096.72-.48 1.056-1.2 1.824-3.072 1.824-3.072.096-.216.312-.36.744-.36h1.68c.504 0 .6.24.48.6-.24 1.152-2.736 4.68-2.856 4.8-.24.288-.312.408 0 .816.216.312 1.008.984 1.536 1.584.936 1.032 1.632 1.896 1.824 2.16.192.312.072.48-.36.48z"/></svg>
+            </a>
+            <!-- MAX Icon (заменено стилизованной иконкой для платформы) -->
+            <a href="#" target="_blank" class="social-icon" title="MAX">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
+            </a>
+        </div>
+
+        <button class="rules-btn" onclick="openRulesModal()">Правила игры</button>
+        
+        <div class="footer-disclaimer">Всю необходимую информацию уточняйте у менеджеров нашей компании</div>
+        <div class="footer-copyright">© 2026. vscreative.ru и ESgame</div>
+    </footer>
+
+    <!-- МОДАЛЬНОЕ ОКНО «ПРАВИЛА ИГРЫ» -->
+    <div class="modal-overlay" id="rulesModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Правила игры</h3>
+                <button class="modal-close" onclick="closeRulesModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Добро пожаловать в «Алко-Властелин»! Настоящие правила регулируют игровой процесс и взаимодействие участников.</p>
+                <p>1. Каждый участник обязуется соблюдать правила безопасности и умеренность при прохождении заданий.</p>
+                <p>2. При отказе от выполнения задания игрок обязан положить штрафной градус в Алко-банк согласно уровню сложности выбранной колоды.</p>
+                <p>3. Время проведения ограничено выбранным режимом (классический или быстрый). По истечении времени производится подсчет очков и определение победителя.</p>
+                <p>4. Запрещается передавать карточки третьим лицам или использовать сторонние методы обхода сканирования QR-кодов.</p>
+                <p>5. Организаторы оставляют за собой право вносить изменения в ход игры в режиме реального времени.</p>
+                <p>Приятной игры и незабываемых эмоций всем участникам компании!</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://upngtdpcgorcvauiirjw.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwbmd0ZHBjZ29yY3ZhdWlpcmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjEwNTUsImV4cCI6MjEwMjIzNzA1NX0.TeJGVOkX-dcAqZEd18WyJyk1lMnjA3A7ppgbeJzPd5E';
@@ -379,7 +611,7 @@
             global: { headers: { 'apikey': SUPABASE_KEY } }
         });
 
-       let allOffers = [];
+        let allOffers = [];
         let auctionOffers = [];
         let tasksPlayedCount = 0; // Счетчик сыгранных заданий
         let html5QrCode = null;
@@ -553,15 +785,13 @@
 
             let currentTask;
 
-            // Условие: аукцион может выпасть только если сыграно больше 3 заданий 
-            // и с вероятностью примерно 25% (или настройте по вкусу)
+            // Условие: аукцион может выпасть только если сыграно больше 6 заданий 
+            // и с вероятностью примерно 10%
             const canTriggerAuction = tasksPlayedCount > 6 && auctionOffers.length > 0 && Math.random() < 0.10;
 
             if (canTriggerAuction) {
-                // Берем случайный аукцион
                 currentTask = auctionOffers[Math.floor(Math.random() * auctionOffers.length)];
             } else {
-                // Берем обычную карточку выбранного цвета
                 currentTask = allOffers[Math.floor(Math.random() * allOffers.length)];
             }
 
@@ -604,7 +834,6 @@
             }
         }
 
-        // Функция возврата к исходному экрану сканирования
         function resetToScanner() {
             document.getElementById('title').innerHTML = "Отсканируйте QR-код карточки<br>для получения нового задания";
             document.getElementById('desc-box').style.display = 'none';
@@ -622,7 +851,6 @@
             document.getElementById('btnGroup').style.display = 'none';
             document.getElementById('warningBox').style.display = 'none';
 
-            // Возврат к сканеру через 10 секунд (10000 миллисекунд)
             setTimeout(resetToScanner, 10000);
         }
 
@@ -636,9 +864,25 @@
             document.getElementById('resultImage').src = currentConfig.image;
             imgBox.style.display = 'block';
 
-            // Возврат к сканеру через 10 секунд (10000 миллисекунд)
             setTimeout(resetToScanner, 10000);
         }
+
+        // Управление модальным окном правил игры
+        function openRulesModal() {
+            document.getElementById('rulesModal').classList.add('active');
+        }
+
+        function closeRulesModal() {
+            document.getElementById('rulesModal').classList.remove('active');
+        }
+
+        // Закрытие модального окна по клику вне его области
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('rulesModal');
+            if (e.target === modal) {
+                closeRulesModal();
+            }
+        });
 
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('esgame_auth') === 'true') {
