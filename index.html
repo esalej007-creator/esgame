@@ -291,7 +291,6 @@
             text-align: center;
         }
 
-        /* Стеклянная разделительная полоска, сужающаяся по краям */
         .footer-divider {
             width: 100%;
             height: 2px;
@@ -371,7 +370,7 @@
         }
 
         .footer-copyright {
-            font-size: 0.75srem;
+            font-size: 0.75rem;
             opacity: 0.6;
             letter-spacing: 0.5px;
         }
@@ -451,7 +450,6 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
-        /* Контейнер с текстом и скрытым скроллом */
         .modal-body {
             font-size: 0.95rem;
             line-height: 1.6;
@@ -460,13 +458,11 @@
             padding-right: 5px;
             color: rgba(255, 255, 255, 0.9);
             margin-bottom: 10px;
-            
-            /* Скрытие скроллбара для разных браузеров */
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
         }
 
         .modal-body::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Edge */
+            display: none;
         }
 
         @media (max-width: 480px) {
@@ -479,7 +475,6 @@
             #timerContainer { top: 10px; left: 10px; padding: 8px 12px; }
         }
     </style>
-    <!-- Подключаем библиотеку для сканирования QR-кодов -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -546,7 +541,7 @@
             <!-- Блок камеры для сканирования -->
             <div id="reader"></div>
 
-            <!-- Блок описания задания (скрыт до сканирования) -->
+            <!-- Блок описания задания -->
             <div id="desc-box">
                 <p id="descText"></p>
                 <div class="btn-group" id="btnGroup">
@@ -567,11 +562,9 @@
         <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" alt="Logo" class="footer-logo">
         
         <div class="footer-socials">
-            <!-- VK Icon -->
             <a href="https://vk.com" target="_blank" class="social-icon" title="VKontakte">
                 <svg viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.626 17.034h-1.68c-.624 0-.816-.504-1.92-1.608-1.008-.984-1.44-1.104-1.68-1.104-.336 0-.432.096-.432.576v1.512c0 .408-.12.672-1.224.672-1.8 0-3.792-1.08-5.184-3.096-2.112-2.976-2.688-5.184-2.688-5.64 0-.24.096-.48.576-.48h1.68c.432 0 .6.192.768.648.816 2.376 2.184 4.464 2.736 4.464.216 0 .312-.096.312-.624V9.666c-.072-1.08-.624-1.176-.624-1.56 0-.192.144-.384.384-.384h2.688c.36 0 .48.192.48.624v3.312c0 .36.144.48.24.48.192 0 .36-.096.72-.48 1.056-1.2 1.824-3.072 1.824-3.072.096-.216.312-.36.744-.36h1.68c.504 0 .6.24.48.6-.24 1.152-2.736 4.68-2.856 4.8-.24.288-.312.408 0 .816.216.312 1.008.984 1.536 1.584.936 1.032 1.632 1.896 1.824 2.16.192.312.072.48-.36.48z"/></svg>
             </a>
-            <!-- MAX Icon (заменено стилизованной иконкой для платформы) -->
             <a href="#" target="_blank" class="social-icon" title="MAX">
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
             </a>
@@ -612,11 +605,12 @@
 
         let allOffers = [];
         let auctionOffers = [];
-        let tasksPlayedCount = 0; // Счетчик сыгранных заданий
+        let tasksPlayedCount = 0;
         let html5QrCode = null;
-
-        const params = new URLSearchParams(window.location.search);
-        const cat = params.get('cat') || 'green';
+        let currentTask = null;
+        let cat = 'green';
+        let mainPart = "";
+        let warningPart = "";
 
         const configs = {
             green: { 
@@ -633,33 +627,32 @@
             }
         };
 
-        const currentConfig = configs[cat] || configs.green;
-        const rootStyle = document.documentElement.style;
-        rootStyle.setProperty('--bg-primary', currentConfig.primary);
-        rootStyle.setProperty('--bg-secondary', currentConfig.secondary);
-        rootStyle.setProperty('--blob-1', currentConfig.b1);
-        rootStyle.setProperty('--blob-2', currentConfig.b2);
+        function applyTheme(category) {
+            const currentConfig = configs[category] || configs.green;
+            const rootStyle = document.documentElement.style;
+            rootStyle.setProperty('--bg-primary', currentConfig.primary);
+            rootStyle.setProperty('--bg-secondary', currentConfig.secondary);
+            rootStyle.setProperty('--blob-1', currentConfig.b1);
+            rootStyle.setProperty('--blob-2', currentConfig.b2);
+        }
 
-        // Загрузка фида заданий и разделение на обычные и аукционы
-       fetch('https://s3.timeweb.cloud/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/feed.xml')
+        applyTheme(cat);
+
+        // Загрузка всего фида целиком при старте
+        fetch('https://s3.timeweb.cloud/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/feed.xml')
             .then(res => res.text())
             .then(str => {
                 const xml = new DOMParser().parseFromString(str, "text/xml");
                 const offers = Array.from(xml.getElementsByTagName("offer"));
                 
-                // Фильтруем ТОЛЬКО по нужной категории (green, yellow или red)
-                allOffers = offers.filter(o => {
-                    const catEl = o.getElementsByTagName("categoryId")[0];
-                    return catEl && catEl.textContent === cat;
-                });
-
-                // Аукционы всегда общие
+                allOffers = offers; // Сохраняем полный пул офферов
+                
                 auctionOffers = offers.filter(o => {
                     const catEl = o.getElementsByTagName("categoryId")[0];
                     return catEl && catEl.textContent === 'auction';
                 });
                 
-                console.log("Загружено заданий:", allOffers.length, "Аукционов:", auctionOffers.length);
+                console.log("Загружено всего офферов:", allOffers.length, "Аукционов:", auctionOffers.length);
             })
             .catch(err => console.error("Ошибка загрузки фида:", err));
 
@@ -744,27 +737,24 @@
             `;
         }
 
-        // Запуск сканера камеры
+        // Запуск сканера камеры с распознаванием категории из QR
         function initScanner() {
             document.getElementById('scannerBtn').style.display = 'none';
             const readerDiv = document.getElementById('reader');
             readerDiv.style.display = 'block';
-            document.getElementById('title').innerText = "Наведите камеру на QR-код";
+            document.getElementById('title').innerText = "Наведите камеру на QR-код...";
 
             html5QrCode = new Html5Qrcode("reader");
             html5QrCode.start(
                 { facingMode: "environment" },
                 { fps: 10, qrbox: { width: 250, height: 250 } },
-                (decodedText, decodedResult) => {
-                    // Успешно отсканировали! Останавливаем камеру и показываем задание
+                (decodedText) => {
                     html5QrCode.stop().then(() => {
                         readerDiv.style.display = 'none';
-                        loadRandomTask();
-                    }).catch(err => console.log(err));
+                        processScannedData(decodedText);
+                    }).catch(err => console.log("Ошибка остановки сканера:", err));
                 },
-                (errorMessage) => {
-                    // Ошибки сканирования кадра можно игнорировать
-                }
+                (errorMessage) => {}
             ).catch(err => {
                 alert("Не удалось запустить камеру: " + err);
                 document.getElementById('scannerBtn').style.display = 'flex';
@@ -772,24 +762,43 @@
             });
         }
 
-        let mainPart = "";
-        let warningPart = "";
+        // Обработка текста из QR-кода и выбор категории
+        function processScannedData(data) {
+            let detectedCat = 'green';
+            if (data.toLowerCase().includes('yellow')) detectedCat = 'yellow';
+            if (data.toLowerCase().includes('red')) detectedCat = 'red';
 
-       function loadRandomTask() {
+            cat = detectedCat;
+            applyTheme(cat);
+            loadRandomTask();
+        }
+
+        function loadRandomTask() {
             if (allOffers.length === 0) {
-                alert("Нет заданий для этой категории!");
+                alert("Фид еще не загрузился, попробуйте еще раз через секунду!");
                 resetToScanner();
                 return;
             }
 
             tasksPlayedCount++;
             
+            // Фильтруем задания под текущую определенную категорию
+            const categoryOffers = allOffers.filter(o => {
+                const catEl = o.getElementsByTagName("categoryId")[0];
+                return catEl && catEl.textContent === cat;
+            });
+
             // Вероятность аукциона (10%)
             const canTriggerAuction = tasksPlayedCount > 6 && auctionOffers.length > 0 && Math.random() < 0.10;
-            const targetPool = canTriggerAuction ? auctionOffers : allOffers;
+            const targetPool = canTriggerAuction ? auctionOffers : categoryOffers;
             
-            // Берем случайное задание из выбранного пула
-            const currentTask = targetPool[Math.floor(Math.random() * targetPool.length)];
+            if (targetPool.length === 0) {
+                alert("Нет заданий для категории: " + cat);
+                resetToScanner();
+                return;
+            }
+
+            currentTask = targetPool[Math.floor(Math.random() * targetPool.length)];
 
             document.getElementById('title').innerText = currentTask.getElementsByTagName('name')[0].textContent;
 
@@ -805,7 +814,6 @@
                 warningPart = "";
             }
 
-            // Проверка аудио
             const audioTag = currentTask.getElementsByTagName('audio')[0];
             if (audioTag && audioTag.textContent.trim() !== "") {
                 try {
@@ -832,6 +840,7 @@
         }
 
         function resetToScanner() {
+            currentTask = null;
             document.getElementById('title').innerHTML = "Отсканируйте QR-код карточки<br>для получения нового задания";
             document.getElementById('desc-box').style.display = 'none';
             document.getElementById('btnGroup').style.display = 'flex';
@@ -843,6 +852,7 @@
         }
 
         function penalty() {
+            const currentConfig = configs[cat] || configs.green;
             document.getElementById('title').innerText = "Внимание!";
             document.getElementById('descText').innerText = `Игрок кладет ${currentConfig.penalty} градус(а) в Алко-банк`;
             document.getElementById('btnGroup').style.display = 'none';
@@ -852,6 +862,7 @@
         }
 
         function finish() {
+            const currentConfig = configs[cat] || configs.green;
             document.getElementById('title').innerText = "Удачи!";
             document.getElementById('descText').innerText = "Задание принято!";
             document.getElementById('btnGroup').style.display = 'none';
@@ -864,7 +875,6 @@
             setTimeout(resetToScanner, 10000);
         }
 
-        // Управление модальным окном правил игры
         function openRulesModal() {
             document.getElementById('rulesModal').classList.add('active');
         }
@@ -873,7 +883,6 @@
             document.getElementById('rulesModal').classList.remove('active');
         }
 
-        // Закрытие модального окна по клику вне его области
         window.addEventListener('click', (e) => {
             const modal = document.getElementById('rulesModal');
             if (e.target === modal) {
