@@ -283,9 +283,12 @@
 
     <script>
         // Инициализация Supabase сразу
-        const SUPABASE_URL = 'https://upngtdpcgorcvauiirjw.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_t7gzRcNbsSTrOdC-4BygFA_gkVWrzsr';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL = 'https://upngtdpcgorcvauiirjw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_t7gzRcNbsSTrOdC-4BygFA_gkVWrzsr';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { persistSession: false },
+    global: { headers: { 'apikey': SUPABASE_KEY } }
+});
 
         let currentTask = null;
         let fullDescription = "";
