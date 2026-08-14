@@ -641,25 +641,27 @@
         rootStyle.setProperty('--blob-2', currentConfig.b2);
 
         // Загрузка фида заданий и разделение на обычные и аукционы
-        fetch('https://s3.timeweb.cloud/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/feed.xml')
+       fetch('https://s3.timeweb.cloud/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/feed.xml')
             .then(res => res.text())
             .then(str => {
                 const xml = new DOMParser().parseFromString(str, "text/xml");
                 const offers = Array.from(xml.getElementsByTagName("offer"));
                 
-                // Обычные карточки текущего цвета
+                // Фильтруем ТОЛЬКО по нужной категории (green, yellow или red)
                 allOffers = offers.filter(o => {
                     const catEl = o.getElementsByTagName("categoryId")[0];
                     return catEl && catEl.textContent === cat;
                 });
 
-                // Карточки аукциона (предполагаем, что их categoryId равен "auction")
+                // Аукционы всегда общие
                 auctionOffers = offers.filter(o => {
                     const catEl = o.getElementsByTagName("categoryId")[0];
                     return catEl && catEl.textContent === 'auction';
                 });
+                
+                console.log("Загружено заданий:", allOffers.length, "Аукционов:", auctionOffers.length);
             })
-            .catch(err => console.log("Ошибка загрузки фида"));
+            .catch(err => console.error("Ошибка загрузки фида:", err));
 
         async function checkPin() {
             const pin = document.getElementById('pinInput').value.trim();
@@ -775,30 +777,26 @@
 
         function loadRandomTask() {
             if (allOffers.length === 0) {
-                alert("Фид еще не загрузился или пуст!");
-                document.getElementById('scannerBtn').style.display = 'flex';
+                alert("Нет заданий для этой категории!");
+                resetToScanner();
                 return;
             }
 
-            tasksPlayedCount++; // Увеличиваем счетчик сыгранных заданий
-
-            let currentTask;
-
-            // Условие: аукцион может выпасть только если сыграно больше 6 заданий 
-            // и с вероятностью примерно 10%
+            tasksPlayedCount++;
+            
+            // Вероятность аукциона (10%)
             const canTriggerAuction = tasksPlayedCount > 6 && auctionOffers.length > 0 && Math.random() < 0.10;
-
-            if (canTriggerAuction) {
-                currentTask = auctionOffers[Math.floor(Math.random() * auctionOffers.length)];
-            } else {
-                currentTask = allOffers[Math.floor(Math.random() * allOffers.length)];
-            }
+            const targetPool = canTriggerAuction ? auctionOffers : allOffers;
+            
+            // Берем случайное задание из выбранного пула
+            const currentTask = targetPool[Math.floor(Math.random() * targetPool.length)];
 
             document.getElementById('title').innerText = currentTask.getElementsByTagName('name')[0].textContent;
 
-            const fullDescription = currentTask.getElementsByTagName('description')[0].textContent;
-            const splitIndex = fullDescription.search(/внимание/i);
+            const descEl = currentTask.getElementsByTagName('description')[0];
+            const fullDescription = descEl ? descEl.textContent : "Нет описания";
             
+            const splitIndex = fullDescription.search(/внимание/i);
             if (splitIndex !== -1) {
                 mainPart = fullDescription.substring(0, splitIndex).trim();
                 warningPart = fullDescription.substring(splitIndex);
@@ -807,10 +805,10 @@
                 warningPart = "";
             }
 
-            const box = document.getElementById('desc-box');
-            box.style.display = 'flex';
+            document.getElementById('desc-box').style.display = 'flex';
             document.getElementById('descText').innerText = "";
             typeWriter(0);
+        }
 
             const audioTag = currentTask.getElementsByTagName('audio')[0];
             if (audioTag && audioTag.textContent.trim() !== "") {
