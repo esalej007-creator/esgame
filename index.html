@@ -107,18 +107,38 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .play-btn {
+       .play-btn {
             width: 75px; height: 75px; border-radius: 50%;
             background: rgba(255, 255, 255, 0.15); 
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: white;
+            cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
             margin: 10px 0;
+            position: relative; /* Нужно для точного позиционирования псевдоэлемента */
         }
+        
+        /* Создаем красивый треугольник через CSS */
+        .play-btn::after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            /* Размеры треугольника: ширина и высота */
+            border-width: 10px 0 10px 18px; 
+            /* Цвет треугольника: полупрозрачный белый вместо резкого чисто-белого */
+            border-color: transparent transparent transparent rgba(255, 255, 255, 0.85);
+            /* Сдвигаем чуть-чуть вправо, чтобы визуально компенсировать форму треугольника и он встал строго по центру */
+            transform: translateX(3px); 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+            transition: border-color 0.3s;
+        }
+
         .play-btn:hover { background: rgba(255, 255, 255, 0.25); }
+        .play-btn:hover::after { border-color: transparent transparent transparent rgba(255, 255, 255, 1); }
         .play-btn:active { transform: scale(0.9); }
         
         #desc-box { 
@@ -246,7 +266,7 @@
 Положите карту на стол так, чтобы все игроки видели выбранный уровень сложности.
 Устройство должно находится рядом с картой.
 Нажмите кнопку воспроизведения ниже.</h1>
-            <button class="play-btn" id="playBtn" onclick="playTask()">▶</button>
+            <button class="play-btn" id="playBtn" onclick="playTask()"></button>
             <div id="desc-box">
                 <p id="descText"></p>
                 <div class="btn-group" id="btnGroup">
@@ -263,7 +283,7 @@
 
     <script>
         // Инициализация Supabase сразу
-        const SUPABASE_URL = 'https://upngtdpgcorvcauuirjw.supabase.co';
+        const SUPABASE_URL = 'https://upngtdpcgorcvauiirjw.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_t7gzRcNbsSTrOdC-4BygFA_gkVWrzsr';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -377,31 +397,46 @@
             imgBox.style.display = 'block';
         }
 
-        async function checkPin() {
-            const pin = document.getElementById('pinInput').value.trim();
-            
-            const { data, error } = await supabaseClient
-                .from('decks') 
-                .select('*')
-                .eq('pin_code', pin)
-                .maybeSingle();
+async function checkPin() {
+    const pin = document.getElementById('pinInput').value.trim();
 
-            if (data) {
-                localStorage.setItem('esgame_auth', 'true');
-                document.getElementById('authBox').style.display = 'none';
-                document.getElementById('gameContent').style.display = 'block';
-            } else {
-                alert("Неверный PIN-код");
-            }
-        }
+    if (!pin) {
+        alert("Введите PIN-код");
+        return;
+    }
 
-        // Проверка сессии при загрузке
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('esgame_auth') === 'true') {
-                document.getElementById('authBox').style.display = 'none';
-                document.getElementById('gameContent').style.display = 'block';
-            }
-        });
+    console.log("Проверяем PIN:", pin);
+
+    const { data, error } = await supabaseClient
+        .from('decks')
+        .select('id, pin_code')
+        .eq('pin_code', pin)
+        .maybeSingle();
+
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
+
+    if (error) {
+        alert("Ошибка Supabase:\n" + error.message);
+        return;
+    }
+
+    if (data) {
+        localStorage.setItem('esgame_auth', 'true');
+        document.getElementById('authBox').style.display = 'none';
+        document.getElementById('gameContent').style.display = 'block';
+    } else {
+        alert("Неверный PIN-код");
+    }
+}
+
+// Проверка сессии при загрузке
+window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('esgame_auth') === 'true') {
+        document.getElementById('authBox').style.display = 'none';
+        document.getElementById('gameContent').style.display = 'block';
+    }
+});
     </script>
 </body>
 </html>
