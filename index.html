@@ -818,14 +818,6 @@
             typeWriter(0);
         }
 
-            const audioTag = currentTask.getElementsByTagName('audio')[0];
-            if (audioTag && audioTag.textContent.trim() !== "") {
-                try {
-                    new Audio(audioTag.textContent).play();
-                } catch (e) { console.log(e); }
-            }
-        }
-
         function typeWriter(i) {
             if (i < mainPart.length) {
                 document.getElementById("descText").innerHTML += mainPart.charAt(i);
