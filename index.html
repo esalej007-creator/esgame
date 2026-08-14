@@ -16,7 +16,7 @@
 
         body { 
             margin: 0; 
-            min-height: 100vh; 
+            min-height: 50vh; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -86,11 +86,6 @@
             overflow: hidden;
         }
 
-        .main-card:hover {
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.15);
-        }
-
         .logo { 
             width: 100%; 
             max-width: 320px; 
@@ -120,29 +115,16 @@
             position: relative;
         }
 
-        /* Кнопка Play с треугольником */
-        #playBtn::after {
-            content: "";
-            display: block;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 10px 0 10px 18px; 
-            border-color: transparent transparent transparent rgba(255, 255, 255, 0.85);
-            transform: translateX(3px); 
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
-            transition: border-color 0.3s;
-        }
-
-        /* Кнопка Камеры с иконкой фотоаппарата */
-        #scannerBtn {
-            font-size: 28px;
+        #scannerBtn svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
         .play-btn:hover { background: rgba(255, 255, 255, 0.25); }
         .play-btn:active { transform: scale(0.9); }
         
-        /* Контейнер для отображения камеры сканирования */
         #reader {
             width: 100%;
             max-width: 320px;
@@ -151,16 +133,15 @@
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.3);
             background: rgba(0, 0, 0, 0.2);
+            display: none;
         }
         
         #desc-box { 
-            opacity: 0; 
-            transform: translateY(15px); 
-            transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+            display: none;
             width: 100%; 
-            display: flex;
             flex-direction: column;
             align-items: center;
+            animation: fadeInWarning 0.5s ease forwards;
         }
 
         #descText { 
@@ -174,8 +155,6 @@
         .btn-group { 
             display: flex; 
             gap: 15px; 
-            opacity: 0; 
-            transition: 0.8s; 
             justify-content: center; 
             margin-bottom: 15px; 
             width: 100%;
@@ -238,6 +217,63 @@
             border-radius: 12px;
         }
 
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            padding: 15px 35px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            margin: 15px auto;
+            display: block;
+        }
+        .glass-btn:hover { background: rgba(255, 255, 255, 0.25); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .glass-btn:active { transform: scale(0.95); }
+
+        #timerContainer {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
+            padding: 10px 20px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            width: fit-content;
+        }
+
+        .bottle-icon {
+            width: 24px;
+            height: 40px;
+            border: 2px solid white;
+            border-radius: 4px 4px 6px 6px;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .bottle-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            transition: height 0.5s ease;
+        }
+
+        .timer-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
         @keyframes fadeInWarning {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -250,9 +286,11 @@
             #descText { font-size: 0.95rem; }
             .btn-group { flex-direction: column; gap: 10px; }
             button.choice { width: 100%; padding: 12px; }
+            #timerContainer { top: 10px; left: 10px; padding: 8px 12px; }
         }
     </style>
-    <!-- Подключаем библиотеку Supabase в самом начале -->
+    <!-- Подключаем библиотеку для сканирования QR-кодов -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -262,8 +300,15 @@
     </div>
     
     <div class="main-card" id="mainContainer">
+        <div id="timerContainer">
+            <div class="bottle-icon">
+                <div class="bottle-fill" id="bottleFill" style="height: 100%;"></div>
+            </div>
+            <div class="timer-text" id="timerDigits">90:00</div>
+        </div>
         <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" class="logo" id="logo">
         
+        <!-- Шаг 1: Ввод PIN-кода -->
         <div id="authBox">
             <h1 style="font-size: 1.2rem; margin-bottom: 20px;">Добро пожаловать в игру Алко-Властелин</h1>
             <p style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">Введите ваш PIN код расположенный внутри коробки под карточками.</p>
@@ -273,17 +318,45 @@
             <button class="choice choice-yes" onclick="checkPin()" style="width: 100%;">Войти</button>
         </div>
 
+        <!-- Шаг 2: Регистрация -->
+        <div id="registerBox" style="display: none; width: 100%;">
+            <h1 style="font-size: 1.2rem; margin-bottom: 20px;">Регистрация игрока</h1>
+            <p style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">Создайте свои учетные данные для защиты аккаунта.</p>
+            <input type="text" id="regLogin" placeholder="Придумайте логин" 
+                style="width: 100%; padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white; text-align: center; font-size: 1.1rem; margin-bottom: 15px;">
+            <input type="password" id="regPassword" placeholder="Придумайте пароль" 
+                style="width: 100%; padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white; text-align: center; font-size: 1.1rem; margin-bottom: 20px;">
+            <button class="choice choice-yes" onclick="registerUser()" style="width: 100%;">Зарегистрироваться</button>
+        </div>
+
+        <!-- Шаг 3: Кнопка «Начать игру» -->
+        <div id="startMenuBox" style="display: none; width: 100%;">
+            <h1 style="font-size: 1.2rem; margin-bottom: 25px;">Всё готово к началу!</h1>
+            <button class="glass-btn" onclick="showModeSelection()">Начать игру</button>
+        </div>
+
+        <!-- Шаг 4: Выбор режима игры -->
+        <div id="modeSelectBox" style="display: none; width: 100%;">
+            <h1 style="font-size: 1.2rem; margin-bottom: 25px;">Выберите режим игры</h1>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button class="glass-btn" onclick="selectMode('classic')" style="margin: 0; width: 100%;">Классический режим 90 минут.</button>
+                <button class="glass-btn" onclick="selectMode('fast')" style="margin: 0; width: 100%;">Быстрый режим 60 минут.</button>
+            </div>
+        </div>
+
+        <!-- Шаг 5: Игровой процесс / Сканер -->
         <div id="gameContent" style="display: none; width: 100%;">
-                    <h1 id="title">Отсканируйте QR-код карточки<br>для получения нового задания</h1>
+            <h1 id="title">Отсканируйте QR-код карточки<br>для получения нового задания</h1>
         
-        <!-- Кнопка камеры для сканирования (изначально активна) -->
-        <button class="play-btn" id="scannerBtn" onclick="openScanner()">📷</button>
+            <!-- Кнопка камеры -->
+            <button class="play-btn" id="scannerBtn" onclick="initScanner()">
+                <svg viewBox="0 0 24 24"><path d="M12 9c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm0-2c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/><path d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0-2-.9-2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h4.05l1.83-2h4.24l1.83 2H20v12z"/></svg>
+            </button>
 
-        <!-- Кнопка Play (появляется после успешного сканирования QR-кода) -->
-        <button class="play-btn" id="playBtn" onclick="playTask()" style="display: none;"></button>
+            <!-- Блок камеры для сканирования -->
+            <div id="reader"></div>
 
-        <!-- Окошко камеры -->
-        <div id="reader" style="display: none;"></div>
+            <!-- Блок описания задания (скрыт до сканирования) -->
             <div id="desc-box">
                 <p id="descText"></p>
                 <div class="btn-group" id="btnGroup">
@@ -299,19 +372,17 @@
     </div>
 
     <script>
-        // Инициализация Supabase сразу
-const SUPABASE_URL = 'https://upngtdpcgorcvauiirjw.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwbmd0ZHBjZ29yY3ZhdWlpcmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjEwNTUsImV4cCI6MjEwMjIzNzA1NX0.TeJGVOkX-dcAqZEd18WyJyk1lMnjA3A7ppgbeJzPd5E';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { persistSession: false },
-    global: { headers: { 'apikey': SUPABASE_KEY } }
-});
+        const SUPABASE_URL = 'https://upngtdpcgorcvauiirjw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwbmd0ZHBjZ29yY3ZhdWlpcmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjEwNTUsImV4cCI6MjEwMjIzNzA1NX0.TeJGVOkX-dcAqZEd18WyJyk1lMnjA3A7ppgbeJzPd5E';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: { persistSession: false },
+            global: { headers: { 'apikey': SUPABASE_KEY } }
+        });
 
-        let currentTask = null;
-        let fullDescription = "";
-        let mainPart = "";
-        let warningPart = "";
-        let splitIndex = -1;
+       let allOffers = [];
+        let auctionOffers = [];
+        let tasksPlayedCount = 0; // Счетчик сыгранных заданий
+        let html5QrCode = null;
 
         const params = new URLSearchParams(window.location.search);
         const cat = params.get('cat') || 'green';
@@ -338,49 +409,185 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
         rootStyle.setProperty('--blob-1', currentConfig.b1);
         rootStyle.setProperty('--blob-2', currentConfig.b2);
 
-        // Загрузка фида
+        // Загрузка фида заданий и разделение на обычные и аукционы
         fetch('https://s3.timeweb.cloud/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/feed.xml')
             .then(res => res.text())
             .then(str => {
                 const xml = new DOMParser().parseFromString(str, "text/xml");
-                const offers = Array.from(xml.getElementsByTagName("offer")).filter(o => o.getElementsByTagName("categoryId")[0].textContent === cat);
-                if (offers.length > 0) {
-                    currentTask = offers[Math.floor(Math.random() * offers.length)];
-                    fullDescription = currentTask.getElementsByTagName('description')[0].textContent;
-                    
-                    splitIndex = fullDescription.search(/внимание/i);
-                    if (splitIndex !== -1) {
-                        mainPart = fullDescription.substring(0, splitIndex).trim();
-                        warningPart = fullDescription.substring(splitIndex);
-                    } else {
-                        mainPart = fullDescription;
-                    }
-                } else {
-                    document.getElementById('title').innerText = "Нет заданий в этой категории";
-                }
-            })
-            .catch(err => {
-                document.getElementById('title').innerText = "Ошибка загрузки фида";
-            });
+                const offers = Array.from(xml.getElementsByTagName("offer"));
+                
+                // Обычные карточки текущего цвета
+                allOffers = offers.filter(o => {
+                    const catEl = o.getElementsByTagName("categoryId")[0];
+                    return catEl && catEl.textContent === cat;
+                });
 
-        function playTask() {
-            if (!currentTask) return;
-            document.getElementById('playBtn').style.display = 'none';
+                // Карточки аукциона (предполагаем, что их categoryId равен "auction")
+                auctionOffers = offers.filter(o => {
+                    const catEl = o.getElementsByTagName("categoryId")[0];
+                    return catEl && catEl.textContent === 'auction';
+                });
+            })
+            .catch(err => console.log("Ошибка загрузки фида"));
+
+        async function checkPin() {
+            const pin = document.getElementById('pinInput').value.trim();
+            if (!pin) { alert("Введите PIN-код"); return; }
+
+            const { data, error } = await supabaseClient
+                .from('decks')
+                .select('decks, pin_code')
+                .eq('pin_code', pin)
+                .maybeSingle();
+
+            if (error) { alert("Ошибка Supabase:\n" + error.message); return; }
+
+            if (data) {
+                document.getElementById('authBox').style.display = 'none';
+                document.getElementById('registerBox').style.display = 'block';
+            } else {
+                alert("Неверный PIN-код");
+            }
+        }
+
+        function registerUser() {
+            const login = document.getElementById('regLogin').value.trim();
+            const pass = document.getElementById('regPassword').value.trim();
+            if (!login || !pass) { alert("Заполните логин и пароль"); return; }
+
+            localStorage.setItem('esgame_auth', 'true');
+            localStorage.setItem('esgame_user', login);
+
+            document.getElementById('registerBox').style.display = 'none';
+            document.getElementById('startMenuBox').style.display = 'block';
+        }
+
+        function showModeSelection() {
+            document.getElementById('startMenuBox').style.display = 'none';
+            document.getElementById('modeSelectBox').style.display = 'block';
+        }
+
+        let gameTimer = null;
+        let totalSeconds = 90 * 60;
+
+        function selectMode(mode) {
+            document.getElementById('modeSelectBox').style.display = 'none';
+            document.getElementById('gameContent').style.display = 'block';
+
+            if (mode === 'classic') {
+                document.getElementById('timerContainer').style.display = 'flex';
+                startClassicTimer();
+            }
+        }
+
+        function startClassicTimer() {
+            updateTimerDisplay();
+            gameTimer = setInterval(() => {
+                totalSeconds--;
+                updateTimerDisplay();
+
+                if (totalSeconds <= 0) {
+                    clearInterval(gameTimer);
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            document.getElementById('timerDigits').innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const fillPercent = (totalSeconds / (90 * 60)) * 100;
+            document.getElementById('bottleFill').style.height = `${fillPercent}%`;
+        }
+
+        function endGame() {
+            document.getElementById('timerContainer').style.display = 'none';
+            document.getElementById('mainContainer').innerHTML = `
+                <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" class="logo" style="margin-bottom: 30px;">
+                <div style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 20px; padding: 25px; width: 100%; font-size: 1.2rem; line-height: 1.5; text-align: center;">
+                    Время вышло, пора подсчитать градусы у игроков
+                </div>
+            `;
+        }
+
+        // Запуск сканера камеры
+        function initScanner() {
+            document.getElementById('scannerBtn').style.display = 'none';
+            const readerDiv = document.getElementById('reader');
+            readerDiv.style.display = 'block';
+            document.getElementById('title').innerText = "Наведите камеру на QR-код";
+
+            html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedText, decodedResult) => {
+                    // Успешно отсканировали! Останавливаем камеру и показываем задание
+                    html5QrCode.stop().then(() => {
+                        readerDiv.style.display = 'none';
+                        loadRandomTask();
+                    }).catch(err => console.log(err));
+                },
+                (errorMessage) => {
+                    // Ошибки сканирования кадра можно игнорировать
+                }
+            ).catch(err => {
+                alert("Не удалось запустить камеру: " + err);
+                document.getElementById('scannerBtn').style.display = 'flex';
+                readerDiv.style.display = 'none';
+            });
+        }
+
+        let mainPart = "";
+        let warningPart = "";
+
+        function loadRandomTask() {
+            if (allOffers.length === 0) {
+                alert("Фид еще не загрузился или пуст!");
+                document.getElementById('scannerBtn').style.display = 'flex';
+                return;
+            }
+
+            tasksPlayedCount++; // Увеличиваем счетчик сыгранных заданий
+
+            let currentTask;
+
+            // Условие: аукцион может выпасть только если сыграно больше 3 заданий 
+            // и с вероятностью примерно 25% (или настройте по вкусу)
+            const canTriggerAuction = tasksPlayedCount > 6 && auctionOffers.length > 0 && Math.random() < 0.10;
+
+            if (canTriggerAuction) {
+                // Берем случайный аукцион
+                currentTask = auctionOffers[Math.floor(Math.random() * auctionOffers.length)];
+            } else {
+                // Берем обычную карточку выбранного цвета
+                currentTask = allOffers[Math.floor(Math.random() * allOffers.length)];
+            }
+
             document.getElementById('title').innerText = currentTask.getElementsByTagName('name')[0].textContent;
 
+            const fullDescription = currentTask.getElementsByTagName('description')[0].textContent;
+            const splitIndex = fullDescription.search(/внимание/i);
+            
+            if (splitIndex !== -1) {
+                mainPart = fullDescription.substring(0, splitIndex).trim();
+                warningPart = fullDescription.substring(splitIndex);
+            } else {
+                mainPart = fullDescription;
+                warningPart = "";
+            }
+
             const box = document.getElementById('desc-box');
-            box.style.opacity = '1';
-            box.style.transform = 'translateY(0)';
+            box.style.display = 'flex';
+            document.getElementById('descText').innerText = "";
             typeWriter(0);
 
             const audioTag = currentTask.getElementsByTagName('audio')[0];
             if (audioTag && audioTag.textContent.trim() !== "") {
                 try {
-                    const audio = new Audio(audioTag.textContent);
-                    audio.play();
-                } catch (e) {
-                    console.log("Ошибка воспроизведения аудио:", e);
-                }
+                    new Audio(audioTag.textContent).play();
+                } catch (e) { console.log(e); }
             }
         }
 
@@ -389,7 +596,6 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
                 document.getElementById("descText").innerHTML += mainPart.charAt(i);
                 setTimeout(() => typeWriter(i + 1), 25);
             } else {
-                document.getElementById('btnGroup').style.opacity = '1';
                 if (warningPart !== "") {
                     const warnBox = document.getElementById('warningBox');
                     warnBox.innerText = warningPart;
@@ -398,11 +604,26 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
             }
         }
 
+        // Функция возврата к исходному экрану сканирования
+        function resetToScanner() {
+            document.getElementById('title').innerHTML = "Отсканируйте QR-код карточки<br>для получения нового задания";
+            document.getElementById('desc-box').style.display = 'none';
+            document.getElementById('btnGroup').style.display = 'flex';
+            document.getElementById('warningBox').style.display = 'none';
+            document.getElementById('imageBox').style.display = 'none';
+            document.getElementById('scannerBtn').style.display = 'flex';
+            document.getElementById('descText').innerText = "";
+            document.getElementById('resultImage').src = "";
+        }
+
         function penalty() {
             document.getElementById('title').innerText = "Внимание!";
             document.getElementById('descText').innerText = `Игрок кладет ${currentConfig.penalty} градус(а) в Алко-банк`;
             document.getElementById('btnGroup').style.display = 'none';
             document.getElementById('warningBox').style.display = 'none';
+
+            // Возврат к сканеру через 10 секунд (10000 миллисекунд)
+            setTimeout(resetToScanner, 10000);
         }
 
         function finish() {
@@ -412,51 +633,19 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
             document.getElementById('warningBox').style.display = 'none';
 
             const imgBox = document.getElementById('imageBox');
-            const resImg = document.getElementById('resultImage');
-            resImg.src = currentConfig.image;
+            document.getElementById('resultImage').src = currentConfig.image;
             imgBox.style.display = 'block';
+
+            // Возврат к сканеру через 10 секунд (10000 миллисекунд)
+            setTimeout(resetToScanner, 10000);
         }
 
-async function checkPin() {
-    const pin = document.getElementById('pinInput').value.trim();
-
-    if (!pin) {
-        alert("Введите PIN-код");
-        return;
-    }
-
-    console.log("Проверяем PIN:", pin);
-
-    const { data, error } = await supabaseClient
-        .from('decks')
-        .select('decks, pin_code')
-        .eq('pin_code', pin)
-        .maybeSingle();
-
-    console.log("DATA:", data);
-    console.log("ERROR:", error);
-
-    if (error) {
-        alert("Ошибка Supabase:\n" + error.message);
-        return;
-    }
-
-    if (data) {
-        localStorage.setItem('esgame_auth', 'true');
-        document.getElementById('authBox').style.display = 'none';
-        document.getElementById('gameContent').style.display = 'block';
-    } else {
-        alert("Неверный PIN-код");
-    }
-}
-
-// Проверка сессии при загрузке
-window.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('esgame_auth') === 'true') {
-        document.getElementById('authBox').style.display = 'none';
-        document.getElementById('gameContent').style.display = 'block';
-    }
-});
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('esgame_auth') === 'true') {
+                document.getElementById('authBox').style.display = 'none';
+                document.getElementById('startMenuBox').style.display = 'block';
+            }
+        });
     </script>
 </body>
 </html>
