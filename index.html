@@ -412,7 +412,7 @@ async function checkPin() {
 
     const { data, error } = await supabaseClient
         .from('decks')
-        .select('id, pin_code')
+        .select('decks, pin_code')
         .eq('pin_code', pin)
         .maybeSingle();
 
