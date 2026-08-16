@@ -663,6 +663,29 @@
     text-overflow: ellipsis;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
+.surrender-btn {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 30px;
+            padding: 10px 25px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            margin: 10px auto 0 auto;
+            display: block;
+            width: 100%;
+        }
+        .surrender-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5), 0 6px 15px rgba(0,0,0,0.3);
+        }
+        .surrender-btn:active {
+            transform: scale(0.95);
+        }
     </style>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -765,9 +788,12 @@
                     </div>
                 </div>
 
-                <div class="btn-group" id="btnGroup">
-                    <button class="choice choice-yes" onclick="playChoiceSound('yes'); handleYesClick()">Да</button>
-                    <button class="choice choice-no" onclick="playChoiceSound('no'); penalty()">Нет</button>
+<div style="display: flex; flex-direction: column; width: 100%;" id="btnContainerWrapper">
+                    <div class="btn-group" id="btnGroup">
+                        <button class="choice choice-yes" onclick="playChoiceSound('yes'); handleYesClick()">Да</button>
+                        <button class="choice choice-no" onclick="playChoiceSound('no'); penalty()">Нет</button>
+                    </div>
+                    <button class="surrender-btn" onclick="openSurrenderModal()">Сдаюсь!</button>
                 </div>
                 <div id="warningBox"></div>
                 <div id="imageBox">
@@ -818,7 +844,20 @@
             </div>
         </div>
     </div>
-
+<div class="modal-overlay" id="surrenderModal">
+        <div class="modal-card" style="text-align: center;">
+            <div class="modal-header">
+                <h3 class="modal-title" style="width: 100%; text-align: center;">Внимание</h3>
+            </div>
+            <div class="modal-body" style="font-size: 1rem; margin-bottom: 20px;">
+                Точно ли вы готовы сдаться? В данном случае все накопленные вами градусы уйдут на счет в "Алкобанк".
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; width: 100%;">
+                <button class="choice choice-yes" style="flex: 1;" onclick="confirmSurrenderYes()">Да</button>
+                <button class="choice choice-no" style="flex: 1;" onclick="confirmSurrenderNo()">Нет</button>
+            </div>
+        </div>
+    </div>
     <script>
         const SUPABASE_URL = 'https://upngtdpcgorcvauiirjw.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwbmd0ZHBjZ29yY3ZhdWlpcmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjEwNTUsImV4cCI6MjEwMjIzNzA1NX0.TeJGVOkX-dcAqZEd18WyJyk1lMnjA3A7ppgbeJzPd5E';
@@ -1026,6 +1065,8 @@ function confirmPlayers() {
         }
 
 function updateActivePlayerUI() {
+            initPlayersGrid(); // Перерисовываем сетку, чтобы актуализировать список оставшихся
+
             playersList.forEach((_, idx) => {
                 const card = document.getElementById(`playerCard_${idx}`);
                 if (card) {
@@ -1288,6 +1329,88 @@ function endGame() {
 
             setTimeout(resetToScanner, 10000);
         }
+        const SURRENDER_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/%D0%A3%D0%B2%D0%B5%D1%80%D0%B5%D0%BD%D1%8B%20%D0%B2%20%D0%B2%D1%8B%D0%B1%D0%BE%D1%80%D0%B5.mp3'; 
+        const CONFIRM_YES_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/miss.MP3'; 
+        const CONFIRM_NO_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Ovations.MP3';
+
+        function playSound(url) {
+            if (url) {
+                try {
+                    new Audio(url).play();
+                } catch (e) {
+                    console.log("Ошибка воспроизведения звука:", e);
+                }
+            }
+        }
+
+        function openSurrenderModal() {
+            playSound(SURRENDER_SOUND_URL);
+            document.getElementById('surrenderModal').classList.add('active');
+        }
+
+        function closeSurrenderModal() {
+            document.getElementById('surrenderModal').classList.remove('active');
+        }
+
+        // Если игрок нажал «Да» в модалке подтверждения сдачи
+        function confirmSurrenderYes() {
+            playSound(CONFIRM_YES_SOUND_URL);
+            closeSurrenderModal();
+
+            const activePlayer = playersList[currentPlayerIndex];
+            
+            // Удаляем игрока из массива игроков текущей игры
+            playersList.splice(currentPlayerIndex, 1);
+
+            // НОВАЯ ПРОВЕРКА: Если остался ровно 1 игрок, сразу вызываем endGame()
+            if (playersList.length === 1) {
+                document.getElementById('title').innerText = "Игра окончена!";
+                document.getElementById('descText').innerText = `${activePlayer.name} сдает все свои градусы в «Алкобанк» и выбывает. Остался последний участник!`;
+                document.getElementById('btnGroup').style.display = 'none';
+                document.querySelector('.surrender-btn').style.display = 'none';
+                document.getElementById('warningBox').style.display = 'none';
+                document.getElementById('taskTimerWrapper').style.display = 'none';
+
+                // Задержка в 3 секунды, чтобы игроки успели прочитать сообщение, затем переход к финалу
+                setTimeout(() => {
+                    endGame();
+                }, 3000);
+                return;
+            }
+
+            // Проверяем, остались ли игроки вообще (на всякий случай)
+            if (playersList.length === 0) {
+                alert(`${activePlayer ? activePlayer.name : 'Игрок'} сдался. В игре больше не осталось участников!`);
+                location.reload();
+                return;
+            }
+
+            // Корректируем индекс текущего игрока, чтобы не выйти за пределы массива
+            if (currentPlayerIndex >= playersList.length) {
+                currentPlayerIndex = 0;
+            }
+
+            // Уведомление о выходе игрока и штрафе в Алкобанк
+            document.getElementById('title').innerText = "Игрок сдался!";
+            document.getElementById('descText').innerText = `${activePlayer.name} сдает все свои градусы в «Алкобанк» и выбывает из игры!`;
+            document.getElementById('btnGroup').style.display = 'none';
+            document.querySelector('.surrender-btn').style.display = 'none';
+            document.getElementById('warningBox').style.display = 'none';
+            document.getElementById('taskTimerWrapper').style.display = 'none';
+
+            // Через 4 секунды переходим к ходу следующего игрока
+            setTimeout(() => {
+                document.querySelector('.surrender-btn').style.display = 'block';
+                resetToScanner();
+            }, 4000);
+        }
+
+        // Если игрок нажал «Нет» в модалке подтверждения сдачи (случайное нажатие)
+        function confirmSurrenderNo() {
+            playSound(CONFIRM_NO_SOUND_URL);
+            closeSurrenderModal();
+            // Игра возвращается назад к уже выбранному заданию без изменений
+        }
 
         function finish() {
             const currentConfig = configs[cat] || configs.green;
@@ -1312,10 +1435,14 @@ function endGame() {
             document.getElementById('rulesModal').classList.remove('active');
         }
 
-        window.addEventListener('click', (e) => {
-            const modal = document.getElementById('rulesModal');
-            if (e.target === modal) {
+window.addEventListener('click', (e) => {
+            const rulesModal = document.getElementById('rulesModal');
+            const surrenderModal = document.getElementById('surrenderModal');
+            if (e.target === rulesModal) {
                 closeRulesModal();
+            }
+            if (e.target === surrenderModal) {
+                confirmSurrenderNo();
             }
         });
 
