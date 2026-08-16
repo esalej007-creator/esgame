@@ -718,11 +718,12 @@
         </div>
 
         <!-- Шаг 4: Выбор режима игры -->
-        <div id="modeSelectBox" style="display: none; width: 100%;">
+            <div id="modeSelectBox" style="display: none; width: 100%;">
             <h1 style="font-size: 1.2rem; margin-bottom: 25px;">Выберите режим игры</h1>
             <div style="display: flex; flex-direction: column; gap: 15px;">
                 <button class="glass-btn" onclick="selectMode('classic')" style="margin: 0; width: 100%;">Классический режим 90 минут.</button>
                 <button class="glass-btn" onclick="selectMode('fast')" style="margin: 0; width: 100%;">Быстрый режим 60 минут.</button>
+                <button class="glass-btn" onclick="selectMode('unlimited')" style="margin: 0; width: 100%;">Безлимитный режим</button>
             </div>
         </div>
 
@@ -810,7 +811,7 @@
                 <p>Добро пожаловать в «Алко-Властелин»! Настоящие правила регулируют игровой процесс и взаимодействие участников.</p>
                 <p>1. Каждый участник обязуется соблюдать правила безопасности и умеренность при прохождении заданий.</p>
                 <p>2. При отказе от выполнения задания игрок обязан положить штрафной градус в Алко-банк согласно уровню сложности выбранной колоды.</p>
-                <p>3. Время проведения ограничено выбранным режимом (классический или быстрый). По истечении времени производится подсчет очков и определение победителя.</p>
+                <p>3. Время проведения ограничено выбранным режимом (классический, быстрый, безлимитный). По истечении времени производится подсчет очков и определение победителя.</p>
                 <p>4. Запрещается передавать карточки третьим лицам или использовать сторонние методы обхода сканирования QR-кодов.</p>
                 <p>5. Организаторы оставляют за собой право вносить изменения в ход игры в режиме реального времени.</p>
                 <p>Приятной игры и незабываемых эмоций всем участникам компании!</p>
@@ -947,7 +948,9 @@ function shuffleArray(array) {
         function selectMode(mode) {
             selectedGameMode = mode;
             if (mode === 'fast') {
-                totalSeconds = 60 * 60;
+                totalSeconds = 60 * 60; // 60 минут для быстрого режима
+            } else if (mode === 'classic') {
+                totalSeconds = 90 * 60; // 90 минут для классического
             }
             document.getElementById('modeSelectBox').style.display = 'none';
             showPlayersCountScreen();
@@ -978,30 +981,34 @@ function shuffleArray(array) {
         }
 
 function confirmPlayers() {
-    playersList = [];
-    
-    const shuffledAvatars = shuffleArray(defaultAvatars);
+            playersList = [];
+            
+            const shuffledAvatars = shuffleArray(defaultAvatars);
 
-    for (let i = 1; i <= playersCount; i++) {
-        const inputVal = document.getElementById(`playerName_${i}`).value.trim();
-        const name = inputVal !== "" ? inputVal : `Игрок ${i}`;
-        const avatar = shuffledAvatars[(i - 1) % shuffledAvatars.length];
-        
-        playersList.push({ name, avatar });
-    }
+            for (let i = 1; i <= playersCount; i++) {
+                const inputVal = document.getElementById(`playerName_${i}`).value.trim();
+                const name = inputVal !== "" ? inputVal : `Игрок ${i}`;
+                const avatar = shuffledAvatars[(i - 1) % shuffledAvatars.length];
+                
+                playersList.push({ name, avatar });
+            }
 
-    document.getElementById('playersCountBox').style.display = 'none';
-    document.getElementById('gameContent').style.display = 'block';
+            document.getElementById('playersCountBox').style.display = 'none';
+            document.getElementById('gameContent').style.display = 'block';
 
-    if (selectedGameMode === 'classic') {
-        document.getElementById('timerContainer').style.display = 'flex';
-        startClassicTimer();
-    }
+            // Таймер запускается и для классического (90 мин), и для быстрого (60 мин) режима
+            if (selectedGameMode === 'classic' || selectedGameMode === 'fast') {
+                document.getElementById('timerContainer').style.display = 'flex';
+                startClassicTimer();
+            } else {
+                // Для безлимитного режима скрываем плашку таймера
+                document.getElementById('timerContainer').style.display = 'none';
+            }
 
-    initPlayersGrid();
-    updateActivePlayerUI(); // <-- ДОБАВЬТЕ ЭТУ СТРОКУ
-    updateScannerTitle();
-}
+            initPlayersGrid();
+            updateActivePlayerUI();
+            updateScannerTitle();
+        }
 
         function initPlayersGrid() {
             const grid = document.getElementById('playersGrid');
@@ -1062,7 +1069,9 @@ function updateActivePlayerUI() {
             const minutes = Math.floor(totalSeconds / 60);
             const seconds = totalSeconds % 60;
             document.getElementById('timerDigits').innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            const maxTime = selectedGameMode === 'classic' ? 90 * 60 : 60 * 60;
+            
+            // Динамически определяем максимальное время в зависимости от выбранного режима
+            const maxTime = selectedGameMode === 'fast' ? 60 * 60 : 90 * 60;
             const fillPercent = (totalSeconds / maxTime) * 100;
             document.getElementById('bottleFill').style.height = `${fillPercent}%`;
         }
