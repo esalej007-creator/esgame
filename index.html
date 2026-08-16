@@ -766,8 +766,8 @@
                 </div>
 
                 <div class="btn-group" id="btnGroup">
-                    <button class="choice choice-yes" onclick="handleYesClick()">Да</button>
-                    <button class="choice choice-no" onclick="penalty()">Нет</button>
+                    <button class="choice choice-yes" onclick="playChoiceSound('yes'); handleYesClick()">Да</button>
+                    <button class="choice choice-no" onclick="playChoiceSound('no'); penalty()">Нет</button>
                 </div>
                 <div id="warningBox"></div>
                 <div id="imageBox">
@@ -1075,7 +1075,22 @@ function updateActivePlayerUI() {
             const fillPercent = (totalSeconds / maxTime) * 100;
             document.getElementById('bottleFill').style.height = `${fillPercent}%`;
         }
+   function playChoiceSound(type) {
+    let soundUrl = '';
+    if (type === 'yes') {
+        soundUrl = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/1393095a-8e3c-4c14-8728-a95942e2c0de.mp3';
+    } else if (type === 'no') {
+        soundUrl = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/no.MP3';
+    }
 
+    if (soundUrl) {
+        try {
+            new Audio(soundUrl).play();
+        } catch (e) {
+            console.log("Ошибка воспроизведения звука:", e);
+        }
+    }
+}
         function endGame() {
             document.getElementById('timerContainer').style.display = 'none';
             document.getElementById('mainContainer').innerHTML = `
