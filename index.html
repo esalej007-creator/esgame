@@ -872,6 +872,7 @@
         let html5QrCode = null;
         let currentTask = null;
         let cat = 'green';
+        let currentAudio = null;
         let mainPart = "";
         let warningPart = "";
         let taskSeconds = 0;
@@ -1132,6 +1133,13 @@ function updateActivePlayerUI() {
         }
     }
 }
+function stopCurrentAudio() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+    }
+}
 function endGame() {
             clearInterval(gameTimer);
             document.getElementById('timerContainer').style.display = 'none';
@@ -1229,12 +1237,14 @@ function endGame() {
             }
 
             // Воспроизведение звуковой дорожки из фида
-            const audioTag = currentTask.getElementsByTagName('audio')[0];
-            if (audioTag && audioTag.textContent.trim() !== "") {
-                try {
-                    new Audio(audioTag.textContent).play();
-                } catch (e) { console.log(e); }
-            }
+const audioTag = currentTask.getElementsByTagName('audio')[0];
+if (audioTag && audioTag.textContent.trim() !== "") {
+    try {
+        stopCurrentAudio(); // Останавливаем предыдущий звук, если он играл
+        currentAudio = new Audio(audioTag.textContent);
+        currentAudio.play();
+    } catch (e) { console.log(e); }
+}
 
             document.getElementById('desc-box').style.display = 'flex';
             document.getElementById('descText').innerText = "";
@@ -1256,6 +1266,7 @@ function endGame() {
 
         // Обработка нажатия кнопки «Да»
         function handleYesClick() {
+        stopCurrentAudio();
             if (taskSeconds > 0) {
                 // Если есть время, запускаем круговой таймер по центру
                 document.getElementById('btnGroup').style.display = 'none';
@@ -1302,6 +1313,7 @@ function endGame() {
         }
 
         function resetToScanner() {
+            stopCurrentAudio();
             currentTask = null;
             taskSeconds = 0;
             currentPlayerIndex = (currentPlayerIndex + 1) % playersList.length;
@@ -1319,6 +1331,7 @@ function endGame() {
         }
 
         function penalty() {
+            stopCurrentAudio();
             const currentConfig = configs[cat] || configs.green;
             const activePlayer = playersList[currentPlayerIndex];
             document.getElementById('title').innerText = "Внимание!";
@@ -1344,6 +1357,7 @@ function endGame() {
         }
 
         function openSurrenderModal() {
+            stopCurrentAudio();
             playSound(SURRENDER_SOUND_URL);
             document.getElementById('surrenderModal').classList.add('active');
         }
