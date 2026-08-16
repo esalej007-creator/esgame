@@ -1091,12 +1091,21 @@ function updateActivePlayerUI() {
         }
     }
 }
-        function endGame() {
+function endGame() {
+            clearInterval(gameTimer);
             document.getElementById('timerContainer').style.display = 'none';
             document.getElementById('mainContainer').innerHTML = `
-                <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" class="logo" style="margin-bottom: 30px;">
-                <div style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 20px; padding: 25px; width: 100%; font-size: 1.2rem; line-height: 1.5; text-align: center;">
-                    Время вышло, пора подсчитать градусы у игроков
+                <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" class="logo" style="margin-bottom: 20px;">
+                <div style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 20px; padding: 20px; width: 100%; font-size: 0.95rem; line-height: 1.5; text-align: center; margin-bottom: 20px;">
+                    Время вышло, пора подсчитать градусы у игроков.
+                    <br><br>
+                    🏆 Тот, у кого <strong>больше всего градусов</strong> — побеждает и получает титул <strong style="color: #facc15;">«Властелин»</strong> (вся компания обязана называть его так весь оставшийся вечер).
+                    <br><br>
+                    💀 А победитель-«Властелин» лично придумывает прозвище для того, у кого <strong>меньше всего градусов</strong>, и теперь все называют проигравшего только так!
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                    <button class="glass-btn" onclick="location.reload()" style="margin: 0; width: 100%;">Новая игра</button>
+                    <button class="glass-btn" onclick="window.close()" style="margin: 0; width: 100%;">Выход</button>
                 </div>
             `;
         }
