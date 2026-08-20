@@ -276,7 +276,6 @@
             letter-spacing: 1px;
         }
 
-        /* --- Стили для круглого таймера задания --- */
         #taskTimerWrapper {
             display: none;
             flex-direction: column;
@@ -315,7 +314,6 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* --- Стили для панели игроков в контейнере --- */
         .players-container-grid {
             display: flex;
             flex-wrap: wrap;
@@ -402,7 +400,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- Стили подвала (Footer) --- */
         .site-footer {
             width: 100%;
             max-width: 600px;
@@ -497,7 +494,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* --- Стили модального окна --- */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -596,74 +592,76 @@
             button.choice { width: 100%; padding: 12px; }
             #timerContainer { top: 10px; left: 10px; padding: 8px 12px; align-self: flex-start; }
         }
-.play-btn .scanner-btn-icon {
-    width: 48px;  
-    height: 48px;
-    object-fit: contain;
-    display: block;
-    margin: 0 auto;
-}
-@media (max-width: 480px) {
-.logo{
-    width: 70%;}
-}
-.top-bar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 10px;
-}
 
-#timerContainer {
-    margin-bottom: 0 !important; /* Убираем лишний отступ, так как теперь есть обертка */
-}
+        .play-btn .scanner-btn-icon {
+            width: 48px;  
+            height: 48px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
 
-/* Стили для плашки текущего хода сверху справа */
-.current-turn-top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 16px;
-    padding: 5px 12px 5px 5px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    animation: fadeInWarning 0.4s ease forwards;
-    max-width: 180px;
-}
+        @media (max-width: 480px) {
+            .logo { width: 70%; }
+        }
 
-.current-turn-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.6);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.2);
-}
+        .top-bar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
 
-.current-turn-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+        #timerContainer {
+            margin-bottom: 0 !important;
+        }
 
-.current-turn-name {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-.surrender-btn {
+        .current-turn-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 5px 12px 5px 5px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            animation: fadeInWarning 0.4s ease forwards;
+            max-width: 180px;
+        }
+
+        .current-turn-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .current-turn-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .current-turn-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .surrender-btn {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.8);
@@ -686,6 +684,34 @@
         .surrender-btn:active {
             transform: scale(0.95);
         }
+
+        .white-card-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 1);
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            margin: 10px auto 0 auto;
+            display: block;
+            width: 100%;
+        }
+        .white-card-btn:hover {
+            background: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+        .white-card-btn:active {
+            transform: scale(0.95);
+        }
+        .white-card-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
     </style>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -697,20 +723,20 @@
     </div>
     
     <div class="main-card" id="mainContainer">
-<div class="top-bar-container">
-        <div id="timerContainer">
-            <div class="bottle-icon">
-                <div class="bottle-fill" id="bottleFill" style="height: 100%;"></div>
+        <div class="top-bar-container">
+            <div id="timerContainer">
+                <div class="bottle-icon">
+                    <div class="bottle-fill" id="bottleFill" style="height: 100%;"></div>
+                </div>
+                <div class="timer-text" id="timerDigits">90:00</div>
             </div>
-            <div class="timer-text" id="timerDigits">90:00</div>
+            <div id="currentTurnIndicator" class="current-turn-top" style="display: none;">
+                <div class="current-turn-avatar">
+                    <img id="currentTurnAvatarImg" src="" alt="Avatar">
+                </div>
+                <span class="current-turn-name" id="currentTurnNameText">Имя</span>
+            </div>
         </div>
-<div id="currentTurnIndicator" class="current-turn-top" style="display: none;">
-        <div class="current-turn-avatar">
-            <img id="currentTurnAvatarImg" src="" alt="Avatar">
-        </div>
-        <span class="current-turn-name" id="currentTurnNameText">Имя</span>
-    </div>
-</div>
         <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" class="logo" id="logo">
         
         <!-- Шаг 1: Ввод PIN-кода -->
@@ -741,7 +767,7 @@
         </div>
 
         <!-- Шаг 4: Выбор режима игры -->
-            <div id="modeSelectBox" style="display: none; width: 100%;">
+        <div id="modeSelectBox" style="display: none; width: 100%;">
             <h1 style="font-size: 1.2rem; margin-bottom: 25px;">Выберите режим игры</h1>
             <div style="display: flex; flex-direction: column; gap: 15px;">
                 <button class="glass-btn" onclick="selectMode('classic')" style="margin: 0; width: 100%;">Классический режим 90 минут.</button>
@@ -759,9 +785,7 @@
                 <span id="playersCountDisplay" style="font-size: 1.8rem; font-weight: bold;">4</span>
                 <button class="glass-btn" onclick="changePlayersCount(1)" style="margin: 0; padding: 10px 20px;">+</button>
             </div>
-            <div id="playerNamesInputs" style="display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;">
-                <!-- Динамические поля ввода имен -->
-            </div>
+            <div id="playerNamesInputs" style="display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;"></div>
             <button class="glass-btn" onclick="confirmPlayers()" style="width: 100%; margin: 0;">Продолжить</button>
         </div>
 
@@ -769,30 +793,27 @@
         <div id="gameContent" style="display: none; width: 100%;">
             <h1 id="title">Отсканируйте QR-код на карточке<br>для получения нового задания</h1>
         
-            <!-- Кнопка камеры -->
-<button class="play-btn" id="scannerBtn" onclick="initScanner()">
-    <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/qrscr.png" alt="Сканировать" class="scanner-btn-icon">
-</button>
+            <button class="play-btn" id="scannerBtn" onclick="initScanner()">
+                <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/qrscr.png" alt="Сканировать" class="scanner-btn-icon">
+            </button>
 
-            <!-- Блок камеры для сканирования -->
             <div id="reader"></div>
 
-            <!-- Блок описания задания -->
             <div id="desc-box">
                 <p id="descText"></p>
                 
-                <!-- Круговой таймер задания -->
                 <div id="taskTimerWrapper">
                     <div class="circular-timer" id="circularTimer">
                         <div class="circular-timer-number" id="taskTimerDigits">0</div>
                     </div>
                 </div>
 
-<div style="display: flex; flex-direction: column; width: 100%;" id="btnContainerWrapper">
+                <div style="display: flex; flex-direction: column; width: 100%;" id="btnContainerWrapper">
                     <div class="btn-group" id="btnGroup">
                         <button class="choice choice-yes" onclick="playChoiceSound('yes'); handleYesClick()">Да</button>
                         <button class="choice choice-no" onclick="playChoiceSound('no'); penalty()">Нет</button>
                     </div>
+                    <button class="white-card-btn" id="whiteCardBtn" onclick="openWhiteCardScanner()">Белая карта (<span id="whiteCardStatus">1</span>)</button>
                     <button class="surrender-btn" onclick="openSurrenderModal()">Сдаюсь!</button>
                 </div>
                 <div id="warningBox"></div>
@@ -801,12 +822,10 @@
                 </div>
             </div>
 
-            <!-- Сетка аватарок игроков в самом низу карточки (на протяжении всей игры) -->
             <div class="players-container-grid" id="playersGrid"></div>
         </div>
     </div>
 
-    <!-- ПОДВАЛ САЙТА -->
     <footer class="site-footer">
         <div class="footer-divider"></div>
         <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" alt="Logo" class="footer-logo">
@@ -826,7 +845,6 @@
         <div class="footer-copyright">© 2026. vscreative.ru и ESgame</div>
     </footer>
 
-    <!-- МОДАЛЬНОЕ ОКНО «ПРАВИЛА ИГРЫ» -->
     <div class="modal-overlay" id="rulesModal">
         <div class="modal-card">
             <div class="modal-header">
@@ -844,7 +862,8 @@
             </div>
         </div>
     </div>
-<div class="modal-overlay" id="surrenderModal">
+
+    <div class="modal-overlay" id="surrenderModal">
         <div class="modal-card" style="text-align: center;">
             <div class="modal-header">
                 <h3 class="modal-title" style="width: 100%; text-align: center;">Внимание</h3>
@@ -858,6 +877,22 @@
             </div>
         </div>
     </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО СКАНИРОВАНИЯ БЕЛОЙ КАРТЫ -->
+    <div class="modal-overlay" id="whiteCardModal">
+        <div class="modal-card" style="text-align: center;">
+            <div class="modal-header">
+                <h3 class="modal-title" style="width: 100%; text-align: center;">Белая карта</h3>
+                <button class="modal-close" onclick="closeWhiteCardScannerModal()">×</button>
+            </div>
+            <div class="modal-body" style="font-size: 0.95rem; margin-bottom: 15px;">
+                Отсканируйте QR-код белой карты, чтобы пропустить текущее задание без начисления наград и штрафов.
+            </div>
+            <button class="glass-btn" id="startWhiteCardScanBtn" onclick="initWhiteCardScanner()" style="width: 100%; margin-bottom: 15px;">Включить камеру</button>
+            <div id="whiteCardReader" style="width: 100%; max-width: 320px; margin: 0 auto; border-radius: 20px; overflow: hidden; display: none;"></div>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://upngtdpcgorcvauiirjw.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwbmd0ZHBjZ29yY3ZhdWlpcmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjEwNTUsImV4cCI6MjEwMjIzNzA1NX0.TeJGVOkX-dcAqZEd18WyJyk1lMnjA3A7ppgbeJzPd5E';
@@ -870,6 +905,7 @@
         let auctionOffers = [];
         let tasksPlayedCount = 0;
         let html5QrCode = null;
+        let html5WhiteCardQrCode = null; // Отдельный инстанс для белой карты
         let currentTask = null;
         let cat = 'green';
         let currentAudio = null;
@@ -896,7 +932,8 @@
             'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/13.png',
             'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/14.png'
         ];
-function shuffleArray(array) {
+
+        function shuffleArray(array) {
             let arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -988,9 +1025,9 @@ function shuffleArray(array) {
         function selectMode(mode) {
             selectedGameMode = mode;
             if (mode === 'fast') {
-                totalSeconds = 60 * 60; // 60 минут для быстрого режима
+                totalSeconds = 60 * 60;
             } else if (mode === 'classic') {
-                totalSeconds = 90 * 60; // 90 минут для классического
+                totalSeconds = 90 * 60;
             }
             document.getElementById('modeSelectBox').style.display = 'none';
             showPlayersCountScreen();
@@ -1020,9 +1057,13 @@ function shuffleArray(array) {
             }
         }
 
-function confirmPlayers() {
+        function getCardIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('card');
+        }
+
+        function confirmPlayers() {
             playersList = [];
-            
             const shuffledAvatars = shuffleArray(defaultAvatars);
 
             for (let i = 1; i <= playersCount; i++) {
@@ -1030,18 +1071,20 @@ function confirmPlayers() {
                 const name = inputVal !== "" ? inputVal : `Игрок ${i}`;
                 const avatar = shuffledAvatars[(i - 1) % shuffledAvatars.length];
                 
-                playersList.push({ name, avatar });
+                playersList.push({ 
+                    name, 
+                    avatar, 
+                    hasWhiteCard: true 
+                });
             }
 
             document.getElementById('playersCountBox').style.display = 'none';
             document.getElementById('gameContent').style.display = 'block';
 
-            // Таймер запускается и для классического (90 мин), и для быстрого (60 мин) режима
             if (selectedGameMode === 'classic' || selectedGameMode === 'fast') {
                 document.getElementById('timerContainer').style.display = 'flex';
                 startClassicTimer();
             } else {
-                // Для безлимитного режима скрываем плашку таймера
                 document.getElementById('timerContainer').style.display = 'none';
             }
 
@@ -1065,8 +1108,8 @@ function confirmPlayers() {
             });
         }
 
-function updateActivePlayerUI() {
-            initPlayersGrid(); // Перерисовываем сетку, чтобы актуализировать список оставшихся
+        function updateActivePlayerUI() {
+            initPlayersGrid();
 
             playersList.forEach((_, idx) => {
                 const card = document.getElementById(`playerCard_${idx}`);
@@ -1079,13 +1122,26 @@ function updateActivePlayerUI() {
                 }
             });
 
-            // Обновление маленькой плашки хода сверху справа
             const activePlayer = playersList[currentPlayerIndex];
             const indicator = document.getElementById('currentTurnIndicator');
             if (activePlayer && indicator) {
                 document.getElementById('currentTurnAvatarImg').src = activePlayer.avatar;
                 document.getElementById('currentTurnNameText').innerText = activePlayer.name;
                 indicator.style.display = 'flex';
+            }
+
+            const wcBtn = document.getElementById('whiteCardBtn');
+            const wcStatus = document.getElementById('whiteCardStatus');
+            if (activePlayer && wcBtn && wcStatus) {
+                if (activePlayer.hasWhiteCard) {
+                    wcStatus.innerText = "1";
+                    wcBtn.removeAttribute('disabled');
+                    wcBtn.style.opacity = "1";
+                } else {
+                    wcStatus.innerText = "0";
+                    wcBtn.setAttribute('disabled', 'true');
+                    wcBtn.style.opacity = "0.4";
+                }
             }
         }
 
@@ -1112,35 +1168,37 @@ function updateActivePlayerUI() {
             const seconds = totalSeconds % 60;
             document.getElementById('timerDigits').innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
-            // Динамически определяем максимальное время в зависимости от выбранного режима
             const maxTime = selectedGameMode === 'fast' ? 60 * 60 : 90 * 60;
             const fillPercent = (totalSeconds / maxTime) * 100;
             document.getElementById('bottleFill').style.height = `${fillPercent}%`;
         }
-   function playChoiceSound(type) {
-    let soundUrl = '';
-    if (type === 'yes') {
-        soundUrl = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/1393095a-8e3c-4c14-8728-a95942e2c0de.mp3';
-    } else if (type === 'no') {
-        soundUrl = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/no.MP3';
-    }
 
-    if (soundUrl) {
-        try {
-            new Audio(soundUrl).play();
-        } catch (e) {
-            console.log("Ошибка воспроизведения звука:", e);
+        function playChoiceSound(type) {
+            let soundUrl = '';
+            if (type === 'yes') {
+                soundUrl = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/1393095a-8e3c-4c14-8728-a95942e2c0de.mp3';
+            } else if (type === 'no') {
+                soundUrl = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/no.MP3';
+            }
+
+            if (soundUrl) {
+                try {
+                    new Audio(soundUrl).play();
+                } catch (e) {
+                    console.log("Ошибка воспроизведения звука:", e);
+                }
+            }
         }
-    }
-}
-function stopCurrentAudio() {
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-        currentAudio = null;
-    }
-}
-function endGame() {
+
+        function stopCurrentAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+        }
+
+        function endGame() {
             clearInterval(gameTimer);
             document.getElementById('timerContainer').style.display = 'none';
             document.getElementById('mainContainer').innerHTML = `
@@ -1171,9 +1229,15 @@ function endGame() {
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 (decodedText) => {
                     html5QrCode.stop().then(() => {
+                        html5QrCode = null;
                         readerDiv.style.display = 'none';
                         processScannedData(decodedText);
-                    }).catch(err => console.log("Ошибка остановки сканера:", err));
+                    }).catch(err => {
+                        console.log("Ошибка остановки основного сканера:", err);
+                        html5QrCode = null;
+                        readerDiv.style.display = 'none';
+                        processScannedData(decodedText);
+                    });
                 },
                 (errorMessage) => {}
             ).catch(err => {
@@ -1222,8 +1286,14 @@ function endGame() {
 
             const descEl = currentTask.getElementsByTagName('description')[0];
             const fullDescription = descEl ? descEl.textContent : "Нет описания";
+
+            if (fullDescription.toLowerCase().includes('белая карта') || (currentTask.getElementsByTagName('reward')[0] && currentTask.getElementsByTagName('reward')[0].textContent.toLowerCase().includes('белая карта'))) {
+                if (playersList[currentPlayerIndex]) {
+                    playersList[currentPlayerIndex].hasWhiteCard = true;
+                    updateActivePlayerUI();
+                }
+            }	
             
-            // Получение таймера из тега <time> в фиде
             const timeEl = currentTask.getElementsByTagName('time')[0];
             taskSeconds = timeEl ? parseInt(timeEl.textContent, 10) || 0 : 0;
 
@@ -1236,15 +1306,14 @@ function endGame() {
                 warningPart = "";
             }
 
-            // Воспроизведение звуковой дорожки из фида
-const audioTag = currentTask.getElementsByTagName('audio')[0];
-if (audioTag && audioTag.textContent.trim() !== "") {
-    try {
-        stopCurrentAudio(); // Останавливаем предыдущий звук, если он играл
-        currentAudio = new Audio(audioTag.textContent);
-        currentAudio.play();
-    } catch (e) { console.log(e); }
-}
+            const audioTag = currentTask.getElementsByTagName('audio')[0];
+            if (audioTag && audioTag.textContent.trim() !== "") {
+                try {
+                    stopCurrentAudio();
+                    currentAudio = new Audio(audioTag.textContent);
+                    currentAudio.play();
+                } catch (e) { console.log(e); }
+            }
 
             document.getElementById('desc-box').style.display = 'flex';
             document.getElementById('descText').innerText = "";
@@ -1264,11 +1333,9 @@ if (audioTag && audioTag.textContent.trim() !== "") {
             }
         }
 
-        // Обработка нажатия кнопки «Да»
         function handleYesClick() {
-        stopCurrentAudio();
+            stopCurrentAudio();
             if (taskSeconds > 0) {
-                // Если есть время, запускаем круговой таймер по центру
                 document.getElementById('btnGroup').style.display = 'none';
                 document.getElementById('descText').innerText = "Выполняйте задание!";
                 if(document.getElementById('warningBox')) document.getElementById('warningBox').style.display = 'none';
@@ -1285,7 +1352,6 @@ if (audioTag && audioTag.textContent.trim() !== "") {
                     remainingSec--;
                     timerDigits.innerText = remainingSec;
 
-                    // Обновление круговой анимации обводки
                     let percentage = (remainingSec / taskSeconds) * 100;
                     timerCircle.style.background = `conic-gradient(rgba(255,255,255,0.3) ${percentage}%, rgba(0,0,0,0.2) ${percentage}%)`;
 
@@ -1293,12 +1359,10 @@ if (audioTag && audioTag.textContent.trim() !== "") {
                         clearInterval(interval);
                         timerWrapper.style.display = 'none';
 
-                        // Воспроизведение No time.MP3 по истечении таймера
                         try {
                             new Audio('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/No%20time.MP3').play();
                         } catch (e) { console.log(e); }
 
-                        // Меняем текст и снова показываем кнопки Да/Нет
                         document.getElementById('descText').innerText = "Время вышло.\nВыполнил-ли игрок данное задание на время?";
                         document.getElementById('btnGroup').style.display = 'flex';
                         
@@ -1307,7 +1371,6 @@ if (audioTag && audioTag.textContent.trim() !== "") {
                 }, 1000);
 
             } else {
-                // Если времени нет в задании — сразу показываем награду
                 finish();
             }
         }
@@ -1342,6 +1405,7 @@ if (audioTag && audioTag.textContent.trim() !== "") {
 
             setTimeout(resetToScanner, 10000);
         }
+
         const SURRENDER_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/%D0%A3%D0%B2%D0%B5%D1%80%D0%B5%D0%BD%D1%8B%20%D0%B2%20%D0%B2%D1%8B%D0%B1%D0%BE%D1%80%D0%B5.mp3'; 
         const CONFIRM_YES_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/miss.MP3'; 
         const CONFIRM_NO_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Ovations.MP3';
@@ -1366,17 +1430,13 @@ if (audioTag && audioTag.textContent.trim() !== "") {
             document.getElementById('surrenderModal').classList.remove('active');
         }
 
-        // Если игрок нажал «Да» в модалке подтверждения сдачи
         function confirmSurrenderYes() {
             playSound(CONFIRM_YES_SOUND_URL);
             closeSurrenderModal();
 
             const activePlayer = playersList[currentPlayerIndex];
-            
-            // Удаляем игрока из массива игроков текущей игры
             playersList.splice(currentPlayerIndex, 1);
 
-            // НОВАЯ ПРОВЕРКА: Если остался ровно 1 игрок, сразу вызываем endGame()
             if (playersList.length === 1) {
                 document.getElementById('title').innerText = "Игра окончена!";
                 document.getElementById('descText').innerText = `${activePlayer.name} сдает все свои градусы в «Алкобанк» и выбывает. Остался последний участник!`;
@@ -1385,26 +1445,22 @@ if (audioTag && audioTag.textContent.trim() !== "") {
                 document.getElementById('warningBox').style.display = 'none';
                 document.getElementById('taskTimerWrapper').style.display = 'none';
 
-                // Задержка в 3 секунды, чтобы игроки успели прочитать сообщение, затем переход к финалу
                 setTimeout(() => {
                     endGame();
                 }, 3000);
                 return;
             }
 
-            // Проверяем, остались ли игроки вообще (на всякий случай)
             if (playersList.length === 0) {
                 alert(`${activePlayer ? activePlayer.name : 'Игрок'} сдался. В игре больше не осталось участников!`);
                 location.reload();
                 return;
             }
 
-            // Корректируем индекс текущего игрока, чтобы не выйти за пределы массива
             if (currentPlayerIndex >= playersList.length) {
                 currentPlayerIndex = 0;
             }
 
-            // Уведомление о выходе игрока и штрафе в Алкобанк
             document.getElementById('title').innerText = "Игрок сдался!";
             document.getElementById('descText').innerText = `${activePlayer.name} сдает все свои градусы в «Алкобанк» и выбывает из игры!`;
             document.getElementById('btnGroup').style.display = 'none';
@@ -1412,18 +1468,103 @@ if (audioTag && audioTag.textContent.trim() !== "") {
             document.getElementById('warningBox').style.display = 'none';
             document.getElementById('taskTimerWrapper').style.display = 'none';
 
-            // Через 4 секунды переходим к ходу следующего игрока
             setTimeout(() => {
                 document.querySelector('.surrender-btn').style.display = 'block';
                 resetToScanner();
             }, 4000);
         }
 
-        // Если игрок нажал «Нет» в модалке подтверждения сдачи (случайное нажатие)
         function confirmSurrenderNo() {
             playSound(CONFIRM_NO_SOUND_URL);
             closeSurrenderModal();
-            // Игра возвращается назад к уже выбранному заданию без изменений
+        }
+
+        function openWhiteCardScanner() {
+            const activePlayer = playersList[currentPlayerIndex];
+            if (!activePlayer || !activePlayer.hasWhiteCard) {
+                alert("У вас больше нет доступных белых карт!");
+                return;
+            }
+            stopCurrentAudio();
+            document.getElementById('whiteCardModal').classList.add('active');
+        }
+
+        function closeWhiteCardScannerModal() {
+            if (html5WhiteCardQrCode) {
+                html5WhiteCardQrCode.stop().then(() => {
+                    html5WhiteCardQrCode = null;
+                    document.getElementById('whiteCardReader').style.display = 'none';
+                    document.getElementById('startWhiteCardScanBtn').style.display = 'block';
+                }).catch(err => {
+                    console.log("Ошибка остановки сканера белой карты:", err);
+                    html5WhiteCardQrCode = null;
+                    document.getElementById('whiteCardReader').style.display = 'none';
+                    document.getElementById('startWhiteCardScanBtn').style.display = 'block';
+                });
+            } else {
+                document.getElementById('whiteCardReader').style.display = 'none';
+                document.getElementById('startWhiteCardScanBtn').style.display = 'block';
+            }
+            document.getElementById('whiteCardModal').classList.remove('active');
+        }
+
+        function initWhiteCardScanner() {
+            document.getElementById('startWhiteCardScanBtn').style.display = 'none';
+            const readerDiv = document.getElementById('whiteCardReader');
+            readerDiv.style.display = 'block';
+
+            html5WhiteCardQrCode = new Html5Qrcode("whiteCardReader");
+            html5WhiteCardQrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 200, height: 200 } },
+                (decodedText) => {
+                    const myCardId = getCardIdFromUrl();
+                    const expectedCode = myCardId ? `white_card_${myCardId}` : "WHITE_CARD_ESGAME";
+
+                    if (decodedText.trim() === expectedCode || decodedText.trim() === "WHITE_CARD_ESGAME") {
+                        if (html5WhiteCardQrCode) {
+                            html5WhiteCardQrCode.stop().then(() => {
+                                html5WhiteCardQrCode = null;
+                                readerDiv.style.display = 'none';
+                                document.getElementById('startWhiteCardScanBtn').style.display = 'block';
+                                document.getElementById('whiteCardModal').classList.remove('active');
+                                
+                                playersList[currentPlayerIndex].hasWhiteCard = false;
+
+                                document.getElementById('title').innerText = "Белая карта использована!";
+                                document.getElementById('descText').innerText = `${playersList[currentPlayerIndex].name} использует белую карту. Задание пропущено без начисления наград!`;
+                                document.getElementById('btnGroup').style.display = 'none';
+                                document.getElementById('whiteCardBtn').style.display = 'none';
+                                document.querySelector('.surrender-btn').style.display = 'none';
+                                document.getElementById('warningBox').style.display = 'none';
+                                document.getElementById('taskTimerWrapper').style.display = 'none';
+
+                                setTimeout(() => {
+                                    document.getElementById('whiteCardBtn').style.display = 'block';
+                                    document.querySelector('.surrender-btn').style.display = 'block';
+                                    resetToScanner();
+                                }, 4000);
+
+                            }).catch(err => {
+                                console.log("Ошибка при остановке после успешного сканирования белой карты:", err);
+                                html5WhiteCardQrCode = null;
+                                readerDiv.style.display = 'none';
+                                document.getElementById('startWhiteCardScanBtn').style.display = 'block';
+                                document.getElementById('whiteCardModal').classList.remove('active');
+                                playersList[currentPlayerIndex].hasWhiteCard = false;
+                                resetToScanner();
+                            });
+                        }
+                    } else {
+                        alert("Эта белая карта не привязана к текущей сессии или неверна!");
+                    }
+                },
+                (errorMessage) => {}
+            ).catch(err => {
+                alert("Не удалось запустить камеру белой карты: " + err);
+                document.getElementById('startWhiteCardScanBtn').style.display = 'block';
+                readerDiv.style.display = 'none';
+            });
         }
 
         function finish() {
@@ -1449,14 +1590,18 @@ if (audioTag && audioTag.textContent.trim() !== "") {
             document.getElementById('rulesModal').classList.remove('active');
         }
 
-window.addEventListener('click', (e) => {
+        window.addEventListener('click', (e) => {
             const rulesModal = document.getElementById('rulesModal');
             const surrenderModal = document.getElementById('surrenderModal');
+            const whiteCardModal = document.getElementById('whiteCardModal');
             if (e.target === rulesModal) {
                 closeRulesModal();
             }
             if (e.target === surrenderModal) {
                 confirmSurrenderNo();
+            }
+            if (e.target === whiteCardModal) {
+                closeWhiteCardScannerModal();
             }
         });
 
