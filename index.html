@@ -914,6 +914,7 @@
         let taskSeconds = 0;
 
         let playersCount = 4;
+        let usedWhiteCards = new Set();
         let playersList = [];
         let currentPlayerIndex = 0;
         
@@ -1508,64 +1509,87 @@
             document.getElementById('whiteCardModal').classList.remove('active');
         }
 
-        function initWhiteCardScanner() {
-            document.getElementById('startWhiteCardScanBtn').style.display = 'none';
-            const readerDiv = document.getElementById('whiteCardReader');
-            readerDiv.style.display = 'block';
+function initWhiteCardScanner() {
+    const activePlayer = playersList[currentPlayerIndex];
+    if (!activePlayer || !activePlayer.hasWhiteCard) {
+        alert("У вас больше нет доступных белых карт!");
+        return;
+    }
+    stopCurrentAudio();
+    document.getElementById('whiteCardModal').classList.add('active');
 
-            html5WhiteCardQrCode = new Html5Qrcode("whiteCardReader");
-            html5WhiteCardQrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 200, height: 200 } },
-                (decodedText) => {
-                    const myCardId = getCardIdFromUrl();
-                    const expectedCode = myCardId ? `white_card_${myCardId}` : "WHITE_CARD_ESGAME";
+    document.getElementById('startWhiteCardScanBtn').style.display = 'none';
+    const readerDiv = document.getElementById('whiteCardReader');
+    readerDiv.style.display = 'block';
 
-                    if (decodedText.trim() === expectedCode || decodedText.trim() === "WHITE_CARD_ESGAME") {
-                        if (html5WhiteCardQrCode) {
-                            html5WhiteCardQrCode.stop().then(() => {
-                                html5WhiteCardQrCode = null;
-                                readerDiv.style.display = 'none';
-                                document.getElementById('startWhiteCardScanBtn').style.display = 'block';
-                                document.getElementById('whiteCardModal').classList.remove('active');
-                                
-                                playersList[currentPlayerIndex].hasWhiteCard = false;
+    html5WhiteCardQrCode = new Html5Qrcode("whiteCardReader");
+    html5WhiteCardQrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 200, height: 200 } },
+        (decodedText) => {
+            const scannedCode = decodedText.trim();
 
-                                document.getElementById('title').innerText = "Белая карта использована!";
-                                document.getElementById('descText').innerText = `${playersList[currentPlayerIndex].name} использует белую карту. Задание пропущено без начисления наград!`;
-                                document.getElementById('btnGroup').style.display = 'none';
-                                document.getElementById('whiteCardBtn').style.display = 'none';
-                                document.querySelector('.surrender-btn').style.display = 'none';
-                                document.getElementById('warningBox').style.display = 'none';
-                                document.getElementById('taskTimerWrapper').style.display = 'none';
+            // Проверяем, что это вообще белая карта (начинается с white_card_ или старая заглушка)
+const isWhiteCardFormat = 
+    scannedCode.includes("esgame.github.io/white") || 
+    scannedCode.startsWith("white_card_") || 
+    scannedCode === "WHITE_CARD_ESGAME";
 
-                                setTimeout(() => {
-                                    document.getElementById('whiteCardBtn').style.display = 'block';
-                                    document.querySelector('.surrender-btn').style.display = 'block';
-                                    resetToScanner();
-                                }, 4000);
+if (isWhiteCardFormat) {
+    // Для уникальности в usedWhiteCards можно использовать сам URL или егопараметры
+    const cardIdentifier = scannedCode;
 
-                            }).catch(err => {
-                                console.log("Ошибка при остановке после успешного сканирования белой карты:", err);
-                                html5WhiteCardQrCode = null;
-                                readerDiv.style.display = 'none';
-                                document.getElementById('startWhiteCardScanBtn').style.display = 'block';
-                                document.getElementById('whiteCardModal').classList.remove('active');
-                                playersList[currentPlayerIndex].hasWhiteCard = false;
-                                resetToScanner();
-                            });
-                        }
-                    } else {
-                        alert("Эта белая карта не привязана к текущей сессии или неверна!");
-                    }
-                },
-                (errorMessage) => {}
-            ).catch(err => {
-                alert("Не удалось запустить камеру белой карты: " + err);
-                document.getElementById('startWhiteCardScanBtn').style.display = 'block';
-                readerDiv.style.display = 'none';
-            });
-        }
+    if (usedWhiteCards.has(cardIdentifier)) {
+        alert("Эта белая карта уже была использована в текущей игре!");
+        return;
+    }
+
+    usedWhiteCards.add(cardIdentifier);
+
+                if (html5WhiteCardQrCode) {
+                    html5WhiteCardQrCode.stop().then(() => {
+                        html5WhiteCardQrCode = null;
+                        readerDiv.style.display = 'none';
+                        document.getElementById('startWhiteCardScanBtn').style.display = 'block';
+                        document.getElementById('whiteCardModal').classList.remove('active');
+                        
+                        playersList[currentPlayerIndex].hasWhiteCard = false;
+
+                        document.getElementById('title').innerText = "Белая карта использована!";
+                        document.getElementById('descText').innerText = `${playersList[currentPlayerIndex].name} использует белую карту (${scannedCode}). Задание пропущено без начисления наград!`;
+                        document.getElementById('btnGroup').style.display = 'none';
+                        document.getElementById('whiteCardBtn').style.display = 'none';
+                        document.querySelector('.surrender-btn').style.display = 'none';
+                        document.getElementById('warningBox').style.display = 'none';
+                        document.getElementById('taskTimerWrapper').style.display = 'none';
+
+                        setTimeout(() => {
+                            document.getElementById('whiteCardBtn').style.display = 'block';
+                            document.querySelector('.surrender-btn').style.display = 'block';
+                            resetToScanner();
+                        }, 4000);
+
+                    }).catch(err => {
+                        console.log("Ошибка при остановке сканера:", err);
+                        html5WhiteCardQrCode = null;
+                        readerDiv.style.display = 'none';
+                        document.getElementById('startWhiteCardScanBtn').style.display = 'block';
+                        document.getElementById('whiteCardModal').classList.remove('active');
+                        playersList[currentPlayerIndex].hasWhiteCard = false;
+                        resetToScanner();
+                    });
+                }
+            } else {
+                alert("Это не QR-код белой карты!");
+            }
+        },
+        (errorMessage) => {}
+    ).catch(err => {
+        alert("Не удалось запустить камеру белой карты: " + err);
+        document.getElementById('startWhiteCardScanBtn').style.display = 'block';
+        readerDiv.style.display = 'none';
+    });
+}
 
         function finish() {
             const currentConfig = configs[cat] || configs.green;
