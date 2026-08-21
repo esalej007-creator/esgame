@@ -769,6 +769,31 @@
 .madness-hint.show {
     opacity: 1;
 }
+.top-bar-madness {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    /* Скрываем обычный аватар игрока в шапке */
+    .current-turn-top {
+        display: none !important;
+    }
+    
+    /* Показываем контейнер со шкалой безумия в верхнем правом углу */
+    .top-bar-madness {
+        display: flex;
+        align-items: center;
+        max-width: 140px;
+    }
+    
+    .top-bar-madness .madness-meter-wrap {
+        margin-top: 0;
+    }
+
+    .top-bar-madness .madness-meter-img {
+        height: 60px; /* Компактный размер для шапки телефона */
+    }
+}
     </style>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -780,7 +805,7 @@
     </div>
     
     <div class="main-card" id="mainContainer">
-        <div class="top-bar-container">
+<div class="top-bar-container">
             <div id="timerContainer">
                 <div class="bottle-icon">
                     <img id="bottleImg" src="ссылка_на_картинку_100_процентов.png" alt="Bottle">
@@ -789,11 +814,21 @@
             </div>
             <!-- Аудио для последних 5 минут -->
             <audio id="fiveMinAudio" src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/timer/a394475c14c105e.mp3" preload="auto"></audio>
+            
+            <!-- Индикатор хода игрока для ПК -->
             <div id="currentTurnIndicator" class="current-turn-top" style="display: none;">
                 <div class="current-turn-avatar">
                     <img id="currentTurnAvatarImg" src="" alt="Avatar">
                 </div>
                 <span class="current-turn-name" id="currentTurnNameText">Имя</span>
+            </div>
+
+            <!-- Шкала безумия для мобильной версии в верхнем правом углу -->
+            <div class="top-bar-madness" onclick="toggleMadnessHint(event, 'top')">
+                <div class="madness-meter-wrap" style="position: relative;">
+                    <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/1.png" class="madness-meter-img" id="topMadnessImg" alt="Шкала безумия">
+                    <div class="madness-hint" id="madnessHint_top">Шкала безумия</div>
+                </div>
             </div>
         </div>
         <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" class="logo" id="logo">
@@ -1134,11 +1169,11 @@ let totalMadnessLevel = 0; // Серия красных заданий (от 0 �
 
 // Ссылки на 5 PNG картинок шкалы безумия (замените на ваши актуальные ссылки/пути)
 const madnessImages = [
-    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/1.png', // 0%
-    'https://s3.twcstorage.ru/.../madness_25.png', // 25%
-    'https://s3.twcstorage.ru/.../madness_50.png', // 50%
-    'https://s3.twcstorage.ru/.../madness_75.png', // 75%
-    'https://s3.twcstorage.ru/.../madness_100.png' // 100%
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/1.png',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/2.png', 
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/3.png',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/4.png', 
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/5.png' 
 ];
 
 // Ссылки на звуки для каждого деления шкалы (от 0 до 4)
@@ -1936,21 +1971,30 @@ function triggerMadnessAnimation(idx) {
 function updateGlobalMadnessUI() {
     const imgIndex = Math.min(totalMadnessLevel, 4);
     const imgEl = document.getElementById('globalMadnessImg');
+    const topImgEl = document.getElementById('topMadnessImg'); // Добавлено для шапки
     const textEl = document.getElementById('globalMadnessText');
     
     if (imgEl && madnessImages[imgIndex]) {
         imgEl.src = madnessImages[imgIndex];
     }
+    // Синхронизируем картинку в верхнем правом углу мобильной версии
+    if (topImgEl && madnessImages[imgIndex]) {
+        topImgEl.src = madnessImages[imgIndex];
+    }
     if (textEl) {
         textEl.innerText = `Общая шкала безумия: ${totalMadnessLevel} / 5`;
     }
 }
-
 function triggerGlobalMadnessAnimation() {
     const imgEl = document.getElementById('globalMadnessImg');
+    const topImgEl = document.getElementById('topMadnessImg');
     if (imgEl) {
         imgEl.classList.add('madness-animated');
         setTimeout(() => imgEl.classList.remove('madness-animated'), 1200);
+    }
+    if (topImgEl) {
+        topImgEl.classList.add('madness-animated');
+        setTimeout(() => topImgEl.classList.remove('madness-animated'), 1200);
     }
 }
 function triggerAuctionEvent(player) {
@@ -1967,7 +2011,7 @@ function triggerAuctionEvent(player) {
     const desc = randomAuctionCard.getElementsByTagName('description')[0]?.textContent || "Секретное задание аукциона!";
     
     // Выводим карточку аукциона на экран
-    document.getElementById('title').innerText = `🔥 АУКЦИОН ДЛЯ ИГРОКА ${player.name.toUpperCase()}! 🔥`;
+    document.getElementById('title').innerText = `🔥 АУКЦИОН! 🔥`;
     document.getElementById('descText').innerText = `${title}\n\n${desc}`;
     document.getElementById('btnGroup').style.display = 'flex';
     document.getElementById('warningBox').style.display = 'none';
