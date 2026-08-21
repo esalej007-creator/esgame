@@ -516,7 +516,7 @@
 
         .modal-card {
             width: 100%;
-            max-width: 450px;
+            max-width: 600px;
             background: rgba(20, 30, 25, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -851,17 +851,154 @@
                 <h3 class="modal-title">Правила игры</h3>
                 <button class="modal-close" onclick="closeRulesModal()">×</button>
             </div>
-            <div class="modal-body">
-                <p>Добро пожаловать в «Алко-Властелин»! Настоящие правила регулируют игровой процесс и взаимодействие участников.</p>
-                <p>1. Каждый участник обязуется соблюдать правила безопасности и умеренность при прохождении заданий.</p>
-                <p>2. При отказе от выполнения задания игрок обязан положить штрафной градус в Алко-банк согласно уровню сложности выбранной колоды.</p>
-                <p>3. Время проведения ограничено выбранным режимом (классический, быстрый, безлимитный). По истечении времени производится подсчет очков и определение победителя.</p>
-                <p>4. Запрещается передавать карточки третьим лицам или использовать сторонние методы обхода сканирования QR-кодов.</p>
-                <p>5. Организаторы оставляют за собой право вносить изменения в ход игры в режиме реального времени.</p>
-                <p>Приятной игры и незабываемых эмоций всем участникам компании!</p>
-            </div>
-        </div>
+<div class="modal-body" style="font-family: 'Segoe UI', sans-serif; color: #fff; line-height: 1.5; padding: 20px;">
+    
+    <!-- ЛОГОТИП -->
+    <div style="text-align: center; margin-bottom: 20px;">
+        <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" alt="Алко-Властелин" style="max-width: 200px; height: auto;">
     </div>
+    
+    <p style="text-align: center; font-size: 1em; color: #b2bec3;"><em>Добро пожаловать в «Алко-Властелин»! Настоящие правила регулируют игровой процесс и взаимодействие участников.</em></p>
+
+    <!-- 1. ОБЩИЕ СВЕДЕНИЯ И ПОДГОТОВКА -->
+    <div style="background: var(--bg-primary); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h4 style="margin-top: 0; color: #ffd700; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">📋 Общие сведения</h4>
+        <ul style="padding-left: 20px; margin: 5px 0;">
+            <li><strong>Название:</strong> Алко-Властелин.</li>
+            <li><strong>Количество игроков:</strong> от 2 до 12 человек.</li>
+            <li><strong>Что нужно:</strong> 1 телефон с камерой для сканирования QR-кодов.</li>
+            <li><strong>Подготовка:</strong> В начале игры каждому участнику раздается по 4 карты: 🟢 Зеленая, 🟡 Желтая, 🔴 Красная и ⚪ Белая.</li>
+            <li><strong>Цель игры:</strong> набрать как можно больше «градусов» (внутренняя валюта игры). Побеждает игрок с наибольшим количеством градусов.</li>
+        </ul>
+    </div>
+
+    <!-- 2. РЕЖИМЫ ИГРЫ -->
+    <div style="background: var(--bg-primary); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h4 style="margin-top: 0; color: #ffd700; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">⏱️ Режимы игры (Таймер)</h4>
+        <p style="margin: 5px 0;">Перед началом игроки выбирают один из режимов:</p>
+        <ol style="padding-left: 20px; margin: 5px 0;">
+            <li><strong>Классика</strong> — на игру дается 90 минут. По истечении времени игра останавливается (даже если ход не закончен) и подсчитываются градусы.</li>
+            <li><strong>Быстрый</strong> — на игру дается 60 минут. (По окончании времени — подсчет градусов у игроков).</li>
+            <li><strong>Безлимитный</strong> — игра идет, пока игроки не решат закончить (по общему согласию).</li>
+            <li><strong>ВНИМАНИЕ</strong> — Есть внутренние задания при принятии которых запускается таймер.</li>
+        </ol>
+        <p style="margin: 8px 0 0 0; font-size: 0.9em; color: #dfe6e9;"><em>В любом режиме победа присуждается по одному принципу: у кого больше градусов — тот и победил.</em></p>
+    </div>
+
+    <!-- 3. ЧТО ПОЛУЧАЕТ ПОБЕДИТЕЛЬ -->
+    <div style="background: var(--bg-primary); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h4 style="margin-top: 0; color: #ffd700; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">👑 Что получает победитель</h4>
+        <ul style="padding-left: 20px; margin: 5px 0;">
+            <li>Участники до конца вечера обязаны называть его <strong>«Властелин»</strong>.</li>
+            <li>Победитель получает право придумать унизительное (или смешное) имя для проигравшего (игрока с наименьшим количеством градусов). Все остальные игроки до конца вечера называют проигравшего только этим именем.</li>
+        </ul>
+    </div>
+
+    <!-- 4. УРОВНИ СЛОЖНОСТИ И КАРТЫ -->
+    <h4 style="color: #ffd700; margin-top: 20px;">🃏 Уровни сложности и карты</h4>
+    <p style="font-size: 0.9em;">Перед каждым заданием игрок сам выбирает уровень сложности. Уровень определяет цвет карты и количество градусов на кону:</p>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.9em;">
+        <thead>
+            <tr style="background: var(--bg-primary);">
+                <th style="padding: 8px; border: 1px solid #555;">Цвет карты</th>
+                <th style="padding: 8px; border: 1px solid #555;">Сложность</th>
+                <th style="padding: 8px; border: 1px solid #555;">Награда за выполнение</th>
+                <th style="padding: 8px; border: 1px solid #555;">Штраф за отказ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #555;">🟢</td>
+                <td style="padding: 8px; border: 1px solid #555;">Легкое</td>
+                <td style="padding: 8px; border: 1px solid #555; text-align: center;">+1 градус</td>
+                <td style="padding: 8px; border: 1px solid #555; text-align: center;">−1 градус (в банк)</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #555;">🟡</td>
+                <td style="padding: 8px; border: 1px solid #555;">Среднее</td>
+                <td style="padding: 8px; border: 1px solid #555; text-align: center;">+2 градуса</td>
+                <td style="padding: 8px; border: 1px solid #555; text-align: center;">−2 градуса (в банк)</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #555;">🔴</td>
+                <td style="padding: 8px; border: 1px solid #555;">Тяжелое (безумное)</td>
+                <td style="padding: 8px; border: 1px solid #555; text-align: center;">+3 градуса</td>
+                <td style="padding: 8px; border: 1px solid #555; text-align: center;">−3 градуса (в банк)</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #555;">⚪ Белая</td>
+                <td colspan="3" style="padding: 8px; border: 1px solid #555; text-align: center;">Особая карта (без градусов и штрафов)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="background: var(--bg-primary); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+        <p style="margin: 0; font-size: 0.9em;"><strong>>Белая карта:</strong> Она не приносит градусов. Она дает право один раз за всю игру отказаться от любого задания без штрафа (просто пропускаете ход). На любом из уровней сложности возможно потерять и более 3 градусов. <strong>Задания случайны.</p>
+    </div>
+
+    <!-- 5. КАК ПРОХОДИТ ХОД -->
+    <div style="background: var(--bg-primary); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h4 style="margin-top: 0; color: #ffd700; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">🔄 Как проходит ход</h4>
+        <ol style="padding-left: 20px; margin: 5px 0;">
+            <li>Игрок выбирает цвет карты (зеленый / желтый / красный).</li>
+            <li>Сканирует с телефона QR-код, соответствующий этому цвету.</li>
+            <li>На экране появляется и озвучивается задание.</li>
+            <li>Если задание на время — запускается таймер (время на выполнение ограничено, отсчитывается автоматически после принятия).</li>
+            <li>Если игрок справился — получает градусы.</li>
+            <li>Если не справился или отказался после того, как увидел задание — платит штраф (отдает градусы в «Алко-банк» либо игрокам в зависимости от задания). Если игрок отказывается, он не получает градусы, а сразу платит штраф.</li>
+        </ol>
+    </div>
+
+    <!-- 6. АЛКО-БАНК И ОТРИЦАТЕЛЬНЫЙ БАЛАНС -->
+    <div style="background: var(--bg-primary); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h4 style="margin-top: 0; color: #ffd700; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">🏦 Алко-банк и отрицательный баланс</h4>
+        <ul style="padding-left: 20px; margin: 5px 0;">
+            <li>Внимательно читайте/слушайте задания - штрафы почти во всех случаях уходят в «Алко-банк»</li>
+            <li><strong>Если у игрока баланс становится отрицательным:</strong>
+                <ul style="margin-top: 5px;">
+                    <li>Он имеет право 1 раз за всю игру взять кредит у банка до 5 градусов (чтобы выйти в ноль или плюс).</li>
+                    <li>После этого все следующие задания он выполняет «в счет банка»: заработанные градусы автоматически идут на погашение долга, пока баланс не станет положительным.</li>
+                </ul>
+            </li>
+            <li>Если игрок уходит в минус, а кредит уже был использован — он может продолжать играть, но с отрицательным счетом (победить в таком случае уже не получится, но участвовать можно в ожидании участи).</li>
+        </ul>
+    </div>
+
+        <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #ffd700;">
+        <h4 style="margin-top: 0; color: #ffd700;">Важные уточнения</h4>
+        <ol style="padding-left: 20px; margin: 5px 0; font-size: 0.9em;">
+            <li>Любое задание возможно отменить "Белой картой".</li>
+            <li>Если игрок отказывается от задания, он не получает градусы, платит штраф.</li>
+            <li>Если режимное время истекло - игра останавливается сразу.</li>
+            <li>Игрок употребивший алкоголь - до начала игры на «СТАРТЕ» получает 1 градус</li>
+        </ol>
+    </div>
+    <div style="background: var(--bg-primary); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h4 style="margin-top: 0; color: #ffd700; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">📌 Коротко: последовательность действий</h4>
+        <ul style="padding-left: 20px; margin: 5px 0;">
+            <li>Выбрать режим.</li>
+            <li>Выбрать цвет карты (из разданных 3-х).</li>
+            <li>Отсканировать QR-код.</li>
+            <li>Услышать / увидеть задание.</li>
+            <li>Либо выполнить (получить градусы), либо отказаться (отдать градусы в банк).</li>
+            <li>В конце игры подсчитать градусы.</li>
+            <li>Объявить Властелина и наказать проигравшего.</li>
+        </ul>
+    </div>
+
+    <!-- 8. ПРАВИЛА БЕЗОПАСНОСТИ И ОГРАНИЧЕНИЯ -->
+    <div style="font-size: 0.85em; color: #b2bec3; border-top: 1px solid #555; padding-top: 10px; margin-bottom: 15px;">
+        <p style="margin: 3px 0;"><strong>⚠️ Важно и безопасность:</strong></p>
+        <p style="margin: 3px 0;">1. Каждый участник обязуется соблюдать правила безопасности и умеренность при прохождении заданий.</p>
+        <p style="margin: 3px 0;">2. При отказе от выполнения задания игрок обязан положить штрафной градус в Алко-банк согласно уровню сложности выбранной колоды.</p>
+        <p style="margin: 3px 0;">3. Время проведения ограничено выбранным режимом (классический, быстрый, безлимитный). По истечении времени производится подсчет очков и определение победителя.</p>
+        <p style="margin: 3px 0;">4. Запрещается передавать карточки третьим лицам или использовать сторонние методы обхода сканирования QR-кодов.</p>
+        <p style="margin: 3px 0;">5. Организаторы оставляют за собой право вносить изменения в ход игры в режиме реального времени.</p>
+    </div>
+
+    <p style="text-align: center; font-weight: bold; color: #ffd700; margin-top: 20px; font-size: 1.1em;">Приятной игры и незабываемых эмоций всем участникам компании!</p>
+</div>
 
     <div class="modal-overlay" id="surrenderModal">
         <div class="modal-card" style="text-align: center;">
