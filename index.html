@@ -849,6 +849,13 @@
             </div>
             <!-- Фоновая музыка для меню -->
             <audio id="menuAudio" src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/output.mp3" loop preload="auto"></audio>
+<audio id="hoverAudio" preload="auto"></audio>
+
+<audio id="startVoiceAudio" preload="auto"></audio>
+
+<audio id="modeVoiceAudio" preload="auto"></audio>
+
+<audio id="playersVoiceAudio" preload="auto"></audio>
             <!-- Аудио для последних 5 минут -->
             <audio id="fiveMinAudio" src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/timer/a394475c14c105e.mp3" preload="auto"></audio>
             
@@ -1180,10 +1187,16 @@
         let currentAudio = null;
         // ===== ОЗВУЧКА ПЕРЕХОДА ХОДА =====
         const turnVoiceLines = [
-    'https://твой-сайт.ru/audio/turn1.mp3',
-    'https://твой-сайт.ru/audio/turn2.mp3',
-    'https://твой-сайт.ru/audio/turn3.mp3',
-    'https://твой-сайт.ru/audio/turn4.mp3'
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%92%D0%BE%D0%B7%D0%BC%D0%BE%D0%B6%D0%BD%D0%BE%20%D1%81%D1%82%D0%BE%D0%B8%D1%82%20%D1%80%D0%B8%D1%81%D0%BA%D0%BD%D1%83%D1%82%D1%8C.wav',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%92%D1%8B%D0%BF%D0%B8%D1%82%D1%8C.wav',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%96%D0%B5%D0%BB%D1%82%D0%B0%D1%8F%20%D0%B6%D0%B4%D0%B5%D1%82.wav',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%B0%D1%8F%20%D0%BA%D0%B0%D1%80%D1%82%D0%B0%20%D1%81%D0%B0%D0%BC%D0%B0.wav',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%B0%D1%8F,%20%D0%B6%D1%91%D0%BB%D1%82%D0%B0%D1%8F%20%D0%B8%D0%BB%D0%B8%20%D0%B7%D0%B5%D0%BB%D0%B5%D0%BD%D0%B0%D1%8F.wav',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%9D%D1%83%20%D1%87%D1%82%D0%BE.wav',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%9E%D1%89%D1%83%D1%89%D0%B5%D0%BD%D0%B8%D0%B5.wav',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%9F%D1%80%D0%B5%D0%B4%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5.wav',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%A2%D0%B2%D0%BE%D0%B9%20%D1%85%D0%BE%D0%B4,%20%D0%BF%D0%BE%D1%80%D0%B0%20%D1%81%D0%BA%D0%B0%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C.wav',
+    'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%A3%D0%B4%D0%B8%D0%B2%D0%B8%20%D0%BC%D0%B5%D0%BD%D1%8F.wav'
 ];
         let mainPart = "";
         let warningPart = "";
@@ -1209,6 +1222,86 @@
             'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/13.png',
             'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/14.png'
         ];
+function playInterfaceAudio(elementId, url, volume = 1) {
+
+    if (!url || url.startsWith("ССЫЛКА_")) return;
+
+    const audio = document.getElementById(elementId);
+
+    if (!audio) return;
+
+    audio.pause();
+    audio.currentTime = 0;
+
+    audio.src = url;
+    audio.volume = volume;
+
+    audio.play().catch(error => {
+        console.log("Ошибка воспроизведения аудио:", error);
+    });
+}
+const AUDIO_SETTINGS = {
+
+    // Звук при наведении мыши на любую кнопку
+    hover: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Klick.wav",
+
+    // Голос на экране «Начать игру»
+    startScreen: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/START.wav",
+
+    // Голос на экране «Выберите режим игры»
+    modeScreen: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/settings.wav",
+
+    // Голос на экране «Количество игроков»
+    playersScreen: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Players.wav"
+};
+function playHoverSound() {
+    playInterfaceAudio(
+        "hoverAudio",
+        AUDIO_SETTINGS.hover,
+        0.65
+    );
+}
+
+function playStartScreenVoice() {
+    playInterfaceAudio(
+        "startVoiceAudio",
+        AUDIO_SETTINGS.startScreen,
+        1
+    );
+}
+
+function playModeScreenVoice() {
+    playInterfaceAudio(
+        "modeVoiceAudio",
+        AUDIO_SETTINGS.modeScreen,
+        1
+    );
+}
+
+function playPlayersScreenVoice() {
+    playInterfaceAudio(
+        "playersVoiceAudio",
+        AUDIO_SETTINGS.playersScreen,
+        1
+    );
+}
+document.addEventListener("mouseover", function(event) {
+
+    const button = event.target.closest("button");
+
+    if (!button) return;
+
+    // Не воспроизводим звук повторно,
+    // если мышь переместилась внутри той же кнопки
+    if (
+        event.relatedTarget &&
+        button.contains(event.relatedTarget)
+    ) {
+        return;
+    }
+
+    playHoverSound();
+});
 let totalMadnessLevel = 0; // Серия красных заданий (от 0 до 5)
 
 // Ссылки на 5 PNG картинок шкалы безумия (замените на ваши актуальные ссылки/пути)
@@ -1342,16 +1435,17 @@ function registerUser() {
 
             localStorage.setItem('esgame_auth', 'true');
             localStorage.setItem('esgame_user', login);
-
             playMenuMusic();
             document.getElementById('registerBox').style.display = 'none';
             document.getElementById('startMenuBox').style.display = 'block';
+playStartScreenVoice();
         }
 
 function showModeSelection() {
             playMenuMusic();
             document.getElementById('startMenuBox').style.display = 'none';
             document.getElementById('modeSelectBox').style.display = 'block';
+playModeScreenVoice();
         }
 
         let selectedGameMode = 'classic';
@@ -1372,6 +1466,7 @@ function showModeSelection() {
         function showPlayersCountScreen() {
             document.getElementById('playersCountBox').style.display = 'block';
             renderPlayerInputs();
+playPlayersScreenVoice();
         }
 
         function changePlayersCount(delta) {
@@ -1824,7 +1919,7 @@ if (auctionTimerInterval) {
             setTimeout(resetToScanner, 10000);
         }
 
-        const SURRENDER_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/%D0%A3%D0%B2%D0%B5%D1%80%D0%B5%D0%BD%D1%8B%20%D0%B2%20%D0%B2%D1%8B%D0%B1%D0%BE%D1%80%D0%B5.mp3'; 
+        const SURRENDER_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/SUrrender.wav'; 
         const CONFIRM_YES_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/miss.MP3'; 
         const CONFIRM_NO_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Ovations.MP3';
 
