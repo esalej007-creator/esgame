@@ -1164,7 +1164,7 @@
         let mainPart = "";
         let warningPart = "";
         let taskSeconds = 0;
-
+        let auctionTimerInterval = null;
         let playersCount = 4;
         let usedWhiteCards = new Set();
         let playersList = [];
@@ -1411,7 +1411,17 @@ function initPlayersGrid() {
     grid.innerHTML = '';
     
     // Отрисовываем карточки игроков
-    playersList.forEach((p, idx) => {
+    const visualPlayers = playersList.map((player, index) => ({
+    player,
+    originalIndex: index
+})).sort((a, b) => {
+    const aPosition = (a.originalIndex - currentPlayerIndex + playersList.length) % playersList.length;
+    const bPosition = (b.originalIndex - currentPlayerIndex + playersList.length) % playersList.length;
+
+    return aPosition - bPosition;
+});
+
+visualPlayers.forEach(({ player: p, originalIndex: idx }) => {
         grid.innerHTML += `
             <div class="player-card-item ${idx === currentPlayerIndex ? 'active' : ''}" id="playerCard_${idx}">
                 <div class="player-avatar-wrap">
@@ -1756,6 +1766,10 @@ function playRandomTurnVoice() {
 }
         function resetToScanner() {
             stopCurrentAudio();
+if (auctionTimerInterval) {
+    clearInterval(auctionTimerInterval);
+    auctionTimerInterval = null;
+}
             currentTask = null;
             taskSeconds = 0;
             currentPlayerIndex = (currentPlayerIndex + 1) % playersList.length;
@@ -2081,36 +2095,131 @@ function triggerAuctionEvent(player) {
         resetToScanner();
         return;
     }
-    
-    // Рандомный выбор карты аукциона из фида
-    const randomAuctionCard = auctionOffers[Math.floor(Math.random() * auctionOffers.length)];
-    
-    const title = randomAuctionCard.getElementsByTagName('name')[0]?.textContent || "Аукцион";
-    const desc = randomAuctionCard.getElementsByTagName('description')[0]?.textContent || "Секретное задание аукциона!";
-    
-    // Выводим карточку аукциона на экран
-    document.getElementById('title').innerText = `🔥 АУКЦИОН! 🔥`;
+
+    // На всякий случай останавливаем старый таймер аукциона
+    if (auctionTimerInterval) {
+        clearInterval(auctionTimerInterval);
+        auctionTimerInterval = null;
+    }
+
+    // Останавливаем предыдущую озвучку
+    stopCurrentAudio();
+
+    // Рандомно выбираем карточку аукциона из фида
+    const randomAuctionCard = auctionOffers[
+        Math.floor(Math.random() * auctionOffers.length)
+    ];
+
+    const title =
+        randomAuctionCard.getElementsByTagName('name')[0]?.textContent ||
+        "Аукцион";
+
+    const desc =
+        randomAuctionCard.getElementsByTagName('description')[0]?.textContent ||
+        "Секретное задание аукциона!";
+
+    // Берём время из <time>
+    const timeEl = randomAuctionCard.getElementsByTagName('time')[0];
+    const auctionSeconds = timeEl
+        ? parseInt(timeEl.textContent, 10) || 0
+        : 0;
+
+    // Берём аудио из <audio>
+    const audioEl = randomAuctionCard.getElementsByTagName('audio')[0];
+    const auctionAudioUrl = audioEl
+        ? audioEl.textContent.trim()
+        : "";
+
+    // Показываем карточку аукциона
+    document.getElementById('title').innerText = "🔥 АУКЦИОН! 🔥";
     document.getElementById('descText').innerText = `${title}\n\n${desc}`;
-    document.getElementById('btnGroup').style.display = 'flex';
+
+    // Кнопки НЕ нужны
+    document.getElementById('btnGroup').style.display = 'none';
+
     document.getElementById('warningBox').style.display = 'none';
     document.getElementById('imageBox').style.display = 'none';
+
+    // Показываем область таймера только после окончания озвучки
     document.getElementById('taskTimerWrapper').style.display = 'none';
 
-    // Переопределяем поведение кнопки "Да" / "Нет" для завершения аукциона и перехода хода к следующему игроку
-    const btnGroup = document.getElementById('btnGroup');
-    btnGroup.innerHTML = `
-        <button class="choice choice-yes" onclick="finishAuction(true)">Выполнено</button>
-        <button class="choice choice-no" onclick="finishAuction(false)">Провал</button>
-    `;
-}
+    // Запускаем таймер аукциона
+    function startAuctionTimer() {
+        // Если аудио/таймер уже запустили — не запускаем повторно
+        if (auctionTimerInterval) return;
 
-function finishAuction(success) {
-    // Возвращаем стандартные кнопки выбора обратно для будущих ходов
-    document.getElementById('btnGroup').innerHTML = `
-        <button class="choice choice-yes" onclick="playChoiceSound('yes'); handleYesClick()">Да</button>
-        <button class="choice choice-no" onclick="playChoiceSound('no'); penalty()">Нет</button>
-    `;
-    resetToScanner();
+        // Если времени нет — сразу переходим к следующему игроку
+        if (auctionSeconds <= 0) {
+            resetToScanner();
+            return;
+        }
+
+        const timerWrapper = document.getElementById('taskTimerWrapper');
+        const timerDigits = document.getElementById('taskTimerDigits');
+        const timerCircle = document.getElementById('circularTimer');
+
+        timerWrapper.style.display = 'flex';
+
+        let remainingSec = auctionSeconds;
+
+        timerDigits.innerText = remainingSec;
+
+        // Начальное состояние круга
+        timerCircle.style.background =
+            `conic-gradient(rgba(255,255,255,0.3) 100%, rgba(0,0,0,0.2) 100%)`;
+
+        auctionTimerInterval = setInterval(() => {
+            remainingSec--;
+
+            timerDigits.innerText = remainingSec;
+
+            const percentage =
+                Math.max(0, (remainingSec / auctionSeconds) * 100);
+
+            timerCircle.style.background =
+                `conic-gradient(
+                    rgba(255,255,255,0.3) ${percentage}%,
+                    rgba(0,0,0,0.2) ${percentage}%
+                )`;
+
+            if (remainingSec <= 0) {
+                clearInterval(auctionTimerInterval);
+                auctionTimerInterval = null;
+
+                timerWrapper.style.display = 'none';
+
+                // Время аукциона закончилось.
+                // Просто переходим к следующему игроку.
+                resetToScanner();
+            }
+        }, 1000);
+    }
+
+    // Если у карточки есть озвучка
+    if (auctionAudioUrl) {
+        currentAudio = new Audio(auctionAudioUrl);
+        currentAudio.volume = 1;
+
+        // Таймер стартует ТОЛЬКО после полного окончания аудио
+        currentAudio.addEventListener('ended', () => {
+            currentAudio = null;
+            startAuctionTimer();
+        });
+
+        currentAudio.play().catch(e => {
+            console.log("Ошибка воспроизведения аудио аукциона:", e);
+
+            // Если браузер не разрешил воспроизведение,
+            // всё равно не блокируем игру — запускаем таймер.
+            currentAudio = null;
+            startAuctionTimer();
+        });
+
+    } else {
+        // Если в карточке нет audio,
+        // таймер запускается сразу.
+        startAuctionTimer();
+    }
 }	
         window.addEventListener('click', (e) => {
             const rulesModal = document.getElementById('rulesModal');
