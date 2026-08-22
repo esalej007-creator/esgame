@@ -805,6 +805,30 @@
         display: none !important;
     }
 }
+.play-btn::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    opacity: 0;
+    animation: ripplePulse 4s infinite ease-out;
+    pointer-events: none;
+}
+
+@keyframes ripplePulse {
+    0%, 75% {
+        transform: scale(1);
+        opacity: 0;
+    }
+    76% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}
     </style>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
