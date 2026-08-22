@@ -1154,6 +1154,13 @@
         let currentTask = null;
         let cat = 'green';
         let currentAudio = null;
+        // ===== ОЗВУЧКА ПЕРЕХОДА ХОДА =====
+        const turnVoiceLines = [
+    'https://твой-сайт.ru/audio/turn1.mp3',
+    'https://твой-сайт.ru/audio/turn2.mp3',
+    'https://твой-сайт.ru/audio/turn3.mp3',
+    'https://твой-сайт.ru/audio/turn4.mp3'
+];
         let mainPart = "";
         let warningPart = "";
         let taskSeconds = 0;
@@ -1735,7 +1742,18 @@ let fiveMinSoundPlayed = false;
                 finish();
             }
         }
+function playRandomTurnVoice() {
+    if (!turnVoiceLines.length) return;
 
+    const randomIndex = Math.floor(Math.random() * turnVoiceLines.length);
+
+    currentAudio = new Audio(turnVoiceLines[randomIndex]);
+    currentAudio.volume = 1;
+
+    currentAudio.play().catch(e => {
+        console.log("Ошибка воспроизведения реплики хода:", e);
+    });
+}
         function resetToScanner() {
             stopCurrentAudio();
             currentTask = null;
@@ -1743,6 +1761,7 @@ let fiveMinSoundPlayed = false;
             currentPlayerIndex = (currentPlayerIndex + 1) % playersList.length;
             updateActivePlayerUI();
             updateScannerTitle();
+            playRandomTurnVoice();
 
             document.getElementById('desc-box').style.display = 'none';
             document.getElementById('btnGroup').style.display = 'flex';
