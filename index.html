@@ -791,7 +791,18 @@
     }
 
     .top-bar-madness .madness-meter-img {
-        height: 60px; /* Компактный размер для шапки телефона */
+        height: 60px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 8px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+    }
+}
+@media (max-width: 480px) {
+    .global-madness-card {
+        display: none !important;
     }
 }
     </style>
@@ -812,6 +823,8 @@
                 </div>
                 <div class="timer-text" id="timerDigits">90:00</div>
             </div>
+            <!-- Фоновая музыка для меню -->
+            <audio id="menuAudio" src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/output.mp3" loop preload="auto"></audio>
             <!-- Аудио для последних 5 минут -->
             <audio id="fiveMinAudio" src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/timer/a394475c14c105e.mp3" preload="auto"></audio>
             
@@ -1178,11 +1191,11 @@ const madnessImages = [
 
 // Ссылки на звуки для каждого деления шкалы (от 0 до 4)
 const madnessSounds = [
-    new Audio('https://s3.twcstorage.ru/.../sound_step0.mp3'),
-    new Audio('https://s3.twcstorage.ru/.../sound_step1.mp3'),
-    new Audio('https://s3.twcstorage.ru/.../sound_step2.mp3'),
-    new Audio('https://s3.twcstorage.ru/.../sound_step3.mp3'),
-    new Audio('https://s3.twcstorage.ru/.../sound_step4.mp3')
+    new Audio('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/1.wav'),
+    new Audio('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/2.wav'),
+    new Audio('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/2.wav'),
+    new Audio('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/2.wav'),
+    new Audio('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/SKILL/1.wav')
 ];
 
         function shuffleArray(array) {
@@ -1233,7 +1246,7 @@ const madnessSounds = [
             })
             .catch(err => console.error("Ошибка загрузки фида:", err));
 
-        async function checkPin() {
+async function checkPin() {
             const pin = document.getElementById('pinInput').value.trim();
             if (!pin) { alert("Введите PIN-код"); return; }
 
@@ -1246,14 +1259,52 @@ const madnessSounds = [
             if (error) { alert("Ошибка Supabase:\n" + error.message); return; }
 
             if (data) {
+                localStorage.setItem('esgame_pin_passed', 'true');
+                playMenuMusic();
                 document.getElementById('authBox').style.display = 'none';
                 document.getElementById('registerBox').style.display = 'block';
             } else {
                 alert("Неверный PIN-код");
             }
         }
+window.addEventListener('DOMContentLoaded', () => {
+            const pinPassed = localStorage.getItem('esgame_pin_passed');
+            const authPassed = localStorage.getItem('esgame_auth');
 
-        function registerUser() {
+            if (pinPassed === 'true') {
+                document.getElementById('authBox').style.display = 'none';
+
+                if (authPassed === 'true') {
+                    // Если пройдена и авторизация/регистрация — показываем окно "Начать игру"
+                    document.getElementById('startMenuBox').style.display = 'block';
+                } else {
+                    // Если авторизация еще не пройдена
+                    document.getElementById('registerBox').style.display = 'block';
+                }
+            }
+        });
+function playMenuMusic() {
+    const audio = document.getElementById('menuAudio');
+    if (audio && audio.paused) {
+        audio.volume = 0.5; // Уровень громкости (от 0.0 до 1.0)
+        audio.play().catch(e => console.log("Ошибка запуска музыки:", e));
+    }
+}
+function fadeOutMenuMusic() {
+    const audio = document.getElementById('menuAudio');
+    if (!audio || audio.paused) return;
+
+    let fadeInterval = setInterval(() => {
+        if (audio.volume > 0.05) {
+            audio.volume -= 0.05; // Постепенное снижение громкости
+        } else {
+            audio.volume = 0;
+            audio.pause();
+            clearInterval(fadeInterval);
+        }
+    }, 100); // Интервал срабатывания в мс
+}
+function registerUser() {
             const login = document.getElementById('regLogin').value.trim();
             const pass = document.getElementById('regPassword').value.trim();
             if (!login || !pass) { alert("Заполните логин и пароль"); return; }
@@ -1261,11 +1312,13 @@ const madnessSounds = [
             localStorage.setItem('esgame_auth', 'true');
             localStorage.setItem('esgame_user', login);
 
+            playMenuMusic();
             document.getElementById('registerBox').style.display = 'none';
             document.getElementById('startMenuBox').style.display = 'block';
         }
 
-        function showModeSelection() {
+function showModeSelection() {
+            playMenuMusic();
             document.getElementById('startMenuBox').style.display = 'none';
             document.getElementById('modeSelectBox').style.display = 'block';
         }
@@ -1315,6 +1368,7 @@ const madnessSounds = [
         }
 
         function confirmPlayers() {
+            fadeOutMenuMusic();
             playersList = [];
             const shuffledAvatars = shuffleArray(defaultAvatars);
 
@@ -1346,33 +1400,33 @@ const madnessSounds = [
         }
 
 function initPlayersGrid() {
-            const grid = document.getElementById('playersGrid');
-            grid.innerHTML = '';
-            
-            // Отрисовываем карточки игроков
-            playersList.forEach((p, idx) => {
-                grid.innerHTML += `
-                    <div class="player-card-item ${idx === currentPlayerIndex ? 'active' : ''}" id="playerCard_${idx}">
-                        <div class="player-avatar-wrap">
-                            <img src="${p.avatar}" alt="${p.name}">
-                        </div>
-                        <div class="player-name-badge">${p.name}</div>
-                    </div>
-                `;
-            });
-
-            // Добавляем общую шкалу безумия под сеткой игроков
-            const globalImgIndex = Math.min(totalMadnessLevel, 4);
-            grid.innerHTML += `
-                <div class="global-madness-card" style="grid-column: 1 / -1; margin-top: 15px; text-align: center;" onclick="toggleMadnessHint(event, 'global')">
-                    <div class="madness-meter-wrap" style="cursor: pointer; position: relative;">
-                        <div style="font-size: 0.85rem; margin-bottom: 5px; opacity: 0.9;" id="globalMadnessText">Общая шкала безумия: ${totalMadnessLevel} / 5</div>
-                        <img src="${madnessImages[globalImgIndex]}" class="madness-meter-img" id="globalMadnessImg" alt="Общая шкала безумия">
-                        <div class="madness-hint" id="madnessHint_global">Алкогольная шкала безумия: при заполнении запускает секретное задание.</div>
-                    </div>
+    const grid = document.getElementById('playersGrid');
+    grid.innerHTML = '';
+    
+    // Отрисовываем карточки игроков
+    playersList.forEach((p, idx) => {
+        grid.innerHTML += `
+            <div class="player-card-item ${idx === currentPlayerIndex ? 'active' : ''}" id="playerCard_${idx}">
+                <div class="player-avatar-wrap">
+                    <img src="${p.avatar}" alt="${p.name}">
                 </div>
-            `;
-        }
+                <div class="player-name-badge">${p.name}</div>
+            </div>
+        `;
+    });
+
+    // Отрисовываем нижний блок шкалы безумия (скрывается CSS-правилом .global-madness-card на мобильных)
+    const globalImgIndex = Math.min(totalMadnessLevel, 4);
+    grid.innerHTML += `
+        <div class="global-madness-card" style="grid-column: 1 / -1; margin-top: 15px; text-align: center;" onclick="toggleMadnessHint(event, 'global')">
+            <div class="madness-meter-wrap" style="cursor: pointer; position: relative;">
+                <div style="font-size: 0.85rem; margin-bottom: 5px; opacity: 0.9;" id="globalMadnessText">Общая шкала безумия: ${totalMadnessLevel} / 5</div>
+                <img src="${madnessImages[globalImgIndex]}" class="madness-meter-img" id="globalMadnessImg" alt="Общая шкала безумия">
+                <div class="madness-hint" id="madnessHint_global">Алкогольная шкала безумия: при заполнении запускает секретное задание.</div>
+            </div>
+        </div>
+    `;
+}
 
 // Функция для показа хинта по клику на телефоне
 function toggleMadnessHint(event, idx) {
@@ -1906,46 +1960,51 @@ let fiveMinSoundPlayed = false;
         }
 
 function finish() {
-            const activePlayer = playersList[currentPlayerIndex];
+    const activePlayer = playersList[currentPlayerIndex];
 
-            // Проверяем категорию выполненного задания
-            if (cat === 'red') {
-                totalMadnessLevel++;
-                if (totalMadnessLevel > 5) totalMadnessLevel = 5;
-                
-                // Проигрываем звук и анимацию для текущего деления (от 0 до 4)
-                playMadnessSound(Math.min(totalMadnessLevel - 1, 4));
-                triggerGlobalMadnessAnimation();
-            } else {
-                // Если выпало зеленое, желтое или любое другое задание — сбрасываем шкалу
-                totalMadnessLevel = 0;
-            }
+    // Проверяем категорию выполненного задания
+    if (cat === 'red') {
+        totalMadnessLevel++;
+        if (totalMadnessLevel > 5) totalMadnessLevel = 5;
+        
+        playMadnessSound(Math.min(totalMadnessLevel - 1, 4));
+        triggerGlobalMadnessAnimation();
+    } else if (cat === 'yellow') {
+        // Желтое задание отнимает 1 уровень
+        totalMadnessLevel -= 1;
+        if (totalMadnessLevel < 0) totalMadnessLevel = 0;
+        triggerGlobalMadnessAnimation();
+    } else if (cat === 'green') {
+        // Зеленое задание отнимает 2 уровня
+        totalMadnessLevel -= 2;
+        if (totalMadnessLevel < 0) totalMadnessLevel = 0;
+        triggerGlobalMadnessAnimation();
+    }
 
-            // Обновляем визуальное отображение общей шкалы
-            updateGlobalMadnessUI();
+    // Обновляем визуальное отображение общей шкалы
+    updateGlobalMadnessUI();
 
-            // Проверяем, заполнилась ли шкала (достигла 5 состояний)
-            if (totalMadnessLevel >= 5) {
-                totalMadnessLevel = 0; // Сбрасываем шкалу
-                updateGlobalMadnessUI();
-                triggerAuctionEvent(activePlayer); // Запускаем аукцион для текущего игрока
-                return; // Прерываем стандартный таймер перехода, так как открылся аукцион
-            }
+    // Проверяем, заполнилась ли шкала (достигла 5 состояний)
+    if (totalMadnessLevel >= 5) {
+        totalMadnessLevel = 0; // Сбрасываем шкалу
+        updateGlobalMadnessUI();
+        triggerAuctionEvent(activePlayer); // Запускаем аукцион для текущего игрока
+        return; // Прерываем стандартный таймер перехода, так как открылся аукцион
+    }
 
-            const currentConfig = configs[cat] || configs.green;
-            document.getElementById('title').innerText = "Удачи!";
-            document.getElementById('descText').innerText = "Задание принято!";
-            document.getElementById('btnGroup').style.display = 'none';
-            document.getElementById('warningBox').style.display = 'none';
-            document.getElementById('taskTimerWrapper').style.display = 'none';
+    const currentConfig = configs[cat] || configs.green;
+    document.getElementById('title').innerText = "Удачи!";
+    document.getElementById('descText').innerText = "Задание принято!";
+    document.getElementById('btnGroup').style.display = 'none';
+    document.getElementById('warningBox').style.display = 'none';
+    document.getElementById('taskTimerWrapper').style.display = 'none';
 
-            const imgBox = document.getElementById('imageBox');
-            document.getElementById('resultImage').src = currentConfig.image;
-            imgBox.style.display = 'block';
+    const imgBox = document.getElementById('imageBox');
+    document.getElementById('resultImage').src = currentConfig.image;
+    imgBox.style.display = 'block';
 
-            setTimeout(resetToScanner, 10000);
-        }
-
+    setTimeout(resetToScanner, 10000);
+}
 
         function openRulesModal() {
             document.getElementById('rulesModal').classList.add('active');
