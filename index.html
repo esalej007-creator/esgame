@@ -1185,6 +1185,172 @@
         let currentTask = null;
         let cat = 'green';
         let currentAudio = null;
+// ======================================================
+// МОБИЛЬНАЯ АУДИОСИСТЕМА
+// ======================================================
+
+let audioUnlocked = false;
+let mobileAudioContext = null;
+
+// Разрешаем браузеру телефона воспроизводить звук
+function unlockAudio() {
+
+    if (audioUnlocked) return;
+
+    try {
+
+        // Создаём AudioContext
+        const AudioContext =
+            window.AudioContext || window.webkitAudioContext;
+
+        if (AudioContext) {
+
+            mobileAudioContext = new AudioContext();
+
+            if (mobileAudioContext.state === 'suspended') {
+                mobileAudioContext.resume();
+            }
+        }
+
+        // Тихий звук.
+        // Он нужен только для "разблокировки" аудио на телефоне.
+        const silentAudio = new Audio();
+
+        silentAudio.src =
+            'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQQAAAAA';
+
+        silentAudio.volume = 0.001;
+
+        const promise = silentAudio.play();
+
+        if (promise) {
+            promise.then(() => {
+                silentAudio.pause();
+                audioUnlocked = true;
+                console.log("Мобильное аудио разблокировано");
+            }).catch(() => {
+                console.log("Браузер пока не разрешил аудио");
+            });
+        } else {
+            audioUnlocked = true;
+        }
+
+    } catch (e) {
+        console.log("Ошибка разблокировки аудио:", e);
+    }
+}
+
+
+// Универсальное воспроизведение аудио
+function playMobileAudio(url, volume = 1) {
+
+    if (!url) return null;
+
+    try {
+
+        const audio = new Audio(url);
+
+        audio.preload = 'auto';
+        audio.volume = volume;
+
+        audio.playsInline = true;
+
+        audio.setAttribute('playsinline', '');
+        audio.setAttribute('webkit-playsinline', '');
+
+        audio.play().catch(error => {
+
+            console.log(
+                "Мобильный браузер заблокировал аудио:",
+                error
+            );
+
+        });
+
+        return audio;
+
+    } catch (error) {
+
+        console.log(
+            "Ошибка создания аудио:",
+            error
+        );
+
+        return null;
+    }
+}
+
+
+// Останавливаем текущее голосовое аудио
+function stopCurrentAudio() {
+
+    if (currentAudio) {
+
+        try {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        } catch (e) {}
+
+        currentAudio = null;
+    }
+}
+
+
+// Универсальное воспроизведение голосовой дорожки
+function playVoice(url) {
+
+    if (!url) return;
+
+    stopCurrentAudio();
+
+    currentAudio = playMobileAudio(url, 1);
+
+    if (currentAudio) {
+
+        currentAudio.addEventListener('ended', () => {
+
+            if (currentAudio === currentAudio) {
+                currentAudio = null;
+            }
+
+        });
+    }
+}
+
+
+// Разблокируем аудио при первом прикосновении/нажатии
+document.addEventListener(
+    'touchstart',
+    function () {
+        unlockAudio();
+playMenuMusic();
+    },
+    {
+        once: true,
+        passive: true
+    }
+);
+
+document.addEventListener(
+    'pointerdown',
+    function () {
+        unlockAudio();
+    },
+    {
+        once: true,
+        passive: true
+    }
+);
+
+document.addEventListener(
+    'click',
+    function () {
+        unlockAudio();
+    },
+    {
+        once: true
+    }
+);
         // ===== ОЗВУЧКА ПЕРЕХОДА ХОДА =====
         const turnVoiceLines = [
     'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%92%D0%BE%D0%B7%D0%BC%D0%BE%D0%B6%D0%BD%D0%BE%20%D1%81%D1%82%D0%BE%D0%B8%D1%82%20%D1%80%D0%B8%D1%81%D0%BA%D0%BD%D1%83%D1%82%D1%8C.wav',
@@ -1408,11 +1574,27 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
 function playMenuMusic() {
-    const audio = document.getElementById('menuAudio');
-    if (audio && audio.paused) {
-        audio.volume = 0.5; // Уровень громкости (от 0.0 до 1.0)
-        audio.play().catch(e => console.log("Ошибка запуска музыки:", e));
-    }
+
+    const audio =
+        document.getElementById('menuAudio');
+
+    if (!audio) return;
+
+    audio.volume = 0.35;
+
+    audio.setAttribute('playsinline', '');
+    audio.setAttribute('webkit-playsinline', '');
+
+    audio.playsInline = true;
+
+    audio.play().catch(error => {
+
+        console.log(
+            "Музыка ожидает разрешения браузера:",
+            error
+        );
+
+    });
 }
 function fadeOutMenuMusic() {
     const audio = document.getElementById('menuAudio');
@@ -1688,13 +1870,6 @@ let fiveMinSoundPlayed = false;
             }
         }
 
-        function stopCurrentAudio() {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                currentAudio = null;
-            }
-        }
 
         function endGame() {
             clearInterval(gameTimer);
@@ -1803,14 +1978,16 @@ let fiveMinSoundPlayed = false;
                 warningPart = "";
             }
 
-            const audioTag = currentTask.getElementsByTagName('audio')[0];
-            if (audioTag && audioTag.textContent.trim() !== "") {
-                try {
-                    stopCurrentAudio();
-                    currentAudio = new Audio(audioTag.textContent);
-                    currentAudio.play();
-                } catch (e) { console.log(e); }
-            }
+const audioTag = currentTask.getElementsByTagName('audio')[0];
+
+if (audioTag && audioTag.textContent.trim() !== "") {
+
+    const taskAudioUrl = audioTag.textContent.trim();
+
+    console.log("Озвучка задания:", taskAudioUrl);
+
+    playVoice(taskAudioUrl);
+}
 
             document.getElementById('desc-box').style.display = 'flex';
             document.getElementById('descText').innerText = "";
@@ -1872,16 +2049,21 @@ let fiveMinSoundPlayed = false;
             }
         }
 function playRandomTurnVoice() {
+
     if (!turnVoiceLines.length) return;
 
-    const randomIndex = Math.floor(Math.random() * turnVoiceLines.length);
+    const randomIndex =
+        Math.floor(Math.random() * turnVoiceLines.length);
 
-    currentAudio = new Audio(turnVoiceLines[randomIndex]);
-    currentAudio.volume = 1;
+    const voiceUrl =
+        turnVoiceLines[randomIndex];
 
-    currentAudio.play().catch(e => {
-        console.log("Ошибка воспроизведения реплики хода:", e);
-    });
+    console.log(
+        "Озвучка перехода хода:",
+        voiceUrl
+    );
+
+    playVoice(voiceUrl);
 }
         function resetToScanner() {
             stopCurrentAudio();
