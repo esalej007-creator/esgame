@@ -1574,41 +1574,67 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
 function playMenuMusic() {
-
-    const audio =
-        document.getElementById('menuAudio');
+    const audio = document.getElementById('menuAudio');
 
     if (!audio) return;
 
     audio.volume = 0.35;
+    audio.loop = true;
+    audio.playsInline = true;
 
     audio.setAttribute('playsinline', '');
     audio.setAttribute('webkit-playsinline', '');
 
-    audio.playsInline = true;
-
-    audio.play().catch(error => {
-
-        console.log(
-            "Музыка ожидает разрешения браузера:",
-            error
-        );
-
+    audio.play().catch(e => {
+        console.log("Музыка пока не может запуститься:", e);
     });
 }
-function fadeOutMenuMusic() {
-    const audio = document.getElementById('menuAudio');
-    if (!audio || audio.paused) return;
+let menuFadeInterval = null;
 
-    let fadeInterval = setInterval(() => {
-        if (audio.volume > 0.05) {
-            audio.volume -= 0.05; // Постепенное снижение громкости
-        } else {
+function fadeOutMenuMusic() {
+
+    const audio = document.getElementById('menuAudio');
+
+    if (!audio) return;
+
+    // Если предыдущее затухание ещё идёт — останавливаем его
+    if (menuFadeInterval) {
+        clearInterval(menuFadeInterval);
+        menuFadeInterval = null;
+    }
+
+    // На всякий случай запоминаем текущее состояние
+    let volume = audio.volume;
+
+    // Если музыка почему-то уже имеет 0 громкость
+    // просто останавливаем её
+    if (volume <= 0) {
+        audio.pause();
+        audio.currentTime = 0;
+        return;
+    }
+
+    menuFadeInterval = setInterval(() => {
+
+        volume -= 0.05;
+
+        if (volume <= 0.05) {
+
             audio.volume = 0;
+
             audio.pause();
-            clearInterval(fadeInterval);
+            audio.currentTime = 0;
+
+            clearInterval(menuFadeInterval);
+            menuFadeInterval = null;
+
+        } else {
+
+            audio.volume = volume;
+
         }
-    }, 100); // Интервал срабатывания в мс
+
+    }, 100);
 }
 function registerUser() {
             const login = document.getElementById('regLogin').value.trim();
@@ -1980,13 +2006,45 @@ let fiveMinSoundPlayed = false;
 
 const audioTag = currentTask.getElementsByTagName('audio')[0];
 
-if (audioTag && audioTag.textContent.trim() !== "") {
+if (audioTag) {
 
     const taskAudioUrl = audioTag.textContent.trim();
 
-    console.log("Озвучка задания:", taskAudioUrl);
+    if (taskAudioUrl) {
 
-    playVoice(taskAudioUrl);
+        console.log("🎙️ Озвучка задания:", taskAudioUrl);
+
+        stopCurrentAudio();
+
+        currentAudio = new Audio();
+
+        currentAudio.src = taskAudioUrl;
+        currentAudio.preload = "auto";
+        currentAudio.volume = 1;
+        currentAudio.playsInline = true;
+
+        currentAudio.setAttribute("playsinline", "");
+        currentAudio.setAttribute("webkit-playsinline", "");
+
+        currentAudio.addEventListener("error", function(e) {
+            console.log("❌ Ошибка загрузки озвучки задания:", e);
+        });
+
+        currentAudio.addEventListener("canplaythrough", function() {
+
+            currentAudio.play().catch(function(error) {
+
+                console.log(
+                    "❌ Телефон заблокировал озвучку задания:",
+                    error
+                );
+
+            });
+
+        }, { once: true });
+
+        currentAudio.load();
+    }
 }
 
             document.getElementById('desc-box').style.display = 'flex';
@@ -2050,7 +2108,10 @@ if (audioTag && audioTag.textContent.trim() !== "") {
         }
 function playRandomTurnVoice() {
 
-    if (!turnVoiceLines.length) return;
+    if (!turnVoiceLines.length) {
+        console.log("Нет голосовых реплик хода");
+        return;
+    }
 
     const randomIndex =
         Math.floor(Math.random() * turnVoiceLines.length);
@@ -2058,12 +2119,43 @@ function playRandomTurnVoice() {
     const voiceUrl =
         turnVoiceLines[randomIndex];
 
-    console.log(
-        "Озвучка перехода хода:",
-        voiceUrl
-    );
+    console.log("🎙️ Реплика хода:", voiceUrl);
 
-    playVoice(voiceUrl);
+    stopCurrentAudio();
+
+    currentAudio = new Audio();
+
+    currentAudio.src = voiceUrl;
+    currentAudio.preload = "auto";
+    currentAudio.volume = 1;
+    currentAudio.playsInline = true;
+
+    currentAudio.setAttribute("playsinline", "");
+    currentAudio.setAttribute("webkit-playsinline", "");
+
+    currentAudio.addEventListener("error", function(e) {
+
+        console.log(
+            "❌ Ошибка загрузки реплики хода:",
+            e
+        );
+
+    });
+
+    currentAudio.addEventListener("canplaythrough", function() {
+
+        currentAudio.play().catch(function(error) {
+
+            console.log(
+                "❌ Телефон заблокировал реплику хода:",
+                error
+            );
+
+        });
+
+    }, { once: true });
+
+    currentAudio.load();
 }
         function resetToScanner() {
             stopCurrentAudio();
