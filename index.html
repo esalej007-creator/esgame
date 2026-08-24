@@ -521,8 +521,6 @@
         }
 
         .modal-card {
-            width: 100%;
-            max-width: 600px;
             background: rgba(20, 30, 25, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -829,6 +827,68 @@
         opacity: 0;
     }
 }
+
+        /* ===== Финальные исправления: ПК/мобильный звук, шкала, сканер и модалки ===== */
+        .current-turn-top { display: none !important; }
+        .top-bar-madness { display: flex; align-items: center; margin-left: auto; }
+        .top-bar-madness .madness-meter-wrap { margin-top: 0; }
+        .top-bar-madness .madness-meter-img {
+            height: 60px;
+            width: 140px;
+            object-fit: contain;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .modal-overlay, .modal-card, .modal-body { max-width: 100%; }
+        .modal-overlay { overflow: hidden; overscroll-behavior: contain; }
+        .modal-card { overflow: hidden; }
+        .modal-body {
+            overflow-x: hidden !important;
+            overscroll-behavior-x: none;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
+            word-break: break-word;
+        }
+        .modal-body table {
+            width: 100% !important;
+            max-width: 100%;
+            table-layout: fixed;
+        }
+        .modal-body th, .modal-body td {
+            max-width: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        #reader, #whiteCardReader { max-width: 280px; margin-left: auto; margin-right: auto; }
+        #reader video, #whiteCardReader video { max-width: 100% !important; }
+        @media (max-width: 480px) {
+            .top-bar-madness { display: flex !important; max-width: 120px; }
+            .top-bar-madness .madness-meter-img {
+                width: 120px;
+                height: 52px;
+                padding: 6px 9px;
+                border-radius: 14px;
+            }
+            #reader, #whiteCardReader { max-width: 250px; }
+            .modal-overlay { padding: 8px; }
+            .modal-card {
+                max-height: calc(100dvh - 16px);
+                padding: 16px 12px;
+            }
+            .modal-body {
+                max-height: calc(100dvh - 110px);
+                padding: 10px !important;
+                font-size: 0.9rem;
+            }
+            .modal-body table { font-size: 0.78rem !important; }
+            .modal-body th, .modal-body td { padding: 6px !important; }
+        }
+
     </style>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -966,7 +1026,6 @@
 
     <footer class="site-footer">
         <div class="footer-divider"></div>
-        <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" alt="Logo" class="footer-logo">
         
         <div class="footer-socials">
             <a href="https://vk.com" target="_blank" class="social-icon" title="VKontakte">
@@ -1241,117 +1300,62 @@ function unlockAudio() {
 }
 
 
-// Универсальное воспроизведение аудио
+// ===== ЕДИНАЯ АУДИОСИСТЕМА ДЛЯ ПК И МОБИЛЬНЫХ =====
 function playMobileAudio(url, volume = 1) {
-
-    if (!url) return null;
-
+    if (!url || url.startsWith("ССЫЛКА_")) return null;
     try {
-
         const audio = new Audio(url);
-
         audio.preload = 'auto';
         audio.volume = volume;
-
         audio.playsInline = true;
-
         audio.setAttribute('playsinline', '');
         audio.setAttribute('webkit-playsinline', '');
-
-        audio.play().catch(error => {
-
-            console.log(
-                "Мобильный браузер заблокировал аудио:",
-                error
-            );
-
-        });
-
+        const promise = audio.play();
+        if (promise && promise.catch) {
+            promise.catch(error => console.log("Аудио не запустилось:", error));
+        }
         return audio;
-
     } catch (error) {
-
-        console.log(
-            "Ошибка создания аудио:",
-            error
-        );
-
+        console.log("Ошибка создания аудио:", error);
         return null;
     }
 }
 
-
-// Останавливаем текущее голосовое аудио
 function stopCurrentAudio() {
-
     if (currentAudio) {
-
         try {
             currentAudio.pause();
             currentAudio.currentTime = 0;
+            currentAudio.src = '';
         } catch (e) {}
-
         currentAudio = null;
     }
 }
 
-
-// Универсальное воспроизведение голосовой дорожки
-function playVoice(url) {
-
-    if (!url) return;
-
+function playVoice(url, volume = 1) {
+    if (!url) return null;
     stopCurrentAudio();
-
-    currentAudio = playMobileAudio(url, 1);
-
-    if (currentAudio) {
-
-        currentAudio.addEventListener('ended', () => {
-
-            if (currentAudio === currentAudio) {
-                currentAudio = null;
-            }
-
-        });
+    currentAudio = playMobileAudio(url, volume);
+    const localAudio = currentAudio;
+    if (localAudio) {
+        localAudio.addEventListener('ended', () => {
+            if (currentAudio === localAudio) currentAudio = null;
+        }, { once: true });
     }
+    return localAudio;
 }
 
+function playOneShot(url, volume = 1) {
+    return playMobileAudio(url, volume);
+}
 
-// Разблокируем аудио при первом прикосновении/нажатии
-document.addEventListener(
-    'touchstart',
-    function () {
-        unlockAudio();
-playMenuMusic();
-    },
-    {
-        once: true,
-        passive: true
-    }
-);
+// Разблокировка выполняется на первом реальном действии пользователя.
+// После этого все игровые звуки используют одну и ту же схему на ПК и телефоне.
+document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+document.addEventListener('pointerdown', unlockAudio, { once: true, passive: true });
+document.addEventListener('click', unlockAudio, { once: true });
 
-document.addEventListener(
-    'pointerdown',
-    function () {
-        unlockAudio();
-    },
-    {
-        once: true,
-        passive: true
-    }
-);
-
-document.addEventListener(
-    'click',
-    function () {
-        unlockAudio();
-    },
-    {
-        once: true
-    }
-);
-        // ===== ОЗВУЧКА ПЕРЕХОДА ХОДА =====
+// ===== ОЗВУЧКА ПЕРЕХОДА ХОДА =====
         const turnVoiceLines = [
     'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%92%D0%BE%D0%B7%D0%BC%D0%BE%D0%B6%D0%BD%D0%BE%20%D1%81%D1%82%D0%BE%D0%B8%D1%82%20%D1%80%D0%B8%D1%81%D0%BA%D0%BD%D1%83%D1%82%D1%8C.wav',
     'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Woman/%D0%92%D1%8B%D0%BF%D0%B8%D1%82%D1%8C.wav',
@@ -1368,6 +1372,10 @@ document.addEventListener(
         let warningPart = "";
         let taskSeconds = 0;
         let auctionTimerInterval = null;
+        let taskTimerInterval = null;
+        let taskTimerRemaining = 0;
+        let taskTimerTotal = 0;
+        let taskTimerRunning = false;
         let playersCount = 4;
         let usedWhiteCards = new Set();
         let playersList = [];
@@ -1880,24 +1888,16 @@ let fiveMinSoundPlayed = false;
         }
 
         function playChoiceSound(type) {
-            let soundUrl = '';
-            if (type === 'yes') {
-                soundUrl = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/1393095a-8e3c-4c14-8728-a95942e2c0de.mp3';
-            } else if (type === 'no') {
-                soundUrl = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/no.MP3';
-            }
+    const soundUrl = type === 'yes'
+        ? 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/1393095a-8e3c-4c14-8728-a95942e2c0de.mp3'
+        : type === 'no'
+            ? 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/no.MP3'
+            : '';
+    if (soundUrl) playOneShot(soundUrl, 1);
+}
 
-            if (soundUrl) {
-                try {
-                    new Audio(soundUrl).play();
-                } catch (e) {
-                    console.log("Ошибка воспроизведения звука:", e);
-                }
-            }
-        }
-
-
-        function endGame() {
+function endGame() {
+            clearTaskTimer(true);
             clearInterval(gameTimer);
             document.getElementById('timerContainer').style.display = 'none';
             document.getElementById('mainContainer').innerHTML = `
@@ -1917,6 +1917,7 @@ let fiveMinSoundPlayed = false;
         }
 
         function initScanner() {
+            fadeOutMenuMusic();
             document.getElementById('scannerBtn').style.display = 'none';
             const readerDiv = document.getElementById('reader');
             readerDiv.style.display = 'block';
@@ -1925,7 +1926,7 @@ let fiveMinSoundPlayed = false;
             html5QrCode = new Html5Qrcode("reader");
             html5QrCode.start(
                 { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
+                { fps: 10, qrbox: (viewfinderWidth, viewfinderHeight) => { const size = Math.floor(Math.min(viewfinderWidth, viewfinderHeight, window.innerWidth <= 480 ? 210 : 250)); return { width: size, height: size }; } },
                 (decodedText) => {
                     html5QrCode.stop().then(() => {
                         html5QrCode = null;
@@ -2005,45 +2006,11 @@ let fiveMinSoundPlayed = false;
             }
 
 const audioTag = currentTask.getElementsByTagName('audio')[0];
-
 if (audioTag) {
-
     const taskAudioUrl = audioTag.textContent.trim();
-
     if (taskAudioUrl) {
-
         console.log("🎙️ Озвучка задания:", taskAudioUrl);
-
-        stopCurrentAudio();
-
-        currentAudio = new Audio();
-
-        currentAudio.src = taskAudioUrl;
-        currentAudio.preload = "auto";
-        currentAudio.volume = 1;
-        currentAudio.playsInline = true;
-
-        currentAudio.setAttribute("playsinline", "");
-        currentAudio.setAttribute("webkit-playsinline", "");
-
-        currentAudio.addEventListener("error", function(e) {
-            console.log("❌ Ошибка загрузки озвучки задания:", e);
-        });
-
-        currentAudio.addEventListener("canplaythrough", function() {
-
-            currentAudio.play().catch(function(error) {
-
-                console.log(
-                    "❌ Телефон заблокировал озвучку задания:",
-                    error
-                );
-
-            });
-
-        }, { once: true });
-
-        currentAudio.load();
+        playVoice(taskAudioUrl, 1);
     }
 }
 
@@ -2065,100 +2032,93 @@ if (audioTag) {
             }
         }
 
-        function handleYesClick() {
-            stopCurrentAudio();
-            if (taskSeconds > 0) {
-                document.getElementById('btnGroup').style.display = 'none';
-                document.getElementById('descText').innerText = "Выполняйте задание!";
-                if(document.getElementById('warningBox')) document.getElementById('warningBox').style.display = 'none';
-                
-                const timerWrapper = document.getElementById('taskTimerWrapper');
-                const timerDigits = document.getElementById('taskTimerDigits');
-                const timerCircle = document.getElementById('circularTimer');
-                timerWrapper.style.display = 'flex';
-
-                let remainingSec = taskSeconds;
-                timerDigits.innerText = remainingSec;
-
-                const interval = setInterval(() => {
-                    remainingSec--;
-                    timerDigits.innerText = remainingSec;
-
-                    let percentage = (remainingSec / taskSeconds) * 100;
-                    timerCircle.style.background = `conic-gradient(rgba(255,255,255,0.3) ${percentage}%, rgba(0,0,0,0.2) ${percentage}%)`;
-
-                    if (remainingSec <= 0) {
-                        clearInterval(interval);
-                        timerWrapper.style.display = 'none';
-
-                        try {
-                            new Audio('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/No%20time.MP3').play();
-                        } catch (e) { console.log(e); }
-
-                        document.getElementById('descText').innerText = "Время вышло.\nВыполнил-ли игрок данное задание на время?";
-                        document.getElementById('btnGroup').style.display = 'flex';
-                        
-                        taskSeconds = 0;
-                    }
-                }, 1000);
-
-            } else {
-                finish();
-            }
-        }
-function playRandomTurnVoice() {
-
-    if (!turnVoiceLines.length) {
-        console.log("Нет голосовых реплик хода");
-        return;
+        function clearTaskTimer(resetVisual = true) {
+    if (taskTimerInterval) {
+        clearInterval(taskTimerInterval);
+        taskTimerInterval = null;
     }
+    taskTimerRunning = false;
+    if (resetVisual) {
+        const wrapper = document.getElementById('taskTimerWrapper');
+        if (wrapper) wrapper.style.display = 'none';
+    }
+}
 
-    const randomIndex =
-        Math.floor(Math.random() * turnVoiceLines.length);
+function pauseTaskTimer() {
+    if (!taskTimerInterval) return;
+    clearInterval(taskTimerInterval);
+    taskTimerInterval = null;
+    taskTimerRunning = false;
+}
 
-    const voiceUrl =
-        turnVoiceLines[randomIndex];
+function resumeTaskTimer() {
+    if (taskTimerRemaining <= 0 || taskTimerInterval || !currentTask) return;
+    const timerWrapper = document.getElementById('taskTimerWrapper');
+    const timerDigits = document.getElementById('taskTimerDigits');
+    const timerCircle = document.getElementById('circularTimer');
+    timerWrapper.style.display = 'flex';
+    taskTimerRunning = true;
 
-    console.log("🎙️ Реплика хода:", voiceUrl);
+    taskTimerInterval = setInterval(() => {
+        taskTimerRemaining--;
+        timerDigits.innerText = Math.max(0, taskTimerRemaining);
+        const percentage = Math.max(0, (taskTimerRemaining / taskTimerTotal) * 100);
+        timerCircle.style.background =
+            `conic-gradient(rgba(255,255,255,0.3) ${percentage}%, rgba(0,0,0,0.2) ${percentage}%)`;
 
+        if (taskTimerRemaining <= 0) {
+            clearTaskTimer(false);
+            timerWrapper.style.display = 'none';
+            taskSeconds = 0;
+            playOneShot('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/No%20time.MP3', 1);
+            document.getElementById('descText').innerText =
+                "Время вышло.\nВыполнил-ли игрок данное задание на время?";
+            document.getElementById('btnGroup').style.display = 'flex';
+        }
+    }, 1000);
+}
+
+function startTaskTimer() {
+    clearTaskTimer(false);
+    taskTimerTotal = Math.max(0, taskSeconds);
+    taskTimerRemaining = taskTimerTotal;
+    if (taskTimerTotal <= 0) return;
+
+    const timerWrapper = document.getElementById('taskTimerWrapper');
+    const timerDigits = document.getElementById('taskTimerDigits');
+    const timerCircle = document.getElementById('circularTimer');
+
+    timerWrapper.style.display = 'flex';
+    timerDigits.innerText = taskTimerRemaining;
+    timerCircle.style.background =
+        'conic-gradient(rgba(255,255,255,0.3) 100%, rgba(0,0,0,0.2) 100%)';
+    resumeTaskTimer();
+}
+
+function handleYesClick() {
     stopCurrentAudio();
 
-    currentAudio = new Audio();
-
-    currentAudio.src = voiceUrl;
-    currentAudio.preload = "auto";
-    currentAudio.volume = 1;
-    currentAudio.playsInline = true;
-
-    currentAudio.setAttribute("playsinline", "");
-    currentAudio.setAttribute("webkit-playsinline", "");
-
-    currentAudio.addEventListener("error", function(e) {
-
-        console.log(
-            "❌ Ошибка загрузки реплики хода:",
-            e
-        );
-
-    });
-
-    currentAudio.addEventListener("canplaythrough", function() {
-
-        currentAudio.play().catch(function(error) {
-
-            console.log(
-                "❌ Телефон заблокировал реплику хода:",
-                error
-            );
-
-        });
-
-    }, { once: true });
-
-    currentAudio.load();
+    if (taskSeconds > 0) {
+        document.getElementById('btnGroup').style.display = 'none';
+        document.getElementById('descText').innerText = "Выполняйте задание!";
+        document.getElementById('warningBox').style.display = 'none';
+        startTaskTimer();
+    } else {
+        finish();
+    }
 }
-        function resetToScanner() {
+
+function playRandomTurnVoice() {
+    if (!turnVoiceLines.length) return;
+    const voiceUrl = turnVoiceLines[Math.floor(Math.random() * turnVoiceLines.length)];
+    playVoice(voiceUrl, 1);
+}
+
+function resetToScanner() {
             stopCurrentAudio();
+            clearTaskTimer(true);
+            taskTimerRemaining = 0;
+            taskTimerTotal = 0;
 if (auctionTimerInterval) {
     clearInterval(auctionTimerInterval);
     auctionTimerInterval = null;
@@ -2182,6 +2142,9 @@ if (auctionTimerInterval) {
 
         function penalty() {
             stopCurrentAudio();
+            clearTaskTimer(true);
+            taskTimerRemaining = 0;
+            taskTimerTotal = 0;
             const currentConfig = configs[cat] || configs.green;
             const activePlayer = playersList[currentPlayerIndex];
             document.getElementById('title').innerText = "Внимание!";
@@ -2198,17 +2161,12 @@ if (auctionTimerInterval) {
         const CONFIRM_NO_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Ovations.MP3';
 
         function playSound(url) {
-            if (url) {
-                try {
-                    new Audio(url).play();
-                } catch (e) {
-                    console.log("Ошибка воспроизведения звука:", e);
-                }
-            }
+            return playOneShot(url, 1);
         }
 
   function openSurrenderModal() {
             stopCurrentAudio();
+            pauseTaskTimer();
             playSound(SURRENDER_SOUND_URL);
             document.getElementById('surrenderModal').classList.add('active');
         }
@@ -2218,6 +2176,9 @@ if (auctionTimerInterval) {
         }
 
         function confirmSurrenderYes() {
+            clearTaskTimer(true);
+            taskTimerRemaining = 0;
+            taskTimerTotal = 0;
             playSound(CONFIRM_YES_SOUND_URL);
             closeSurrenderModal();
 
@@ -2264,6 +2225,7 @@ if (auctionTimerInterval) {
         function confirmSurrenderNo() {
             playSound(CONFIRM_NO_SOUND_URL);
             closeSurrenderModal();
+            resumeTaskTimer();
         }
 
        function openWhiteCardScanner() {
@@ -2277,6 +2239,7 @@ if (auctionTimerInterval) {
                 return;
             }
             stopCurrentAudio();
+            pauseTaskTimer();
             document.getElementById('whiteCardModal').classList.add('active');
             
             document.getElementById('startWhiteCardScanBtn').style.display = 'block';
@@ -2284,6 +2247,8 @@ if (auctionTimerInterval) {
         }
 
         function closeWhiteCardScannerModal() {
+            const consumed = !!window.__whiteCardConsumed;
+            window.__whiteCardConsumed = false;
             if (html5WhiteCardQrCode) {
                 html5WhiteCardQrCode.stop().then(() => {
                     html5WhiteCardQrCode.clear();
@@ -2296,6 +2261,7 @@ if (auctionTimerInterval) {
             document.getElementById('whiteCardReader').style.display = 'none';
             document.getElementById('startWhiteCardScanBtn').style.display = 'block';
             document.getElementById('whiteCardModal').classList.remove('active');
+            if (!consumed) resumeTaskTimer();
         }
 
         function initWhiteCardScanner() {
@@ -2323,7 +2289,7 @@ if (auctionTimerInterval) {
                 html5WhiteCardQrCode = new Html5Qrcode("whiteCardReader");
                 html5WhiteCardQrCode.start(
                     { facingMode: "environment" },
-                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    { fps: 10, qrbox: (viewfinderWidth, viewfinderHeight) => { const size = Math.floor(Math.min(viewfinderWidth, viewfinderHeight, window.innerWidth <= 480 ? 210 : 250)); return { width: size, height: size }; } },
                     (decodedText) => {
                         const scannedCode = decodedText.trim();
                         const isWhiteCardFormat = 
@@ -2347,6 +2313,10 @@ if (auctionTimerInterval) {
                                 document.getElementById('whiteCardModal').classList.remove('active');
                                 
                                 playersList[currentPlayerIndex].hasWhiteCard = false;
+                                window.__whiteCardConsumed = true;
+                                clearTaskTimer(true);
+                                taskTimerRemaining = 0;
+                                taskTimerTotal = 0;
 
                                 document.getElementById('title').innerText = "Белая карта использована!";
                                 document.getElementById('descText').innerText = `${playersList[currentPlayerIndex].name} использует белую карту. Задание пропущено без начисления наград!`;
@@ -2588,26 +2558,17 @@ function triggerAuctionEvent(player) {
         }, 1000);
     }
 
-    // Если у карточки есть озвучка
+    // Если у карточки есть озвучка — единая схема для ПК и мобильных.
     if (auctionAudioUrl) {
-        currentAudio = new Audio(auctionAudioUrl);
-        currentAudio.volume = 1;
-
-        // Таймер стартует ТОЛЬКО после полного окончания аудио
-        currentAudio.addEventListener('ended', () => {
-            currentAudio = null;
+        const auctionAudio = playVoice(auctionAudioUrl, 1);
+        if (auctionAudio) {
+            auctionAudio.addEventListener('ended', () => {
+                if (currentAudio === auctionAudio) currentAudio = null;
+                startAuctionTimer();
+            }, { once: true });
+        } else {
             startAuctionTimer();
-        });
-
-        currentAudio.play().catch(e => {
-            console.log("Ошибка воспроизведения аудио аукциона:", e);
-
-            // Если браузер не разрешил воспроизведение,
-            // всё равно не блокируем игру — запускаем таймер.
-            currentAudio = null;
-            startAuctionTimer();
-        });
-
+        }
     } else {
         // Если в карточке нет audio,
         // таймер запускается сразу.
