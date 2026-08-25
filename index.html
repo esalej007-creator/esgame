@@ -2964,6 +2964,7 @@ function triggerAuctionEvent(player) {
         // Если аудио/таймер уже запустили — не запускаем повторно
         if (auctionTimerInterval) return;
 
+        // Если времени нет — сразу переходим к следующему игроку
         if (auctionSeconds <= 0) {
             resetToScanner();
             return;
@@ -3003,11 +3004,14 @@ function triggerAuctionEvent(player) {
 
                 timerWrapper.style.display = 'none';
 
+                // Время аукциона закончилось.
+                // Просто переходим к следующему игроку.
                 resetToScanner();
             }
         }, 1000);
     }
 
+    // Если у карточки есть озвучка — единая схема для ПК и мобильных.
     if (auctionAudioUrl) {
         const auctionAudio = playVoice(auctionAudioUrl, 1);
         if (auctionAudio) {
@@ -3019,6 +3023,8 @@ function triggerAuctionEvent(player) {
             startAuctionTimer();
         }
     } else {
+        // Если в карточке нет audio,
+        // таймер запускается сразу.
         startAuctionTimer();
     }
 }	
