@@ -2411,7 +2411,7 @@ function resumeTaskTimer() {
             if (isCurrentVoiceTask()) {
                 await finishVoiceRecordingAfterTimer();
             } else {
-                playOneShot('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/No%20time.MP3', 1);
+                playOneShot('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/no%20time1.wav', 1);
                 document.getElementById('descText').innerText =
                     "Время вышло.\nВыполнил-ли игрок данное задание на время?";
                 document.getElementById('btnGroup').style.display = 'flex';
@@ -2430,7 +2430,7 @@ async function finishVoiceRecordingAfterTimer() {
     clearTaskTimer(false);
     taskSeconds = 0;
     // Замените URL ниже на вашу финальную дорожку диктора, когда добавите ее.
-    const VOICE_TASK_TIMEOUT_AUDIO_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/No%20time.MP3';
+    const VOICE_TASK_TIMEOUT_AUDIO_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/no%20time1.wav';
     playOneShot(VOICE_TASK_TIMEOUT_AUDIO_URL, 1);
 
     document.getElementById('btnGroup').style.display='none';
