@@ -1473,6 +1473,11 @@ function animateMoney(direction){
         let currentTask = null;
         let cat = 'green';
         let currentAudio = null;
+const CARD_LEVEL_VOICES = {
+    green: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/brif/green.wav",
+    yellow: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/brif/yellow.wav",
+    red: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/brif/red.wav"
+};
 // ======================================================
 // МОБИЛЬНАЯ АУДИОСИСТЕМА
 // ======================================================
@@ -2186,15 +2191,21 @@ function endGame() {
             });
         }
 
-        function processScannedData(data) {
-            let detectedCat = 'green';
-            if (data.toLowerCase().includes('yellow')) detectedCat = 'yellow';
-            if (data.toLowerCase().includes('red')) detectedCat = 'red';
+function processScannedData(data) {
+    let detectedCat = 'green';
 
-            cat = detectedCat;
-            applyTheme(cat);
-            loadRandomTask();
-        }
+    if (data.toLowerCase().includes('yellow')) {
+        detectedCat = 'yellow';
+    }
+
+    if (data.toLowerCase().includes('red')) {
+        detectedCat = 'red';
+    }
+
+    cat = detectedCat;
+    applyTheme(cat);
+    loadRandomTask();
+}
 
         function loadRandomTask() {
             if (allOffers.length === 0) {
@@ -2254,17 +2265,75 @@ function endGame() {
             }
 
 const audioTag = currentTask.getElementsByTagName('audio')[0];
-if (audioTag) {
-    const taskAudioUrl = audioTag.textContent.trim();
+
+const taskAudioUrl = audioTag
+    ? audioTag.textContent.trim()
+    : "";
+
+// Показываем поле задания,
+// но пока текст пустой
+document.getElementById('desc-box').style.display = 'flex';
+document.getElementById('descText').innerText = "";
+document.getElementById('warningBox').style.display = 'none';
+
+
+// Функция запуска задания
+function startTaskContent() {
+
+    // Запускаем озвучку самого задания
     if (taskAudioUrl) {
         console.log("🎙️ Озвучка задания:", taskAudioUrl);
         playVoice(taskAudioUrl, 1);
     }
+
+    // Одновременно начинаем медленно писать текст
+    typeWriter(0);
 }
 
-            document.getElementById('desc-box').style.display = 'flex';
-            document.getElementById('descText').innerText = "";
-            typeWriter(0);
+
+// ===== СНАЧАЛА ОЗВУЧКА УРОВНЯ КАРТЫ =====
+
+const cardVoiceUrl = CARD_LEVEL_VOICES[cat];
+
+if (
+    cardVoiceUrl &&
+    !cardVoiceUrl.startsWith("ССЫЛКА_")
+) {
+
+    console.log("🎴 Озвучка уровня карты:", cardVoiceUrl);
+
+    const cardAudio = playVoice(cardVoiceUrl, 1);
+
+    if (cardAudio) {
+
+        // Когда закончилась озвучка карты —
+        // запускаем озвучку задания и текст
+        cardAudio.addEventListener('ended', () => {
+
+            startTaskContent();
+
+        }, { once: true });
+
+        // Если произошла ошибка —
+        // всё равно запускаем задание
+        cardAudio.addEventListener('error', () => {
+
+            startTaskContent();
+
+        }, { once: true });
+
+    } else {
+
+        startTaskContent();
+
+    }
+
+} else {
+
+    // Если ссылка на озвучку ещё не добавлена
+    startTaskContent();
+
+}
         }
 
         function getTaskCategoryId(task) {
@@ -2502,17 +2571,18 @@ if (audioTag) {
         }
 
 function typeWriter(i) {
-            if (i < mainPart.length) {
-                document.getElementById("descText").innerHTML += mainPart.charAt(i);
-                setTimeout(() => typeWriter(i + 1), 25);
-            } else {
-                if (warningPart !== "") {
-                    const warnBox = document.getElementById('warningBox');
-                    warnBox.innerText = warningPart;
-                    warnBox.style.display = 'block';
-                }
-            }
+    if (i < mainPart.length) {
+        document.getElementById("descText").innerHTML += mainPart.charAt(i);
+
+        setTimeout(() => typeWriter(i + 1), 40);
+    } else {
+        if (warningPart !== "") {
+            const warnBox = document.getElementById('warningBox');
+            warnBox.innerText = warningPart;
+            warnBox.style.display = 'block';
         }
+    }
+}
 
         function clearTaskTimer(resetVisual = true) {
     if (taskTimerInterval) {
