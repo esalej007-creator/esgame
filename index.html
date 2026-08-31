@@ -2940,7 +2940,7 @@ function resumeTaskTimer() {
             if (isCurrentVoiceTask()) {
                 await finishVoiceRecordingAfterTimer();
             } else {
-                playOneShot('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/no%20time1.wav', 1);
+                playOneShot('https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/notime.wav', 1);
                 document.getElementById('descText').innerText =
                     "Время вышло.\nВыполнил-ли игрок данное задание на время?";
                 taskWaitingForResult = true;
