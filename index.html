@@ -1743,72 +1743,101 @@ function showPlayerStateIcon(state, durationMs) {
 let audioUnlocked = false;
 let mobileAudioContext = null;
 
-// Разрешаем браузеру телефона воспроизводить звук
-function unlockAudio() {
+// Отдельный постоянный канал для АВТОМАТИЧЕСКИХ голосовых дорожек:
+// озвучка перехода хода, уровня карты и самого задания.
+// ВАЖНО: playOneShot() ниже оставляем отдельным — на нём работают
+// surrender / Да / Нет и прочие короткие интерфейсные звуки.
+let persistentVoiceAudio = null;
 
+const SILENT_AUDIO_SRC =
+    'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQQAAAAA';
+
+function getPersistentVoiceAudio() {
+    if (persistentVoiceAudio) return persistentVoiceAudio;
+
+    persistentVoiceAudio = document.createElement('audio');
+    persistentVoiceAudio.id = 'persistentVoiceAudio';
+    persistentVoiceAudio.preload = 'auto';
+    persistentVoiceAudio.playsInline = true;
+    persistentVoiceAudio.setAttribute('playsinline', '');
+    persistentVoiceAudio.setAttribute('webkit-playsinline', '');
+    persistentVoiceAudio.style.display = 'none';
+
+    document.body.appendChild(persistentVoiceAudio);
+    return persistentVoiceAudio;
+}
+
+// Разрешаем браузеру телефона воспроизводить автоматические голосовые
+// дорожки. Разблокируется именно тот audio-элемент, который потом
+// используется playVoice().
+async function unlockAudio() {
     if (audioUnlocked) return;
 
     try {
-
-        // Создаём AudioContext
         const AudioContext =
             window.AudioContext || window.webkitAudioContext;
 
         if (AudioContext) {
-
-            mobileAudioContext = new AudioContext();
-
+            if (!mobileAudioContext) {
+                mobileAudioContext = new AudioContext();
+            }
             if (mobileAudioContext.state === 'suspended') {
-                mobileAudioContext.resume();
+                await mobileAudioContext.resume();
             }
         }
 
-        // Тихий звук.
-        // Он нужен только для "разблокировки" аудио на телефоне.
-        const silentAudio = new Audio();
+        const audio = getPersistentVoiceAudio();
 
-        silentAudio.src =
-            'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQQAAAAA';
+        audio.src = SILENT_AUDIO_SRC;
+        audio.volume = 0.001;
+        audio.muted = false;
 
-        silentAudio.volume = 0.001;
+        const promise = audio.play();
 
-        const promise = silentAudio.play();
-
-        if (promise) {
-            promise.then(() => {
-                silentAudio.pause();
-                audioUnlocked = true;
-                console.log("Мобильное аудио разблокировано");
-            }).catch(() => {
-                console.log("Браузер пока не разрешил аудио");
-            });
-        } else {
-            audioUnlocked = true;
+        if (promise && promise.then) {
+            await promise;
         }
 
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = '';
+        audioUnlocked = true;
+
+        console.log("Автоматическое мобильное аудио разблокировано");
     } catch (e) {
-        console.log("Ошибка разблокировки аудио:", e);
+        console.log("Браузер пока не разрешил автоматическое аудио:", e);
     }
 }
 
 
-// ===== ЕДИНАЯ АУДИОСИСТЕМА ДЛЯ ПК И МОБИЛЬНЫХ =====
+// ===== КАНАЛ АВТОМАТИЧЕСКИХ ГОЛОСОВЫХ ДОРОЖЕК =====
 function playMobileAudio(url, volume = 1) {
     if (!url || url.startsWith("ССЫЛКА_")) return null;
+
     try {
-        const audio = new Audio(url);
-        audio.preload = 'auto';
+        const audio = getPersistentVoiceAudio();
+
+        audio.pause();
+        audio.currentTime = 0;
         audio.volume = volume;
+        audio.muted = false;
         audio.playsInline = true;
         audio.setAttribute('playsinline', '');
         audio.setAttribute('webkit-playsinline', '');
+        audio.src = url;
+        audio.load();
+
         const promise = audio.play();
+
         if (promise && promise.catch) {
-            promise.catch(error => console.log("Аудио не запустилось:", error));
+            promise.catch(error => {
+                console.log("Автоматическое аудио не запустилось:", error);
+            });
         }
+
         return audio;
     } catch (error) {
-        console.log("Ошибка создания аудио:", error);
+        console.log("Ошибка запуска автоматического аудио:", error);
         return null;
     }
 }
@@ -2586,11 +2615,22 @@ const taskAudioUrl = audioTag
 // но пока текст пустой
 document.getElementById('desc-box').style.display = 'flex';
 document.getElementById('descText').innerText = "";
+document.getElementById('warningBox').innerText = "";
 document.getElementById('warningBox').style.display = 'none';
+
+// Новый текст задания — старые setTimeout больше не действуют.
+taskAccepted = false;
+taskTextRenderToken++;
 
 
 // Функция запуска задания
 function startTaskContent() {
+
+    // Если игрок уже принял задание, отложенный callback
+    // озвучки карты не должен снова выводить его текст.
+    if (taskAccepted) return;
+
+    const renderToken = taskTextRenderToken;
 
     // Алко-Властелин уже включён сразу после сканирования QR-кода.
     // Здесь повторно не запускаем флип, чтобы не было задержки/двойной анимации.
@@ -2602,7 +2642,7 @@ function startTaskContent() {
     }
 
     // Одновременно начинаем медленно писать текст
-    typeWriter(0);
+    typeWriter(0, renderToken);
 }
 
 
@@ -2885,17 +2925,21 @@ if (
             }
         }
 
-function typeWriter(i) {
+let taskTextRenderToken = 0;
+let taskAccepted = false;
+
+function typeWriter(i, token = taskTextRenderToken) {
+    // Если игрок уже принял задание — старый setTimeout
+    // больше не имеет права дописывать исходный текст.
+    if (taskAccepted || token !== taskTextRenderToken) return;
+
     if (i < mainPart.length) {
         document.getElementById("descText").innerHTML += mainPart.charAt(i);
-
-        setTimeout(() => typeWriter(i + 1), 40);
-    } else {
-        if (warningPart !== "") {
-            const warnBox = document.getElementById('warningBox');
-            warnBox.innerText = warningPart;
-            warnBox.style.display = 'block';
-        }
+        setTimeout(() => typeWriter(i + 1, token), 40);
+    } else if (!taskAccepted && token === taskTextRenderToken && warningPart !== "") {
+        const warnBox = document.getElementById('warningBox');
+        warnBox.innerText = warningPart;
+        warnBox.style.display = 'block';
     }
 }
 
@@ -3066,26 +3110,47 @@ function startTaskTimer() {
 }
 
 async function handleYesClick() {
+    // Сначала навсегда останавливаем текущую печать задания.
+    // Это предотвращает появление «левых» кусочков текста после клика.
+    taskAccepted = true;
+    taskTextRenderToken++;
+
     // Награда летит только после ответа на задание, а не при запуске таймера
     if (taskWaitingForResult) {
         taskWaitingForResult = false;
         if (typeof finish === "function") finish();
         return;
     }
+
     stopCurrentAudio();
+
     if (taskSeconds > 0) {
         document.getElementById('btnGroup').style.display='none';
         document.getElementById('voicePlaybackBox').style.display='none';
         const voiceResult=document.getElementById('voiceResultBox'); if(voiceResult) voiceResult.style.display='none';
         const voiceEmpty=document.getElementById('voiceEmptyChoices'); if(voiceEmpty) voiceEmpty.style.display='none';
-        document.getElementById('descText').innerText='Выполняйте задание!';
+
+        // Никакого исходного задания после принятия.
+        document.getElementById('title').innerText = 'Задание принято!';
+        document.getElementById('descText').innerText = 'Выполняйте задание!';
+        document.getElementById('warningBox').innerText = '';
         document.getElementById('warningBox').style.display='none';
+
         if(isCurrentVoiceTask()) {
-            try { await startVoiceRecording(); }
-            catch(e) { document.getElementById('btnGroup').style.display='flex'; document.getElementById('descText').innerText='Не удалось получить доступ к микрофону. Разрешите доступ и попробуйте ещё раз.'; return; }
+            try {
+                await startVoiceRecording();
+            }
+            catch(e) {
+                document.getElementById('btnGroup').style.display='flex';
+                document.getElementById('descText').innerText='Не удалось получить доступ к микрофону. Разрешите доступ и попробуйте ещё раз.';
+                return;
+            }
         }
+
         startTaskTimer();
-    } else finish();
+    } else {
+        finish();
+    }
 }
 
 function playRandomTurnVoice() {
@@ -3373,6 +3438,11 @@ if (auctionTimerInterval) {
         }
 
 function finish() {
+    // На случай принятия задания без таймера также отменяем
+    // все отложенные дописывания исходного текста.
+    taskAccepted = true;
+    taskTextRenderToken++;
+
     stopVoiceRecording(); stopVoicePlayback();
 
     // После принятия задания ведущий возвращается в Алко-банк.
@@ -3411,10 +3481,11 @@ function finish() {
     }
 
     const currentConfig = configs[cat] || configs.green;
-    document.getElementById('title').innerText = "Удачи!";
-    document.getElementById('descText').innerText = "Задание принято!";
-    document.getElementById('btnGroup').style.display = 'none';
+    document.getElementById('title').innerText = "Задание принято!";
+    document.getElementById('descText').innerText = "";
+    document.getElementById('warningBox').innerText = "";
     document.getElementById('warningBox').style.display = 'none';
+    document.getElementById('btnGroup').style.display = 'none';
     document.getElementById('taskTimerWrapper').style.display = 'none';
 
     const imgBox = document.getElementById('imageBox');
@@ -3588,8 +3659,6 @@ function triggerAuctionEvent(player) {
             startAuctionTimer();
         }
     } else {
-        // Если в карточке нет audio,
-        // таймер запускается сразу.
         startAuctionTimer();
     }
 }	
