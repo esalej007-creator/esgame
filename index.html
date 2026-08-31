@@ -378,6 +378,80 @@
             object-fit: cover;
         }
 
+.player-state-icon {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.player-state-icon img {
+    width: 65%;
+    height: 65%;
+    object-fit: contain;
+    display: block;
+
+    filter:
+        drop-shadow(0 2px 6px rgba(0,0,0,.55))
+        drop-shadow(0 0 10px rgba(255,255,255,.25));
+
+    /* Появление */
+    animation: playerStateIconAppear 0.55s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+
+/* =========================================================
+   ПОЯВЛЕНИЕ
+   ========================================================= */
+
+@keyframes playerStateIconAppear {
+
+    0% {
+        opacity: 0;
+        transform: scale(0.55) rotate(-6deg);
+    }
+
+    55% {
+        opacity: 1;
+        transform: scale(1.10) rotate(2deg);
+    }
+
+    75% {
+        transform: scale(0.97) rotate(-0.5deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+
+/* =========================================================
+   ИСЧЕЗНОВЕНИЕ
+   ========================================================= */
+
+.player-state-icon-hide img {
+    animation: playerStateIconDisappear 0.5s ease-in forwards;
+}
+
+@keyframes playerStateIconDisappear {
+
+    0% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.80) rotate(4deg);
+    }
+}
+
         .player-name-badge {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(8px);
@@ -1002,7 +1076,7 @@ white-space: nowrap;
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    overflow: hidden;
+    overflow: visible;
     background: rgba(255,255,255,.12);
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255,255,255,.3);
@@ -1010,12 +1084,95 @@ white-space: nowrap;
     display: flex;
     align-items: center;
     justify-content: center;
+    perspective: 900px;
 }
 
-.bank-avatar-wrap img {
+/* 3D-флип аватарки Алко-банка <-> Алко-Властелина */
+.bank-avatar-flipper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    transition: transform .72s cubic-bezier(.22,.61,.36,1);
+}
+
+.bank-avatar-wrap.bank-host-active .bank-avatar-flipper {
+    transform: rotateY(180deg);
+}
+
+.bank-avatar-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bank-avatar-face img {
     width: 98%;
     height: 98%;
     object-fit: cover;
+    display: block;
+}
+
+.bank-avatar-face.bank-back {
+    transform: rotateY(180deg);
+}
+
+/* Синхронный флип имени */
+.bank-name-flipper {
+    position: relative;
+    height: 32px;
+    min-width: 180px;
+    width: max-content;
+    margin-bottom: 8px;
+    perspective: 700px;
+    transform-style: preserve-3d;
+}
+
+.bank-name-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    -webkit-text-stroke: 1px rgba(0, 0, 0, .35);
+    text-shadow: 0 0 4px rgba(255,255,255,.8), 0 1px 3px rgba(0,0,0,.7);
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.35);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 3px 10px rgba(0,0,0,.2);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.bank-name-face.bank-name-back {
+    transform: rotateY(180deg);
+}
+
+.bank-name-flipper {
+    transition: transform .72s cubic-bezier(.22,.61,.36,1);
+}
+
+.bank-card-item.bank-host-active .bank-name-flipper {
+    transform: rotateY(180deg);
+}
+
+/* Лёгкое усиление свечения обводки в момент переворота */
+.bank-avatar-wrap.bank-flipping {
+    box-shadow: 0 0 28px rgba(255,255,255,.55), 0 6px 15px rgba(0,0,0,.25);
 }
 
 .bank-effect-icon {
@@ -1136,11 +1293,21 @@ function animateMoney(direction){
         <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" class="logo menu-screen-logo" id="logo">
 
 <div class="game-bank-center" id="gameBankCenter" style="display:none">
-    <div class="bank-card-item">
-        <div class="bank-name">Алко банк</div>
+    <div class="bank-card-item" id="bankPresenterCard">
+        <div class="bank-name-flipper" id="bankNameFlipper" aria-live="polite">
+            <div class="bank-name-face bank-name-front">Алко банк</div>
+            <div class="bank-name-face bank-name-back">Алко-Властелин</div>
+        </div>
 
-        <div class="bank-avatar-wrap">
-            <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/Alko.png" alt="Алко-банк">
+        <div class="bank-avatar-wrap" id="bankPresenterAvatar">
+            <div class="bank-avatar-flipper">
+                <div class="bank-avatar-face bank-front">
+                    <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/Alko.png" alt="Алко-банк">
+                </div>
+                <div class="bank-avatar-face bank-back">
+                    <img id="bankHostAvatarImg" src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/vlast.png" alt="Алко-Властелин">
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -1478,6 +1645,97 @@ const CARD_LEVEL_VOICES = {
     yellow: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/brif/yellow.wav",
     red: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/brif/red.wav"
 };
+
+// ================================================================
+// ИКОНКИ СОСТОЯНИЯ ИГРОКОВ
+//
+// ВСТАВЬТЕ СЮДА ССЫЛКИ НА ВАШИ PNG.
+// Больше ничего в коде для настройки иконок менять не нужно.
+//
+// waiting   — новый игрок ждёт сканирования QR, 5 секунд
+// scared    — игрок нажал «Нет», 4 секунды
+// reset     — игрок использовал белую карту, 4 секунды
+// courage   — красное задание, случайно одна из двух, 4 секунды
+// surrender — игрок нажал «Сдаться» → «Да», 3 секунды
+// ================================================================
+const PLAYER_STATE_ICONS = {
+    waiting: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/wait.png",
+
+    scared: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/fear2.png",
+
+    reset: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/fear.png",
+
+    courage: [
+        "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/red.png",
+        "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/red1.png"
+    ],
+
+    surrender: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/sabotage.png"
+};
+
+let playerStateIconTimer = null;
+
+function hidePlayerStateIcon() {
+    if (playerStateIconTimer) {
+        clearTimeout(playerStateIconTimer);
+        playerStateIconTimer = null;
+    }
+
+    document.querySelectorAll('.player-state-icon').forEach(el => el.remove());
+}
+
+function showPlayerStateIcon(state, durationMs) {
+    hidePlayerStateIcon();
+
+    const avatar = document.querySelector(
+        '.player-card-item.active .player-avatar-wrap'
+    );
+    if (!avatar) return;
+
+    let iconUrl = PLAYER_STATE_ICONS[state];
+
+    // Для красного задания случайно выбираем одну из двух PNG.
+    if (state === 'courage' && Array.isArray(PLAYER_STATE_ICONS.courage)) {
+        const variants = PLAYER_STATE_ICONS.courage.filter(url =>
+            url && !url.startsWith('ВСТАВЬТЕ_')
+        );
+
+        if (!variants.length) return;
+
+        iconUrl = variants[Math.floor(Math.random() * variants.length)];
+    }
+
+    if (!iconUrl || iconUrl.startsWith('ВСТАВЬТЕ_')) return;
+
+    avatar.style.position = 'relative';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'player-state-icon';
+
+    const img = document.createElement('img');
+    img.src = iconUrl;
+    img.alt = 'Состояние игрока';
+    img.draggable = false;
+
+    overlay.appendChild(img);
+    avatar.appendChild(overlay);
+
+    // За 0.5 секунды до окончания запускаем красивое исчезновение.
+    const fadeOutTime = 500;
+
+    playerStateIconTimer = setTimeout(() => {
+        overlay.classList.add('player-state-icon-hide');
+
+        // Ждём окончания анимации исчезновения,
+        // затем удаляем элемент.
+        setTimeout(() => {
+            overlay.remove();
+            playerStateIconTimer = null;
+        }, fadeOutTime);
+
+    }, Math.max(0, durationMs - fadeOutTime));
+}
+
 // ======================================================
 // МОБИЛЬНАЯ АУДИОСИСТЕМА
 // ======================================================
@@ -2141,6 +2399,7 @@ let fiveMinSoundPlayed = false;
 }
 
 function endGame() {
+            hideTaskPresenter();
             clearTaskTimer(true);
             clearInterval(gameTimer);
             document.getElementById('timerContainer').style.display = 'none';
@@ -2160,7 +2419,49 @@ function endGame() {
             `;
         }
 
+        // =========================================================
+        // АВАТАР ВЕДУЩЕГО: Алко-банк <-> Алко-Властелин
+        // =========================================================
+        let bankPresenterFlipTimer = null;
+
+        function setBankPresenter(isHost, animate = true) {
+            const avatar = document.getElementById('bankPresenterAvatar');
+            const card = document.getElementById('bankPresenterCard');
+            if (!avatar || !card) return;
+
+            if (bankPresenterFlipTimer) {
+                clearTimeout(bankPresenterFlipTimer);
+                bankPresenterFlipTimer = null;
+            }
+
+            if (animate) {
+                avatar.classList.add('bank-flipping');
+                bankPresenterFlipTimer = setTimeout(() => {
+                    avatar.classList.remove('bank-flipping');
+                    bankPresenterFlipTimer = null;
+                }, 760);
+            } else {
+                avatar.classList.remove('bank-flipping');
+            }
+
+            avatar.classList.toggle('bank-host-active', !!isHost);
+            card.classList.toggle('bank-host-active', !!isHost);
+        }
+
+        // Вызывается именно в момент начала озвучки задания.
+        function showTaskPresenter() {
+            setBankPresenter(true, true);
+        }
+
+        // Возврат к Алко-банку перед следующим ходом.
+        function hideTaskPresenter() {
+            setBankPresenter(false, true);
+        }
+
         function initScanner() {
+            // Если камера запускается раньше 5 секунд, убираем ожидание сразу.
+            hidePlayerStateIcon();
+
             fadeOutMenuMusic();
             document.getElementById('scannerBtn').style.display = 'none';
             const readerDiv = document.getElementById('reader');
@@ -2203,6 +2504,17 @@ function processScannedData(data) {
     }
 
     cat = detectedCat;
+
+    // QR-код отсканирован — сразу включаем Алко-Властелина.
+    // Это происходит ДО озвучки уровня карты, поэтому флип начинается мгновенно.
+    hidePlayerStateIcon();
+    showTaskPresenter();
+
+    // Красное задание — случайная иконка отваги на 4 секунды.
+    if (cat === 'red') {
+        showPlayerStateIcon('courage', 4000);
+    }
+
     applyTheme(cat);
     loadRandomTask();
 }
@@ -2279,6 +2591,9 @@ document.getElementById('warningBox').style.display = 'none';
 
 // Функция запуска задания
 function startTaskContent() {
+
+    // Алко-Властелин уже включён сразу после сканирования QR-кода.
+    // Здесь повторно не запускаем флип, чтобы не было задержки/двойной анимации.
 
     // Запускаем озвучку самого задания
     if (taskAudioUrl) {
@@ -2789,11 +3104,18 @@ if (auctionTimerInterval) {
     clearInterval(auctionTimerInterval);
     auctionTimerInterval = null;
 }
+            // Завершён ход — возвращаем Алко-банк с тем же 3D-флипом.
+            hideTaskPresenter();
+
             currentTask = null;
             taskSeconds = 0;
             currentPlayerIndex = (currentPlayerIndex + 1) % playersList.length;
             updateActivePlayerUI();
             updateScannerTitle();
+
+            // Новый игрок получил ход: иконка ожидания на 5 секунд.
+            showPlayerStateIcon('waiting', 5000);
+
             playRandomTurnVoice();
 
             document.getElementById('desc-box').style.display = 'none';
@@ -2812,6 +3134,13 @@ if (auctionTimerInterval) {
 
         function penalty() {
             taskWaitingForResult = false;
+
+            // После «Нет» ведущий синхронно возвращается в Алко-банк.
+            hideTaskPresenter();
+
+            // Игрок отказался от задания («Нет») — испуг на 4 секунды.
+            showPlayerStateIcon('scared', 4000);
+
             const penaltyConfig = configs[cat] || configs.green;
             document.getElementById('resultImage').src = penaltyConfig.image;
             animateMoney("back");
@@ -2850,11 +3179,18 @@ if (auctionTimerInterval) {
         }
 
         function confirmSurrenderYes() {
+            // Подтверждена сдача — возвращаем аватарку/имя Алко-банка.
+            hideTaskPresenter();
+
             clearTaskTimer(true);
             taskTimerRemaining = 0;
             taskTimerTotal = 0;
             playSound(CONFIRM_YES_SOUND_URL);
             closeSurrenderModal();
+
+            // Игрок подтвердил «Сдаться» — иконка на 3 секунды.
+            // Показываем её до удаления игрока из списка.
+            showPlayerStateIcon('surrender', 3000);
 
             const activePlayer = playersList[currentPlayerIndex];
             playersList.splice(currentPlayerIndex, 1);
@@ -2988,6 +3324,13 @@ if (auctionTimerInterval) {
                                 
                                 playersList[currentPlayerIndex].hasWhiteCard = false;
                                 window.__whiteCardConsumed = true;
+
+                                // Белая карта использована — ход завершён, возвращаем Алко-банк.
+                                hideTaskPresenter();
+
+                                // Белая карта использована — сброс задания на 4 секунды.
+                                showPlayerStateIcon('reset', 4000);
+
                                 clearTaskTimer(true);
                                 taskTimerRemaining = 0;
                                 taskTimerTotal = 0;
@@ -3031,6 +3374,10 @@ if (auctionTimerInterval) {
 
 function finish() {
     stopVoiceRecording(); stopVoicePlayback();
+
+    // После принятия задания ведущий возвращается в Алко-банк.
+    hideTaskPresenter();
+
     const activePlayer = playersList[currentPlayerIndex];
 
     // Проверяем категорию выполненного задания
@@ -3160,8 +3507,6 @@ function triggerAuctionEvent(player) {
     const desc =
         randomAuctionCard.getElementsByTagName('description')[0]?.textContent ||
         "Секретное задание аукциона!";
-
-    // Берём время из <time>
     const timeEl = randomAuctionCard.getElementsByTagName('time')[0];
     const auctionSeconds = timeEl
         ? parseInt(timeEl.textContent, 10) || 0
@@ -3173,25 +3518,19 @@ function triggerAuctionEvent(player) {
         ? audioEl.textContent.trim()
         : "";
 
-    // Показываем карточку аукциона
     document.getElementById('title').innerText = "🔥 АУКЦИОН! 🔥";
     document.getElementById('descText').innerText = `${title}\n\n${desc}`;
 
-    // Кнопки НЕ нужны
     document.getElementById('btnGroup').style.display = 'none';
 
     document.getElementById('warningBox').style.display = 'none';
     document.getElementById('imageBox').style.display = 'none';
 
-    // Показываем область таймера только после окончания озвучки
     document.getElementById('taskTimerWrapper').style.display = 'none';
 
-    // Запускаем таймер аукциона
     function startAuctionTimer() {
-        // Если аудио/таймер уже запустили — не запускаем повторно
         if (auctionTimerInterval) return;
 
-        // Если времени нет — сразу переходим к следующему игроку
         if (auctionSeconds <= 0) {
             resetToScanner();
             return;
@@ -3238,7 +3577,6 @@ function triggerAuctionEvent(player) {
         }, 1000);
     }
 
-    // Если у карточки есть озвучка — единая схема для ПК и мобильных.
     if (auctionAudioUrl) {
         const auctionAudio = playVoice(auctionAudioUrl, 1);
         if (auctionAudio) {
