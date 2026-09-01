@@ -1192,6 +1192,24 @@ white-space: nowrap;
     object-fit: contain;
     filter: drop-shadow(0 0 8px white);
 }
+
+        /* Индикатор первоначальной загрузки игры */
+        .game-preload-spinner {
+            width: 58px;
+            height: 58px;
+            margin: 12px auto 0;
+            border-radius: 50%;
+            border: 5px solid rgba(255,255,255,0.16);
+            border-top-color: rgba(255,255,255,0.95);
+            border-right-color: rgba(255,255,255,0.65);
+            animation: gamePreloadSpin 0.85s linear infinite;
+            box-shadow: 0 0 24px rgba(255,255,255,0.12);
+        }
+
+        @keyframes gamePreloadSpin {
+            to { transform: rotate(360deg); }
+        }
+
 </style>
     <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
@@ -1360,6 +1378,13 @@ function animateMoney(direction){
             </div>
             <div id="playerNamesInputs" style="display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px;"></div>
             <button class="glass-btn" onclick="confirmPlayers()" style="width: 100%; margin: 0;">Продолжить</button>
+        </div>
+
+        <!-- Предзагрузка игровых ресурсов -->
+        <div id="gamePreloadOverlay" style="display: none; width: 100%; text-align: center;">
+            <div class="game-preload-spinner"></div>
+            <h1 id="gamePreloadTitle" style="font-size: 1.25rem; margin: 18px 0 8px;">Подготавливаем игру...</h1>
+            <p id="gamePreloadText" style="margin: 0; opacity: 0.8; font-size: 0.9rem;">Загружаем задания, картинки и звуки</p>
         </div>
 
         <!-- Шаг 5: Игровой процесс / Сканер -->
@@ -1640,6 +1665,178 @@ function animateMoney(direction){
         let currentTask = null;
         let cat = 'green';
         let currentAudio = null;
+
+        // ================================================================
+        // ОСОБЫЕ ЗАДАНИЯ
+        // ================================================================
+        const SPECIAL_TASK_NAMES = {
+            languageLord: 'Властелин языка',
+            jackpot: 'Алко-Джекпот'
+        };
+
+        // Вставьте сюда ссылку на загруженный вами звуковой сигнал.
+        // Голос ведущего проигрывается ОДИН РАЗ в начале 10-секундного
+        // розыгрыша «Алко-Джекпота». Например:
+        // «Так, посмотрим что бы вытянуть из колоды. вот.»
+        const JACKPOT_COLOR_SOUND_URL = 'ССЫЛКА_НА_ВАШ_ГОЛОСОВОЙ_ФАЙЛ.mp3';
+
+        let jackpotColorInterval = null;
+        let jackpotFinishTimeout = null;
+        let jackpotRunning = false;
+        let jackpotTaskActive = false;
+
+        function isSpecialTask(task, specialName) {
+            if (!task) return false;
+            const nameEl = task.getElementsByTagName('name')[0];
+            return !!nameEl && nameEl.textContent.trim() === specialName;
+        }
+
+        function isLanguageLordTask(task) {
+            return isSpecialTask(task, SPECIAL_TASK_NAMES.languageLord);
+        }
+
+        function isJackpotTask(task) {
+            return isSpecialTask(task, SPECIAL_TASK_NAMES.jackpot);
+        }
+
+        function getOfferText(task) {
+            const el = task ? task.getElementsByTagName('description')[0] : null;
+            return el ? el.textContent : '';
+        }
+
+        function getBracketText(text) {
+            const match = String(text || '').match(/\[([\s\S]*?)\]/);
+            return match ? match[1].trim() : '';
+        }
+
+        function getTextWithoutBrackets(text) {
+            return String(text || '').replace(/\[[\s\S]*?\]/g, '').trim();
+        }
+
+        function stopJackpotRoulette() {
+            if (jackpotColorInterval) {
+                clearInterval(jackpotColorInterval);
+                jackpotColorInterval = null;
+            }
+            if (jackpotFinishTimeout) {
+                clearTimeout(jackpotFinishTimeout);
+                jackpotFinishTimeout = null;
+            }
+            jackpotRunning = false;
+        }
+
+        function playJackpotVoice() {
+            if (!JACKPOT_COLOR_SOUND_URL || JACKPOT_COLOR_SOUND_URL.startsWith('ССЫЛКА_')) return;
+            playOneShot(JACKPOT_COLOR_SOUND_URL, 1);
+        }
+
+        function runJackpotRoulette() {
+            if (jackpotRunning) return;
+
+            if (!allOffers.length) {
+                alert('Фид еще не загрузился, попробуйте еще раз через секунду!');
+                resetToScanner();
+                return;
+            }
+
+            // Из розыгрыша исключаем только аукционные карточки.
+            const jackpotPool = allOffers.filter(offer => getTaskCategoryId(offer) !== 'auction');
+
+            if (!jackpotPool.length) {
+                alert('В фиде нет заданий для «Алко-Джекпота».');
+                resetToScanner();
+                return;
+            }
+
+            jackpotRunning = true;
+            jackpotTaskActive = true;
+            taskAccepted = true;
+            taskTextRenderToken++;
+
+            stopCurrentAudio();
+            clearTaskTimer(true);
+            taskTimerRemaining = 0;
+            taskTimerTotal = 0;
+
+            document.getElementById('btnGroup').style.display = 'none';
+            document.getElementById('voicePlaybackBox').style.display = 'none';
+            document.getElementById('voiceResultBox').style.display = 'none';
+            document.getElementById('voiceEmptyChoices').style.display = 'none';
+            document.getElementById('warningBox').style.display = 'none';
+            document.getElementById('imageBox').style.display = 'none';
+            document.getElementById('taskTimerWrapper').style.display = 'none';
+            document.getElementById('title').innerText = '🎰 АЛКО-ДЖЕКПОТ 🎰';
+            document.getElementById('descText').innerText = 'Выбирается случайное задание...';
+
+            // Быстро перебираем уже существующие темы игры.
+            const rouletteColors = ['red', 'yellow', 'green'];
+            let lastColor = null;
+
+            const changeRouletteColor = () => {
+                let nextColor;
+                do {
+                    nextColor = rouletteColors[Math.floor(Math.random() * rouletteColors.length)];
+                } while (nextColor === lastColor && rouletteColors.length > 1);
+
+                lastColor = nextColor;
+                applyTheme(nextColor);
+            };
+
+            // Голос ведущего звучит ВСЕГО ОДИН РАЗ в начале розыгрыша.
+            playJackpotVoice();
+
+            // Первый цвет сразу после нажатия «Да», дальше цвета быстро
+            // и псевдослучайно меняются 10 секунд, создавая эффект
+            // выбора карты из колоды. На сменах цвета звук НЕ запускается.
+            changeRouletteColor();
+            jackpotColorInterval = setInterval(changeRouletteColor, 180);
+
+            jackpotFinishTimeout = setTimeout(() => {
+                stopJackpotRoulette();
+
+                const randomOffer = jackpotPool[Math.floor(Math.random() * jackpotPool.length)];
+
+                // Для обычных карточек тема берется из categoryId.
+                // Для voice используем желтую/красную тему, т.к. voice-задания
+                // в текущей логике игры относятся к этим двум уровням.
+                let forcedCategory = getTaskCategoryId(randomOffer);
+                if (forcedCategory === 'voice') {
+                    forcedCategory = Math.random() < 0.5 ? 'yellow' : 'red';
+                }
+                if (!['green', 'yellow', 'red'].includes(forcedCategory)) {
+                    forcedCategory = 'green';
+                }
+
+                cat = forcedCategory;
+                applyTheme(cat);
+
+                document.getElementById('title').innerText =
+                    randomOffer.getElementsByTagName('name')[0]?.textContent || 'Случайное задание';
+
+                // Передаем конкретно выбранную карточку в общий загрузчик,
+                // чтобы сохранились обычные таймеры, аудио, голосовые задания,
+                // награды и вся существующая логика.
+                loadRandomTask(randomOffer, forcedCategory);
+
+                // Джекпот закончился. Теперь выпавшая карта — обычное задание:
+                // игрок должен увидеть кнопки Да/Нет и принять решение.
+                jackpotRunning = false;
+                jackpotTaskActive = false;
+                taskAccepted = false;
+                taskWaitingForResult = false;
+
+                const jackpotButtons = document.getElementById('btnGroup');
+                if (jackpotButtons) jackpotButtons.style.display = 'flex';
+            }, 7000);
+        }
+
+        function prepareJackpotTaskForAcceptance() {
+            document.getElementById('title').innerText = 'Алко-Джекпот';
+            document.getElementById('descText').innerText = '🎰 Запускаем розыгрыш...';
+            document.getElementById('warningBox').style.display = 'none';
+            document.getElementById('btnGroup').style.display = 'none';
+            runJackpotRoulette();
+        }
 const CARD_LEVEL_VOICES = {
     green: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/brif/green.wav",
     yellow: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/brif/yellow.wav",
@@ -2069,8 +2266,16 @@ const madnessSounds = [
 
         applyTheme(cat);
 
-        fetch('https://s3.timeweb.cloud/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/feed.xml')
-            .then(res => res.text())
+        // Фид загружается заранее. Его Promise используется перед стартом
+        // сканера, чтобы камера не запускалась, пока ресурсы игры не готовы.
+        let feedReady = false;
+        let feedLoadError = null;
+
+        const feedReadyPromise = fetch('https://s3.timeweb.cloud/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/feed.xml')
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.text();
+            })
             .then(str => {
                 const xml = new DOMParser().parseFromString(str, "text/xml");
                 const offers = Array.from(xml.getElementsByTagName("offer"));
@@ -2079,8 +2284,193 @@ const madnessSounds = [
                     const catEl = o.getElementsByTagName("categoryId")[0];
                     return catEl && catEl.textContent === 'auction';
                 });
+                feedReady = true;
+                return offers;
             })
-            .catch(err => console.error("Ошибка загрузки фида:", err));
+            .catch(err => {
+                feedLoadError = err;
+                console.error("Ошибка загрузки фида:", err);
+                throw err;
+            });
+
+        let gameAssetsPreloaded = false;
+        let gameAssetsPreloadPromise = null;
+
+        function setPreloadMessage(title, text) {
+            const titleEl = document.getElementById('gamePreloadTitle');
+            const textEl = document.getElementById('gamePreloadText');
+            if (titleEl) titleEl.innerText = title;
+            if (textEl) textEl.innerText = text;
+        }
+
+        function collectOfferResourceUrls(offers) {
+            const urls = new Set();
+
+            // Картинки/аудио из самого XML-фида.
+            offers.forEach(offer => {
+                offer.querySelectorAll('image, img, picture, source, audio, video').forEach(el => {
+                    const value = (
+                        el.getAttribute('src') ||
+                        el.getAttribute('href') ||
+                        el.textContent ||
+                        ''
+                    ).trim();
+
+                    if (value && !value.startsWith('ССЫЛКА_')) urls.add(value);
+                });
+
+                // Поддержка распространенных атрибутов, если они используются
+                // в отдельных карточках фида.
+                ['src', 'image', 'audio', 'url', 'href'].forEach(attr => {
+                    const value = (offer.getAttribute(attr) || '').trim();
+                    if (value && !value.startsWith('ССЫЛКА_')) urls.add(value);
+                });
+            });
+
+            // Голоса уровней карты.
+            Object.values(CARD_LEVEL_VOICES).forEach(url => {
+                if (url && !url.startsWith('ССЫЛКА_')) urls.add(url);
+            });
+
+            // Все уже прописанные картинки/ресурсы самой страницы.
+            document.querySelectorAll('img[src], audio[src], video[src], source[src], link[href]').forEach(el => {
+                const value = (el.getAttribute('src') || el.getAttribute('href') || '').trim();
+                if (/^https?:\/\//i.test(value) && !value.startsWith('ССЫЛКА_')) {
+                    urls.add(value);
+                }
+            });
+
+            // Аватары игроков и специальные иконки.
+            if (typeof defaultAvatars !== 'undefined' && Array.isArray(defaultAvatars)) {
+                defaultAvatars.forEach(url => {
+                    if (url && !url.startsWith('ВСТАВЬТЕ_')) urls.add(url);
+                });
+            }
+
+            if (typeof PLAYER_STATE_ICONS !== 'undefined') {
+                Object.values(PLAYER_STATE_ICONS).forEach(value => {
+                    (Array.isArray(value) ? value : [value]).forEach(url => {
+                        if (url && !url.startsWith('ВСТАВЬТЕ_')) urls.add(url);
+                    });
+                });
+            }
+
+            // Картинки денег для всех трех уровней.
+            Object.values(configs).forEach(config => {
+                if (config && config.image && !config.image.startsWith('ССЫЛКА_')) {
+                    urls.add(config.image);
+                }
+            });
+
+            return [...urls];
+        }
+
+        function preloadSingleResource(url) {
+            return new Promise(resolve => {
+                const isAudio = /\.(mp3|wav|ogg|m4a|aac)(\?|#|$)/i.test(url);
+
+                if (isAudio) {
+                    const audio = new Audio();
+                    audio.preload = 'auto';
+                    audio.src = url;
+
+                    const done = () => {
+                        audio.removeEventListener('canplaythrough', done);
+                        audio.removeEventListener('loadeddata', done);
+                        audio.removeEventListener('error', done);
+                        resolve();
+                    };
+
+                    audio.addEventListener('canplaythrough', done, { once: true });
+                    audio.addEventListener('loadeddata', done, { once: true });
+                    audio.addEventListener('error', done, { once: true });
+
+                    try {
+                        audio.load();
+                    } catch (e) {
+                        resolve();
+                    }
+                } else {
+                    const image = new Image();
+                    const done = () => {
+                        image.onload = null;
+                        image.onerror = null;
+                        resolve();
+                    };
+
+                    image.onload = done;
+                    image.onerror = done;
+                    image.src = url;
+
+                    // Некоторые браузеры могут не дать событие повторно,
+                    // если ресурс уже находится в кеше.
+                    if (image.complete) resolve();
+                }
+            });
+        }
+
+        async function preloadGameAssets() {
+            if (gameAssetsPreloaded) return true;
+            if (gameAssetsPreloadPromise) return gameAssetsPreloadPromise;
+
+            gameAssetsPreloadPromise = (async () => {
+                setPreloadMessage('Подготавливаем игру...', 'Загружаем фид заданий...');
+
+                const offers = await feedReadyPromise;
+                const urls = collectOfferResourceUrls(offers);
+
+                if (!urls.length) {
+                    gameAssetsPreloaded = true;
+                    return true;
+                }
+
+                let loaded = 0;
+                const total = urls.length;
+
+                setPreloadMessage(
+                    'Подготавливаем игру...',
+                    `Загружаем файлы: 0 из ${total}`
+                );
+
+                // Ограничиваем параллельность, чтобы слабое соединение не
+                // захлебнулось от сотен одновременных запросов.
+                const concurrency = 6;
+                let nextIndex = 0;
+
+                async function worker() {
+                    while (true) {
+                        const index = nextIndex++;
+                        if (index >= urls.length) return;
+
+                        await preloadSingleResource(urls[index]);
+                        loaded++;
+
+                        setPreloadMessage(
+                            'Подготавливаем игру...',
+                            `Загружаем файлы: ${loaded} из ${total}`
+                        );
+                    }
+                }
+
+                await Promise.all(
+                    Array.from(
+                        { length: Math.min(concurrency, urls.length) },
+                        () => worker()
+                    )
+                );
+
+                gameAssetsPreloaded = true;
+                setPreloadMessage('Готово!', 'Все основные файлы игры загружены.');
+                return true;
+            })();
+
+            try {
+                return await gameAssetsPreloadPromise;
+            } catch (err) {
+                gameAssetsPreloadPromise = null;
+                throw err;
+            }
+        }
 
 async function checkPin() {
             const pin = document.getElementById('pinInput').value.trim();
@@ -2247,8 +2637,28 @@ playPlayersScreenVoice();
             return params.get('card');
         }
 
-        function confirmPlayers() {
+        async function confirmPlayers() {
             fadeOutMenuMusic();
+
+            // До первого появления сканера заранее загружаем весь фид,
+            // картинки и аудиоресурсы. Камера не запускается, пока это
+            // не завершится.
+            const preloadOverlay = document.getElementById('gamePreloadOverlay');
+            const playersBox = document.getElementById('playersCountBox');
+
+            if (playersBox) playersBox.style.display = 'none';
+            if (preloadOverlay) preloadOverlay.style.display = 'block';
+
+            try {
+                await preloadGameAssets();
+            } catch (err) {
+                console.error('Ошибка предварительной загрузки игры:', err);
+                if (preloadOverlay) preloadOverlay.style.display = 'none';
+                if (playersBox) playersBox.style.display = 'block';
+                alert('Не удалось загрузить файлы игры. Проверьте интернет-соединение и попробуйте еще раз.');
+                return;
+            }
+
             playersList = [];
             const shuffledAvatars = shuffleArray(defaultAvatars);
 
@@ -2265,6 +2675,7 @@ playPlayersScreenVoice();
             }
 
             document.getElementById('playersCountBox').style.display = 'none';
+            document.getElementById('gamePreloadOverlay').style.display = 'none';
             document.getElementById('gameContent').style.display = 'block';
             document.getElementById('mainContainer').classList.add('game-started');
             document.getElementById('logo').style.display = 'none';
@@ -2487,7 +2898,30 @@ function endGame() {
             setBankPresenter(false, true);
         }
 
-        function initScanner() {
+        async function initScanner() {
+            // Дополнительная защита: даже если initScanner вызван напрямую,
+            // камера не стартует до завершения предзагрузки.
+            if (!gameAssetsPreloaded) {
+                const preloadOverlay = document.getElementById('gamePreloadOverlay');
+                const gameContent = document.getElementById('gameContent');
+
+                if (preloadOverlay) preloadOverlay.style.display = 'block';
+                if (gameContent) gameContent.style.display = 'none';
+
+                try {
+                    await preloadGameAssets();
+                } catch (err) {
+                    console.error('Не удалось завершить предзагрузку:', err);
+                    if (preloadOverlay) preloadOverlay.style.display = 'none';
+                    if (gameContent) gameContent.style.display = 'block';
+                    alert('Файлы игры еще не загрузились. Проверьте интернет-соединение и попробуйте еще раз.');
+                    return;
+                }
+
+                if (preloadOverlay) preloadOverlay.style.display = 'none';
+                if (gameContent) gameContent.style.display = 'block';
+            }
+
             // Если камера запускается раньше 5 секунд, убираем ожидание сразу.
             hidePlayerStateIcon();
 
@@ -2548,7 +2982,7 @@ function processScannedData(data) {
     loadRandomTask();
 }
 
-        function loadRandomTask() {
+        function loadRandomTask(forcedOffer = null, forcedCategory = null) {
             if (allOffers.length === 0) {
                 alert("Фид еще не загрузился, попробуйте еще раз через секунду!");
                 resetToScanner();
@@ -2571,8 +3005,13 @@ function processScannedData(data) {
                 return;
             }
 
-            // ИСПРАВЛЕНО: выбираем из categoryOffers
-            currentTask = categoryOffers[Math.floor(Math.random() * categoryOffers.length)];
+            // Если карточка пришла из специального режима «Алко-Джекпот»,
+            // используем именно ее. Иначе сохраняется обычный случайный выбор.
+            currentTask = forcedOffer || categoryOffers[Math.floor(Math.random() * categoryOffers.length)];
+
+            if (forcedCategory) {
+                cat = forcedCategory;
+            }
             resetVoiceRecordingState();
             document.getElementById('voicePlaybackBox').style.display = 'none';
             document.getElementById('voicePlaybackBtn').disabled = true;
@@ -2605,6 +3044,27 @@ function processScannedData(data) {
                 warningPart = "";
             }
 
+            // Универсальная логика для квадратных скобок:
+            // если в описании есть [скрытый текст], он НЕ показывается
+            // до принятия задания. После «Да» скрытая часть добавляется
+            // к уже принятому заданию.
+            //
+            // Задания без [...] работают полностью по старой логике.
+            const bracketReadingText = getBracketText(fullDescription);
+            if (bracketReadingText) {
+                mainPart = getTextWithoutBrackets(mainPart);
+                warningPart = getTextWithoutBrackets(warningPart);
+                currentTask.__bracketReadingText = bracketReadingText;
+            } else {
+                delete currentTask.__bracketReadingText;
+            }
+
+            // Совместимость со старой специальной логикой «Властелина языка».
+            // Ничего не меняет для него, но сохраняет старое имя свойства.
+            if (isLanguageLordTask(currentTask) && bracketReadingText) {
+                currentTask.__languageLordReadingText = bracketReadingText;
+            }
+
 const audioTag = currentTask.getElementsByTagName('audio')[0];
 
 const taskAudioUrl = audioTag
@@ -2617,6 +3077,11 @@ document.getElementById('desc-box').style.display = 'flex';
 document.getElementById('descText').innerText = "";
 document.getElementById('warningBox').innerText = "";
 document.getElementById('warningBox').style.display = 'none';
+
+// После завершения Джекпота карточка снова работает как обычная:
+// игрок сначала видит Да/Нет.
+const taskChoiceButtons = document.getElementById('btnGroup');
+if (taskChoiceButtons) taskChoiceButtons.style.display = 'flex';
 
 // Новый текст задания — старые setTimeout больше не действуют.
 taskAccepted = false;
@@ -3110,7 +3575,55 @@ function startTaskTimer() {
 }
 
 async function handleYesClick() {
-    // Сначала навсегда останавливаем текущую печать задания.
+    // Особые задания обрабатываются отдельно от стандартного сценария.
+    if (isJackpotTask(currentTask) && !jackpotRunning && !jackpotTaskActive) {
+        taskAccepted = true;
+        taskTextRenderToken++;
+        prepareJackpotTaskForAcceptance();
+        return;
+    }
+
+    if ((isLanguageLordTask(currentTask) || currentTask.__bracketReadingText) && !taskAccepted) {
+        taskAccepted = true;
+        taskTextRenderToken++;
+
+        stopCurrentAudio();
+        stopVoiceRecording();
+        stopVoicePlayback();
+
+        document.getElementById('btnGroup').style.display = 'none';
+        document.getElementById('voicePlaybackBox').style.display = 'none';
+        document.getElementById('voiceResultBox').style.display = 'none';
+        document.getElementById('voiceEmptyChoices').style.display = 'none';
+        document.getElementById('warningBox').style.display = 'none';
+
+        const readingText =
+            currentTask.__bracketReadingText ||
+            currentTask.__languageLordReadingText ||
+            getBracketText(getOfferText(currentTask));
+
+        // Показываем обычную часть задания + скрытую часть из [...].
+        // Для старого «Властелина языка» сохраняется прежний вид:
+        // после принятия игрок видит именно текст для чтения.
+        if (isLanguageLordTask(currentTask)) {
+            document.getElementById('title').innerText = 'Задание принято!';
+            document.getElementById('descText').innerText = readingText || 'Выполняйте задание!';
+        } else {
+            const visibleBeforeAccept = getTextWithoutBrackets(getOfferText(currentTask));
+            const combinedText = visibleBeforeAccept && readingText
+                ? visibleBeforeAccept + '\n\n' + readingText
+                : (visibleBeforeAccept || readingText || 'Выполняйте задание!');
+            document.getElementById('descText').innerText = combinedText;
+        }
+
+        document.getElementById('taskTimerWrapper').style.display = 'none';
+
+        // Для bracket-заданий таймер запускается только после показа скрытой части.
+        startTaskTimer();
+        return;
+    }
+
+    // Сначала навсегда останавливаем текущую печать.
     // Это предотвращает появление «левых» кусочков текста после клика.
     taskAccepted = true;
     taskTextRenderToken++;
@@ -3123,6 +3636,8 @@ async function handleYesClick() {
     }
 
     stopCurrentAudio();
+    stopVoiceRecording();
+    stopVoicePlayback();
 
     if (taskSeconds > 0) {
         document.getElementById('btnGroup').style.display='none';
@@ -3160,6 +3675,8 @@ function playRandomTurnVoice() {
 }
 
 function resetToScanner() {
+            stopJackpotRoulette();
+            jackpotTaskActive = false;
             stopCurrentAudio(); stopVoiceRecording(); stopVoicePlayback();
             if(voiceRecordingUrl){URL.revokeObjectURL(voiceRecordingUrl);voiceRecordingUrl=null;} voiceRecordingBlob=null;
             clearTaskTimer(true);
@@ -3198,7 +3715,16 @@ if (auctionTimerInterval) {
         }
 
         function penalty() {
+            // НЕТ окончательно закрывает текущую карточку.
+            // Инвалидируем все отложенные callbacks, чтобы старый текст
+            // больше не мог появиться после нажатия.
+            taskAccepted = true;
+            taskTextRenderToken++;
             taskWaitingForResult = false;
+
+            stopCurrentAudio();
+            stopVoiceRecording();
+            stopVoicePlayback();
 
             // После «Нет» ведущий синхронно возвращается в Алко-банк.
             hideTaskPresenter();
@@ -3209,7 +3735,6 @@ if (auctionTimerInterval) {
             const penaltyConfig = configs[cat] || configs.green;
             document.getElementById('resultImage').src = penaltyConfig.image;
             animateMoney("back");
-            stopCurrentAudio(); stopVoiceRecording(); stopVoicePlayback();
             clearTaskTimer(true);
             taskTimerRemaining = 0;
             taskTimerTotal = 0;
@@ -3472,8 +3997,10 @@ function finish() {
     // Обновляем визуальное отображение общей шкалы
     updateGlobalMadnessUI();
 
-    // Проверяем, заполнилась ли шкала (достигла 5 состояний)
-    if (totalMadnessLevel >= 5) {
+    // Проверяем, заполнилась ли шкала (достигла 5 состояний).
+    // Задание, выбранное внутри «Алко-Джекпота», не должно запускать
+    // еще один аукцион/джекпот поверх текущего хода.
+    if (totalMadnessLevel >= 5 && !jackpotTaskActive) {
         totalMadnessLevel = 0; // Сбрасываем шкалу
         updateGlobalMadnessUI();
         triggerAuctionEvent(activePlayer); // Запускаем аукцион для текущего игрока
@@ -3493,7 +4020,10 @@ function finish() {
     imgBox.style.display = 'block';
     setTimeout(()=>animateMoney("toPlayer"), 50);
 
-    setTimeout(resetToScanner, 10000);
+    setTimeout(() => {
+        jackpotTaskActive = false;
+        resetToScanner();
+    }, 10000);
 }
 
         function openRulesModal() {
