@@ -1210,6 +1210,419 @@ white-space: nowrap;
             to { transform: rotate(360deg); }
         }
 
+
+
+/* ================================================================
+   ФИНАЛЬНАЯ СТАТИСТИКА
+   ================================================================ */
+.final-end-message {
+    background: rgba(255,255,255,.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 20px;
+    padding: 20px;
+    width: 100%;
+    font-size: .95rem;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.final-gold { color:#facc15; text-shadow:0 0 12px rgba(250,204,21,.28); }
+.final-statistics {
+    width:100%;
+    border-radius:24px;
+    padding:14px;
+    background:rgba(8,20,15,.48);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.24);
+    box-shadow:0 18px 40px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.2);
+    animation:finalStatsAppear .65s cubic-bezier(.16,1,.3,1) forwards;
+}
+.final-stats-title {
+    text-align:center;
+    font-size:1.55rem;
+    font-weight:800;
+    letter-spacing:.5px;
+    margin:4px 0 14px;
+    color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+.final-stats-section {
+    width:100%;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:18px;
+    overflow:hidden;
+    margin-top:12px;
+    background:rgba(255,255,255,.045);
+}
+.final-stats-section-title {
+    padding:12px 11px;
+    font-size:.9rem;
+    font-weight:750;
+    line-height:1.3;
+    background:rgba(255,255,255,.075);
+    border-bottom:1px solid rgba(255,255,255,.18);
+    text-align:left;
+}
+.final-stats-row {
+    display:grid;
+    grid-template-columns:30px minmax(0,1fr) minmax(70px,auto);
+    align-items:center;
+    gap:8px;
+    min-height:72px;
+    padding:8px 9px;
+    border-bottom:1px solid rgba(255,255,255,.14);
+}
+.final-stats-row:last-child { border-bottom:0; }
+.final-stats-rank {
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:.78rem;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);
+}
+.final-stats-player-cell { min-width:0; }
+.final-stats-player {
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-width:0;
+}
+.final-stats-player img {
+    flex:0 0 auto;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid rgba(255,255,255,.45);
+    box-shadow:0 4px 12px rgba(0,0,0,.3);
+}
+.final-stats-player-name {
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:.86rem;
+    font-weight:650;
+}
+.final-stats-value {
+    text-align:right;
+    font-size:.9rem;
+    font-weight:800;
+    white-space:nowrap;
+    color:#f8fafc;
+    text-shadow:0 1px 4px rgba(0,0,0,.35);
+}
+.final-stats-empty {
+    padding:14px;
+    text-align:center;
+    opacity:.68;
+    font-size:.85rem;
+}
+.final-winner-row {
+    background:linear-gradient(90deg,rgba(250,204,21,.13),rgba(255,255,255,.035));
+}
+.final-winner-row .final-stats-value { color:#facc15; font-size:1rem; }
+.final-stats-white-row { grid-template-columns:minmax(0,1fr) minmax(90px,auto); }
+.final-simple-section { padding:0 11px; }
+.final-stats-simple-row {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    padding:12px 0;
+    border-bottom:1px solid rgba(255,255,255,.14);
+    font-size:.86rem;
+    line-height:1.3;
+}
+.final-stats-simple-row:last-child { border-bottom:0; }
+.final-stats-simple-row span { opacity:.86; text-align:left; }
+.final-stats-simple-row strong { white-space:nowrap; font-size:.9rem; }
+@keyframes finalStatsAppear {
+    from { opacity:0; transform:translateY(18px) scale(.985); }
+    to { opacity:1; transform:translateY(0) scale(1); }
+}
+@media (max-width:480px) {
+    .final-end-message { padding:16px 13px; font-size:.88rem; }
+    .final-statistics { padding:10px; border-radius:20px; }
+    .final-stats-title { font-size:1.35rem; }
+    .final-stats-section-title { font-size:.82rem; padding:10px 9px; }
+    .final-stats-row { grid-template-columns:27px minmax(0,1fr) minmax(62px,auto); gap:6px; min-height:66px; padding:7px 6px; }
+    .final-stats-player { gap:7px; }
+    .final-stats-player-name { font-size:.78rem; }
+    .final-stats-value { font-size:.8rem; }
+    .final-stats-simple-row { font-size:.8rem; }
+}
+
+/* ================================================================
+   АЛКОБИРЖА — специальное красное задание
+   ================================================================ */
+.alko-exchange-panel {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    animation: fadeInWarning .45s ease forwards;
+}
+.alko-exchange-scale-wrap {
+    width: 100%;
+    max-width: 520px;
+    padding: 14px;
+    margin: 4px 0 12px;
+    border-radius: 24px;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.28);
+    box-shadow: 0 18px 38px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.32);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+.alko-exchange-scale {
+    display: block;
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    border-radius: 16px;
+    filter: drop-shadow(0 7px 16px rgba(0,0,0,.28));
+}
+.alko-exchange-course {
+    width: 100%;
+    margin: 0 0 14px;
+    padding: 13px 15px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.09);
+    border: 1px solid rgba(255,255,255,.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
+    font-size: 1.03rem;
+    line-height: 1.45;
+    text-align: center;
+    font-weight: 600;
+}
+.alko-exchange-course strong {
+    font-size: 1.12em;
+}
+.alko-exchange-actions {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    justify-content: center;
+    margin: 0 0 12px;
+}
+.alko-exchange-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    border: 1px solid rgba(255,255,255,.28);
+    border-radius: 30px;
+    padding: 13px 18px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.22);
+    transition: transform .2s, background .25s, box-shadow .25s;
+}
+.alko-exchange-btn:active { transform: scale(.96); }
+.alko-exchange-btn:disabled { opacity: .45; cursor: not-allowed; }
+.alko-exchange-risk {
+    background: rgba(34,197,94,.55);
+}
+.alko-exchange-risk:hover {
+    background: rgba(34,197,94,.75);
+    box-shadow: 0 10px 25px rgba(0,0,0,.30);
+}
+.alko-exchange-take {
+    background: rgba(255,255,255,.14);
+}
+.alko-exchange-take:hover {
+    background: rgba(255,255,255,.25);
+}
+.alko-exchange-timer {
+    min-width: 96px;
+    padding: 7px 16px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.24);
+    box-shadow: 0 7px 18px rgba(0,0,0,.20);
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: .8px;
+}
+.alko-exchange-final {
+    display: none;
+    width: 100%;
+    margin-top: 4px;
+    padding: 15px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.25);
+    box-shadow: 0 12px 28px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.18);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    font-weight: 700;
+    text-align: center;
+}
+.alko-exchange-result {
+    display: none;
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border-radius: 16px;
+    background: rgba(250,204,21,.12);
+    border: 1px solid rgba(250,204,21,.28);
+    font-size: .95rem;
+    line-height: 1.4;
+    text-align: center;
+}
+@media (max-width: 480px) {
+    .alko-exchange-scale-wrap { padding: 9px; border-radius: 20px; }
+    .alko-exchange-scale { max-height: 190px; }
+    .alko-exchange-course { font-size: .92rem; padding: 11px 10px; }
+    .alko-exchange-actions { gap: 8px; }
+    .alko-exchange-btn { padding: 12px 8px; font-size: .88rem; }
+    .alko-exchange-timer { font-size: .95rem; }
+}
+
+
+/* ================================================================
+   ШТРАФНОЕ ЗАДАНИЕ — промежуточное решение после «Нет»
+   ================================================================ */
+#desc-box.penalty-layout {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    gap: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* В режиме штрафа пустой descText не должен занимать место между заголовком и карточкой. */
+#desc-box.penalty-layout #descText {
+    display: none !important;
+    min-height: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Сам заголовок «Штраф» сразу над карточкой, без лишнего воздуха. */
+#gameContent:has(#desc-box.penalty-layout) > #title {
+    margin-bottom: 4px !important;
+}
+#penaltyDecisionBox {
+    display:none;
+    width:100%;
+    margin: 0;
+    perspective: 1200px;
+}
+#penaltyDecisionFlip {
+    position:relative;
+    width:100%;
+    max-width:520px;
+    margin:0 auto;
+    min-height:360px;
+    transform-style:preserve-3d;
+    transition:transform .72s cubic-bezier(.22,.61,.36,1);
+}
+#penaltyDecisionFlip.is-flipped {
+    transform:rotateY(180deg);
+}
+.penalty-face {
+    width:100%;
+    min-height:360px;
+    height:100%;
+    box-sizing:border-box;
+    padding:18px 16px;
+    overflow:hidden;
+    border-radius:24px;
+    background:rgba(255,255,255,.10);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.28);
+    box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.32);
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+}
+.penalty-back {
+    position:absolute;
+    inset:0;
+    transform:rotateY(180deg);
+    justify-content:flex-start;
+}
+#penaltyTaskText {
+    width:100%;
+    font-size:1.05rem;
+    line-height:1.5;
+    white-space:pre-wrap;
+    margin:0 0 18px;
+}
+.penalty-decision-title {
+    font-size:1.2rem;
+    font-weight:700;
+    line-height:1.35;
+    margin:0 0 12px;
+    text-shadow:0 2px 5px rgba(0,0,0,.25);
+}
+.penalty-decision-subtitle {
+    font-size:.92rem;
+    opacity:.82;
+    margin:0 0 16px;
+}
+.penalty-decision-actions {
+    display:flex;
+    gap:10px;
+    width:100%;
+    justify-content:center;
+}
+.penalty-decision-actions button {
+    flex:1 1 0;
+    min-width:0;
+    margin:0;
+    padding:12px 10px;
+}
+.penalty-drink-image {
+    display:block;
+    width:100%;
+    max-width:300px;
+    max-height:280px;
+    width:auto;
+    max-width:100%;
+    object-fit:contain;
+    border-radius:18px;
+    margin:8px auto 0;
+    filter:drop-shadow(0 8px 18px rgba(0,0,0,.3));
+}
+.penalty-drink-title {
+    font-size:1.18rem;
+    font-weight:750;
+    line-height:1.35;
+    margin:0 0 4px;
+}
+.penalty-drink-name {
+    font-size:1rem;
+    font-weight:650;
+    line-height:1.35;
+    margin:0 0 4px;
+}
+@media (max-width:480px) {
+    #penaltyDecisionFlip { min-height:340px; }
+    .penalty-face { min-height:340px; padding:16px 12px; }
+    #penaltyTaskText { font-size:.95rem; }
+    .penalty-decision-title, .penalty-drink-title { font-size:1.05rem; }
+    .penalty-decision-actions { gap:8px; }
+    .penalty-decision-actions button { font-size:.84rem; padding:11px 7px; }
+    .penalty-drink-image { max-height:220px; width:auto; max-width:100%; }
+}
+
 </style>
     <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
@@ -1399,6 +1812,39 @@ function animateMoney(direction){
 
             <div id="desc-box">
                 <p id="descText"></p>
+
+
+                <div id="penaltyDecisionBox" aria-live="polite">
+                    <div id="penaltyDecisionFlip">
+                        <div class="penalty-face penalty-front">
+                            <div class="penalty-decision-title">Штраф за отказ от задания</div>
+                            <p id="penaltyTaskText"></p>
+                            <div class="penalty-decision-actions">
+                                <button id="penaltyDrinkBtn" class="choice choice-yes" type="button" onclick="penaltyDrink()">Пью!</button>
+                                <button id="penaltyPayBtn" class="choice choice-no" type="button" onclick="penaltyPay()">Оплачиваю штраф</button>
+                            </div>
+                        </div>
+                        <div class="penalty-face penalty-back">
+                            <div id="penaltyDrinkTitle" class="penalty-drink-title"></div>
+                            <div id="penaltyDrinkName" class="penalty-drink-name"></div>
+                            <img id="penaltyDrinkImage" class="penalty-drink-image" src="" alt="Штрафное задание">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="alkoExchangePanel" class="alko-exchange-panel" aria-live="polite">
+                    <div class="alko-exchange-scale-wrap">
+                        <img id="alkoExchangeScale" class="alko-exchange-scale" src="" alt="Шкала курса Алкобиржи">
+                    </div>
+                    <div id="alkoExchangeCourse" class="alko-exchange-course"></div>
+                    <div id="alkoExchangeActions" class="alko-exchange-actions">
+                        <button id="alkoExchangeRisk" class="alko-exchange-btn alko-exchange-risk" type="button">Риск</button>
+                        <button id="alkoExchangeTake" class="alko-exchange-btn alko-exchange-take" type="button">Забрать градусы</button>
+                    </div>
+                    <div id="alkoExchangeTimer" class="alko-exchange-timer">2:00</div>
+                    <div id="alkoExchangeResult" class="alko-exchange-result"></div>
+                    <div id="alkoExchangeFinal" class="alko-exchange-final"></div>
+                </div>
                 
                 <div id="taskTimerWrapper">
                     <div class="circular-timer" id="circularTimer">
@@ -2211,7 +2657,191 @@ document.addEventListener("mouseover", function(event) {
 
     playHoverSound();
 });
-let totalMadnessLevel = 0; // Серия красных заданий (от 0 до 5)
+let totalMadnessLevel = 0; // Текущий уровень общей шкалы (0..5)
+
+// ================================================================
+// СТАТИСТИКА ИГРЫ
+// ================================================================
+// Важно: playersList меняется при сдаче игрока, поэтому отдельный
+// массив allGamePlayers хранит ссылки на ВСЕХ участников до конца игры.
+let allGamePlayers = [];
+let gameStartedAt = null;
+let gameEndedAt = null;
+let gameStatsFinished = false;
+let skipNextTurnAdvance = false;
+
+function createPlayerStats() {
+    return {
+        redTaken: 0,
+        yellowTaken: 0,
+        greenTaken: 0,
+        yesCount: 0,
+        noCount: 0,
+        redCompleted: 0,
+        yellowCompleted: 0,
+        greenCompleted: 0,
+        completedTasks: 0,
+        surrendered: false
+    };
+}
+
+function ensurePlayerStats(player) {
+    if (!player) return null;
+    if (!player.stats) player.stats = createPlayerStats();
+    return player.stats;
+}
+
+function recordTaskTaken(player, category) {
+    const st = ensurePlayerStats(player);
+    if (!st) return;
+    if (category === 'red') st.redTaken++;
+    else if (category === 'yellow') st.yellowTaken++;
+    else if (category === 'green') st.greenTaken++;
+}
+
+function recordTaskYes() {
+    const player = playersList[currentPlayerIndex];
+    if (!player || !currentTask) return;
+    if (currentTask.__statsYesRecorded) return;
+    currentTask.__statsYesRecorded = true;
+    ensurePlayerStats(player).yesCount++;
+}
+
+function recordTaskNo() {
+    const player = playersList[currentPlayerIndex];
+    if (!player || !currentTask) return;
+    if (currentTask.__statsNoRecorded) return;
+    currentTask.__statsNoRecorded = true;
+    ensurePlayerStats(player).noCount++;
+}
+
+function recordTaskCompleted(player, category) {
+    const st = ensurePlayerStats(player);
+    if (!st) return;
+    st.completedTasks++;
+    if (category === 'red') st.redCompleted++;
+    else if (category === 'yellow') st.yellowCompleted++;
+    else if (category === 'green') st.greenCompleted++;
+}
+
+function formatGameDuration(seconds) {
+    const total = Math.max(0, Math.round(Number(seconds) || 0));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    if (h > 0) return `${h} ч ${String(m).padStart(2, '0')} мин ${String(s).padStart(2, '0')} сек`;
+    return `${m} мин ${String(s).padStart(2, '0')} сек`;
+}
+
+function escapeStatsHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function statsAvatar(player, small = false) {
+    const size = small ? 42 : 52;
+    return `
+        <div class="final-stats-player">
+            <img src="${escapeStatsHtml(player.avatar)}" alt="${escapeStatsHtml(player.name)}" style="width:${size}px;height:${size}px;">
+            <div class="final-stats-player-name">${escapeStatsHtml(player.name)}</div>
+        </div>`;
+}
+
+function buildTopThreeRows(players, getter, suffix = '') {
+    const sorted = [...players].sort((a, b) => {
+        const diff = (Number(getter(b)) || 0) - (Number(getter(a)) || 0);
+        if (diff !== 0) return diff;
+        return String(a.name).localeCompare(String(b.name), 'ru');
+    });
+    const top = sorted.slice(0, Math.min(3, sorted.length));
+    if (!top.length) return `<div class="final-stats-empty">Нет данных</div>`;
+    return top.map((p, i) => `
+        <div class="final-stats-row">
+            <div class="final-stats-rank">${i + 1}</div>
+            <div class="final-stats-player-cell">${statsAvatar(p, true)}</div>
+            <div class="final-stats-value">${Number(getter(p)) || 0}${suffix}</div>
+        </div>`).join('');
+}
+
+function buildAllWhiteRows(players) {
+    const left = players.filter(p => p.hasWhiteCard);
+    if (!left.length) return `<div class="final-stats-empty">Белых карт не осталось</div>`;
+    return left.map(p => `
+        <div class="final-stats-row final-stats-white-row">
+            <div class="final-stats-player-cell">${statsAvatar(p, true)}</div>
+            <div class="final-stats-value">Карта осталась</div>
+        </div>`).join('');
+}
+
+function buildFinalStatistics() {
+    const players = allGamePlayers.length ? allGamePlayers : playersList;
+    const end = gameEndedAt || Date.now();
+    const duration = gameStartedAt ? (end - gameStartedAt) / 1000 : 0;
+    const completed = players.reduce((sum, p) => sum + (Number(p.stats?.completedTasks) || 0), 0);
+    const greenCompleted = players.reduce((sum, p) => sum + (Number(p.stats?.greenCompleted) || 0), 0);
+    const yellowCompleted = players.reduce((sum, p) => sum + (Number(p.stats?.yellowCompleted) || 0), 0);
+    const redCompleted = players.reduce((sum, p) => sum + (Number(p.stats?.redCompleted) || 0), 0);
+
+    return `
+        <section class="final-statistics" aria-label="Статистика игры">
+            <div class="final-stats-title">Статистика</div>
+
+            <div class="final-stats-section">
+                <div class="final-stats-section-title">🔴 Самый безумный игрок по красным картам</div>
+                ${buildTopThreeRows(players, p => p.stats?.redTaken, ' заданий')}
+            </div>
+
+            <div class="final-stats-section">
+                <div class="final-stats-section-title">🟡 Лучшие игроки по желтым картам</div>
+                ${buildTopThreeRows(players, p => p.stats?.yellowTaken, ' заданий')}
+            </div>
+
+            <div class="final-stats-section">
+                <div class="final-stats-section-title">🟢 Испуганные игроки - только зеленые задания</div>
+                ${buildTopThreeRows(players, p => p.stats?.greenTaken, ' заданий')}
+            </div>
+
+            <div class="final-stats-section">
+                <div class="final-stats-section-title">✅ Всегда говори ДА</div>
+                ${buildTopThreeRows(players, p => p.stats?.yesCount, ' раз')}
+            </div>
+
+            <div class="final-stats-section">
+                <div class="final-stats-section-title">❌ Отчаянное НЕТ</div>
+                ${buildTopThreeRows(players, p => p.stats?.noCount, ' раз')}
+            </div>
+
+            <div class="final-stats-section">
+                <div class="final-stats-section-title">⚪ Осталась белая карта</div>
+                ${buildAllWhiteRows(players)}
+            </div>
+
+            <div class="final-stats-section final-simple-section">
+                <div class="final-stats-simple-row"><span>Общее время игры</span><strong>${formatGameDuration(duration)}</strong></div>
+                <div class="final-stats-simple-row"><span>Полная шкала безумия</span><strong>${Number(window.__fullMadnessCompletions) || 0}</strong></div>
+                <div class="final-stats-simple-row"><span>Общее количество выполненных заданий</span><strong>${completed}</strong></div>
+                <div class="final-stats-simple-row"><span>Зеленых</span><strong>${greenCompleted}</strong></div>
+                <div class="final-stats-simple-row"><span>Желтых</span><strong>${yellowCompleted}</strong></div>
+                <div class="final-stats-simple-row"><span>Красных</span><strong>${redCompleted}</strong></div>
+            </div>
+        </section>`;
+}
+
+// Один глобальный обработчик считает именно нажатия кнопок Да/Нет.
+// Для image-sequence второе «Да» после таймера не считается повторно:
+// currentTask.__statsYesRecorded уже установлен на первом нажатии.
+document.addEventListener('click', function (event) {
+    const btn = event.target.closest('#btnGroup button.choice');
+    if (!btn || !currentTask || gameStatsFinished) return;
+    if (btn.classList.contains('choice-yes')) recordTaskYes();
+    else if (btn.classList.contains('choice-no')) recordTaskNo();
+});
+
+window.__fullMadnessCompletions = 0;
 
 // Ссылки на 5 PNG картинок шкалы безумия (замените на ваши актуальные ссылки/пути)
 const madnessImages = [
@@ -2667,12 +3297,21 @@ playPlayersScreenVoice();
                 const name = inputVal !== "" ? inputVal : `Игрок ${i}`;
                 const avatar = shuffledAvatars[(i - 1) % shuffledAvatars.length];
                 
-                playersList.push({ 
+                const player = { 
                     name, 
                     avatar, 
-                    hasWhiteCard: true 
-                });
+                    hasWhiteCard: true,
+                    stats: createPlayerStats()
+                };
+                playersList.push(player);
             }
+
+            allGamePlayers = [...playersList];
+            gameStartedAt = Date.now();
+            gameEndedAt = null;
+            gameStatsFinished = false;
+            skipNextTurnAdvance = false;
+            window.__fullMadnessCompletions = 0;
 
             document.getElementById('playersCountBox').style.display = 'none';
             document.getElementById('gamePreloadOverlay').style.display = 'none';
@@ -2839,25 +3478,47 @@ let fiveMinSoundPlayed = false;
 }
 
 function endGame() {
-            hideTaskPresenter();
-            clearTaskTimer(true);
-            clearInterval(gameTimer);
-            document.getElementById('timerContainer').style.display = 'none';
-            document.getElementById('mainContainer').innerHTML = `
-                <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" class="logo" style="margin-bottom: 20px;">
-                <div style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 20px; padding: 20px; width: 100%; font-size: 0.95rem; line-height: 1.5; text-align: center; margin-bottom: 20px;">
-                    Время вышло, пора подсчитать градусы у игроков.
-                    <br><br>
-                    🏆 Тот, у кого <strong>больше всего градусов</strong> — побеждает и получает титул <strong style="color: #facc15;">«Властелин»</strong> (вся компания обязана называть его так весь оставшийся вечер).
-                    <br><br>
-                    💀 А победитель-«Властелин» лично придумывает прозвище для того, у кого <strong>меньше всего градусов</strong>, и теперь все называют проигравшего только так!
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-                    <button class="glass-btn" onclick="location.reload()" style="margin: 0; width: 100%;">Новая игра</button>
-                    <button class="glass-btn" onclick="window.close()" style="margin: 0; width: 100%;">Выход</button>
-                </div>
-            `;
-        }
+    if (gameStatsFinished) return;
+    gameStatsFinished = true;
+    gameEndedAt = Date.now();
+
+    hideTaskPresenter();
+    clearTaskTimer(true);
+    clearInterval(gameTimer);
+    if (auctionTimerInterval) {
+        clearInterval(auctionTimerInterval);
+        auctionTimerInterval = null;
+    }
+    if (typeof stopJackpotRoulette === 'function') stopJackpotRoulette();
+
+    // ============================================================
+    // ФИНАЛЬНЫЙ ЗВУК — ВСТАВЬТЕ ССЫЛКУ СЮДА
+    // ============================================================
+    const END_GAME_AUDIO_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/endgame1.wav';
+    if (END_GAME_AUDIO_URL && !END_GAME_AUDIO_URL.startsWith('ВСТАВЬТЕ_')) {
+        playOneShot(END_GAME_AUDIO_URL, 1);
+    }
+
+    document.getElementById('timerContainer').style.display = 'none';
+    document.getElementById('mainContainer').innerHTML = `
+        <img src="https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/sitelogo.png" class="logo" style="margin-bottom: 20px;">
+
+        <div class="final-end-message">
+            Время вышло, пора подсчитать градусы у игроков.
+            <br><br>
+            🏆 Тот, у кого <strong>больше всего градусов</strong> — побеждает и получает титул <strong class="final-gold">«Властелин»</strong> (вся компания обязана называть его так весь оставшийся вечер).
+            <br><br>
+            💀 А победитель-«Властелин» лично придумывает прозвище для того, у кого <strong>меньше всего градусов</strong>, и теперь все называют проигравшего только так!
+        </div>
+
+        ${buildFinalStatistics()}
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 20px;">
+            <button class="glass-btn" onclick="location.reload()" style="margin: 0; width: 100%;">Новая игра</button>
+            <button class="glass-btn" onclick="window.close()" style="margin: 0; width: 100%;">Выход</button>
+        </div>
+    `;
+}
 
         // =========================================================
         // АВАТАР ВЕДУЩЕГО: Алко-банк <-> Алко-Властелин
@@ -3008,6 +3669,12 @@ function processScannedData(data) {
             // Если карточка пришла из специального режима «Алко-Джекпот»,
             // используем именно ее. Иначе сохраняется обычный случайный выбор.
             currentTask = forcedOffer || categoryOffers[Math.floor(Math.random() * categoryOffers.length)];
+
+            // Статистика выбора цветной карты. Служебный «Алко-Джекпот»
+            // не является отдельной цветной картой и здесь не учитывается.
+            if (playersList[currentPlayerIndex] && !isJackpotTask(currentTask)) {
+                recordTaskTaken(playersList[currentPlayerIndex], cat);
+            }
 
             if (forcedCategory) {
                 cat = forcedCategory;
@@ -3675,6 +4342,7 @@ function playRandomTurnVoice() {
 }
 
 function resetToScanner() {
+            hidePenaltyDecisionBox();
             stopJackpotRoulette();
             jackpotTaskActive = false;
             stopCurrentAudio(); stopVoiceRecording(); stopVoicePlayback();
@@ -3691,7 +4359,14 @@ if (auctionTimerInterval) {
 
             currentTask = null;
             taskSeconds = 0;
-            currentPlayerIndex = (currentPlayerIndex + 1) % playersList.length;
+
+            if (skipNextTurnAdvance) {
+                skipNextTurnAdvance = false;
+                currentPlayerIndex = currentPlayerIndex % playersList.length;
+            } else {
+                currentPlayerIndex = (currentPlayerIndex + 1) % playersList.length;
+            }
+
             updateActivePlayerUI();
             updateScannerTitle();
 
@@ -3714,10 +4389,39 @@ if (auctionTimerInterval) {
             document.getElementById('resultImage').src = "";
         }
 
-        function penalty() {
-            // НЕТ окончательно закрывает текущую карточку.
-            // Инвалидируем все отложенные callbacks, чтобы старый текст
-            // больше не мог появиться после нажатия.
+        const PENALTY_VOICE_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/Penalty.wav';
+        const PENALTY_FLIP_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/flip.mp3';
+        const PENALTY_DRINK_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/zvuk_n.wav';
+        const PENALTY_GREEN_IMAGE_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/Penalty11.png';
+        const PENALTY_YELLOW_IMAGE_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/Penalty22.png';
+        let penaltyDrinkTimer = null;
+        let penaltyDrinkAudio = null;
+
+        function getPenaltyTaskText() {
+            if (!currentTask) return '';
+            const el = currentTask.getElementsByTagName('penaltyTask')[0];
+            return el ? el.textContent.trim() : '';
+        }
+
+        function hidePenaltyDecisionBox() {
+            const descBox = document.getElementById('desc-box');
+            if (descBox) descBox.classList.remove('penalty-layout');
+            if (penaltyDrinkTimer) {
+                clearTimeout(penaltyDrinkTimer);
+                penaltyDrinkTimer = null;
+            }
+            if (penaltyDrinkAudio) {
+                try { penaltyDrinkAudio.pause(); penaltyDrinkAudio.currentTime = 0; } catch (e) {}
+                penaltyDrinkAudio = null;
+            }
+            const box = document.getElementById('penaltyDecisionBox');
+            const flip = document.getElementById('penaltyDecisionFlip');
+            if (flip) flip.classList.remove('is-flipped');
+            if (box) box.style.display = 'none';
+        }
+
+        // Старая логика штрафа. Для красных она вызывается напрямую без новой промежуточной карточки.
+        function applyPenaltyAndContinue() {
             taskAccepted = true;
             taskTextRenderToken++;
             taskWaitingForResult = false;
@@ -3725,6 +4429,7 @@ if (auctionTimerInterval) {
             stopCurrentAudio();
             stopVoiceRecording();
             stopVoicePlayback();
+            hidePenaltyDecisionBox();
 
             // После «Нет» ведущий синхронно возвращается в Алко-банк.
             hideTaskPresenter();
@@ -3740,13 +4445,132 @@ if (auctionTimerInterval) {
             taskTimerTotal = 0;
             const currentConfig = configs[cat] || configs.green;
             const activePlayer = playersList[currentPlayerIndex];
+
             document.getElementById('title').innerText = "Внимание!";
-            document.getElementById('descText').innerText = `${activePlayer.name} кладет ${currentConfig.penalty} градус(а) в Алко-банк`;
+            document.getElementById('descText').innerText = `${activePlayer?.name || 'Игрок'} кладет ${currentConfig.penalty} градус(а) в Алко-банк`;
             document.getElementById('btnGroup').style.display = 'none';
             document.getElementById('warningBox').style.display = 'none';
             document.getElementById('taskTimerWrapper').style.display = 'none';
 
             setTimeout(resetToScanner, 10000);
+        }
+
+        function penalty() {
+            // Красные задания работают ровно по старому сценарию.
+            if (cat === 'red') {
+                applyPenaltyAndContinue();
+                return;
+            }
+
+            const penaltyTaskText = getPenaltyTaskText();
+            // Если в старом/неполном фиде строки нет, не ломаем игру — используем старую механику.
+            if (!penaltyTaskText) {
+                applyPenaltyAndContinue();
+                return;
+            }
+
+            taskAccepted = true;
+            taskTextRenderToken++;
+            taskWaitingForResult = false;
+
+            stopCurrentAudio();
+            stopVoiceRecording();
+            stopVoicePlayback();
+            clearTaskTimer(true);
+            taskTimerRemaining = 0;
+            taskTimerTotal = 0;
+
+            const box = document.getElementById('penaltyDecisionBox');
+            const flip = document.getElementById('penaltyDecisionFlip');
+            const text = document.getElementById('penaltyTaskText');
+            const player = playersList[currentPlayerIndex];
+
+            if (!box || !flip || !text) {
+                applyPenaltyAndContinue();
+                return;
+            }
+
+            const descBox = document.getElementById('desc-box');
+            if (descBox) descBox.classList.add('penalty-layout');
+            flip.classList.remove('is-flipped');
+            text.innerText = penaltyTaskText;
+            box.style.display = 'block';
+
+            document.getElementById('title').innerText = 'Штраф';
+            document.getElementById('descText').innerText = '';
+            document.getElementById('btnGroup').style.display = 'none';
+            document.getElementById('warningBox').style.display = 'none';
+            document.getElementById('taskTimerWrapper').style.display = 'none';
+
+            // Игрок отказался — оставляем ведущего на экране, показываем новый текст и голос.
+            showPlayerStateIcon('scared', 4000);
+            playVoice(PENALTY_VOICE_URL, 1);
+        }
+
+        function penaltyPay() {
+            // Оплата штрафа — полностью существующая анимация и переход хода.
+            applyPenaltyAndContinue();
+        }
+
+        function penaltyDrink() {
+            if (cat !== 'green' && cat !== 'yellow') {
+                applyPenaltyAndContinue();
+                return;
+            }
+
+            if (penaltyDrinkTimer) {
+                clearTimeout(penaltyDrinkTimer);
+                penaltyDrinkTimer = null;
+            }
+            stopCurrentAudio();
+            if (penaltyDrinkAudio) {
+                try { penaltyDrinkAudio.pause(); penaltyDrinkAudio.currentTime = 0; } catch (e) {}
+            }
+
+            const box = document.getElementById('penaltyDecisionBox');
+            const flip = document.getElementById('penaltyDecisionFlip');
+            const title = document.getElementById('penaltyDrinkTitle');
+            const name = document.getElementById('penaltyDrinkName');
+            const image = document.getElementById('penaltyDrinkImage');
+            const player = playersList[currentPlayerIndex];
+            const playerName = player && player.name ? String(player.name).trim() : '';
+            const isGreen = cat === 'green';
+
+            if (!box || !flip || !title || !name || !image) {
+                applyPenaltyAndContinue();
+                return;
+            }
+
+            taskAccepted = true;
+            taskTextRenderToken++;
+            taskWaitingForResult = false;
+
+            title.innerText = isGreen
+                ? 'Игрок пьёт половину напитка!'
+                : 'Игрок пьёт напиток целиком!';
+            name.innerText = playerName ? playerName : '';
+            name.style.display = playerName ? 'block' : 'none';
+            image.src = isGreen ? PENALTY_GREEN_IMAGE_URL : PENALTY_YELLOW_IMAGE_URL;
+
+            box.style.display = 'block';
+            flip.classList.remove('is-flipped');
+
+            // Сначала запускаем 3D-флип и его звук.
+            requestAnimationFrame(() => {
+                flip.classList.add('is-flipped');
+            });
+            playOneShot(PENALTY_FLIP_SOUND_URL, 1);
+
+            // После флипа запускаем звук напитка и держим карточку 10 секунд.
+            setTimeout(() => {
+                if (!document.getElementById('penaltyDecisionBox')) return;
+                penaltyDrinkAudio = playOneShot(PENALTY_DRINK_SOUND_URL, 1);
+            }, 720);
+
+            penaltyDrinkTimer = setTimeout(() => {
+                penaltyDrinkTimer = null;
+                resetToScanner();
+            }, 10000);
         }
 
         const SURRENDER_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/help.wav'; 
@@ -3783,11 +4607,18 @@ if (auctionTimerInterval) {
             showPlayerStateIcon('surrender', 3000);
 
             const activePlayer = playersList[currentPlayerIndex];
+            if (activePlayer) {
+                const st = ensurePlayerStats(activePlayer);
+                st.surrendered = true;
+            }
+            // После удаления игрока следующий по исходному порядку
+            // занимает его индекс. Не перескакиваем через него.
+            skipNextTurnAdvance = true;
             playersList.splice(currentPlayerIndex, 1);
 
             if (playersList.length === 1) {
                 document.getElementById('title').innerText = "Игра окончена!";
-                document.getElementById('descText').innerText = `${activePlayer.name} сдает все свои градусы в «Алкобанк» и выбывает. Остался последний участник!`;
+                document.getElementById('descText').innerText = `${activePlayer.name} выбывает из игры. Остался последний участник!`;
                 document.getElementById('btnGroup').style.display = 'none';
                 document.querySelector('.surrender-btn').style.display = 'none';
                 document.getElementById('warningBox').style.display = 'none';
@@ -3810,7 +4641,7 @@ if (auctionTimerInterval) {
             }
 
             document.getElementById('title').innerText = "Игрок сдался!";
-            document.getElementById('descText').innerText = `${activePlayer.name} сдает все свои градусы в «Алко-банк» и выбывает из игры!`;
+            document.getElementById('descText').innerText = `${activePlayer.name} выбывает из игры!`;
             document.getElementById('btnGroup').style.display = 'none';
             document.querySelector('.surrender-btn').style.display = 'none';
             document.getElementById('warningBox').style.display = 'none';
@@ -3913,6 +4744,7 @@ if (auctionTimerInterval) {
                                 document.getElementById('whiteCardModal').classList.remove('active');
                                 
                                 playersList[currentPlayerIndex].hasWhiteCard = false;
+                                // Белая карта не является выполненным заданием и не дает градусов.
                                 window.__whiteCardConsumed = true;
 
                                 // Белая карта использована — ход завершён, возвращаем Алко-банк.
@@ -3975,6 +4807,11 @@ function finish() {
 
     const activePlayer = playersList[currentPlayerIndex];
 
+    // Учитываем только факт выполненного задания.
+    if (activePlayer) {
+        recordTaskCompleted(activePlayer, cat);
+    }
+
     // Проверяем категорию выполненного задания
     if (cat === 'red') {
         totalMadnessLevel++;
@@ -3997,15 +4834,9 @@ function finish() {
     // Обновляем визуальное отображение общей шкалы
     updateGlobalMadnessUI();
 
-    // Проверяем, заполнилась ли шкала (достигла 5 состояний).
-    // Задание, выбранное внутри «Алко-Джекпота», не должно запускать
-    // еще один аукцион/джекпот поверх текущего хода.
-    if (totalMadnessLevel >= 5 && !jackpotTaskActive) {
-        totalMadnessLevel = 0; // Сбрасываем шкалу
-        updateGlobalMadnessUI();
-        triggerAuctionEvent(activePlayer); // Запускаем аукцион для текущего игрока
-        return; // Прерываем стандартный таймер перехода, так как открылся аукцион
-    }
+    // ВАЖНО: заполнение шкалы не перебивает текущее задание.
+    // Сначала полностью показываем результат выполненного 5-го задания,
+    // и только после его финального экрана запускаем аукцион как 6-й ход.
 
     const currentConfig = configs[cat] || configs.green;
     document.getElementById('title').innerText = "Задание принято!";
@@ -4021,6 +4852,18 @@ function finish() {
     setTimeout(()=>animateMoney("toPlayer"), 50);
 
     setTimeout(() => {
+        // 5-е задание уже полностью завершено и его результат показан.
+        // Только теперь, если шкала безумия заполнена, запускаем аукцион
+        // как отдельный 6-й ход.
+        if (totalMadnessLevel >= 5 && !jackpotTaskActive) {
+            window.__fullMadnessCompletions =
+                (Number(window.__fullMadnessCompletions) || 0) + 1;
+            totalMadnessLevel = 0;
+            updateGlobalMadnessUI();
+            triggerAuctionEvent(activePlayer);
+            return;
+        }
+
         jackpotTaskActive = false;
         resetToScanner();
     }, 10000);
@@ -4096,6 +4939,20 @@ function triggerAuctionEvent(player) {
     // Останавливаем предыдущую озвучку
     stopCurrentAudio();
 
+    // ВАЖНО: если аукцион запускается сразу после Алкобиржи,
+    // финальный экран Алкобиржи уже не должен оставаться в DOM поверх аукциона.
+    // Аукцион — отдельный 6-й ход и полностью заменяет экран предыдущего задания.
+    const alkoPanel = document.getElementById('alkoExchangePanel');
+    if (alkoPanel) {
+        alkoPanel.style.display = 'none';
+        const alkoActions = document.getElementById('alkoExchangeActions');
+        const alkoResult = document.getElementById('alkoExchangeResult');
+        const alkoFinal = document.getElementById('alkoExchangeFinal');
+        if (alkoActions) alkoActions.style.display = 'none';
+        if (alkoResult) alkoResult.style.display = 'none';
+        if (alkoFinal) alkoFinal.style.display = 'none';
+    }
+
     // Рандомно выбираем карточку аукциона из фида
     const randomAuctionCard = auctionOffers[
         Math.floor(Math.random() * auctionOffers.length)
@@ -4122,7 +4979,22 @@ function triggerAuctionEvent(player) {
     document.getElementById('title').innerText = "🔥 АУКЦИОН! 🔥";
     document.getElementById('descText').innerText = `${title}\n\n${desc}`;
 
+    // После завершения предыдущего задания desc-box может быть скрыт.
+    // Для аукциона обязательно показываем его, чтобы текст задания был виден.
+    const auctionDescBox = document.getElementById('desc-box');
+    if (auctionDescBox) {
+        auctionDescBox.style.display = 'flex';
+        auctionDescBox.classList.remove('image-sequence-layout-v2');
+    }
+
     document.getElementById('btnGroup').style.display = 'none';
+
+    // Аукцион — бонусное задание для всех: здесь нельзя сдаться
+    // и нельзя использовать белую карту. Окончание определяется только таймером.
+    const auctionWhiteCardBtn = document.getElementById('whiteCardBtn');
+    const auctionSurrenderBtn = document.querySelector('.surrender-btn');
+    if (auctionWhiteCardBtn) auctionWhiteCardBtn.style.display = 'none';
+    if (auctionSurrenderBtn) auctionSurrenderBtn.style.display = 'none';
 
     document.getElementById('warningBox').style.display = 'none';
     document.getElementById('imageBox').style.display = 'none';
@@ -4214,5 +5086,1230 @@ function triggerAuctionEvent(player) {
             }
         });
     </script>
+<script>
+
+(function () {
+
+    const IMAGE_SEQUENCE_FLIP_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/flip.mp3';
+
+    const IMAGE_SEQUENCE_NOTIME_SOUND_URL = 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/audio/notime.wav';
+    const IMAGE_SEQUENCE_PENALTY_DELAY = 10000;
+    const IMAGE_SEQUENCE_FLIP_DURATION = 700;
+
+    let imageTaskInterval = null;
+    let imageTaskPenaltyTimeout = null;
+    let imageTaskImages = [];
+    let imageTaskPhase = 'none'; // none | running | waitingResult | flipping | showingAll
+    let imageTaskOriginalHandleYesClick = null;
+    let imageTaskOriginalPenalty = null;
+    let imageTaskOriginalResetToScanner = null;
+    let imageTaskOriginalStartTaskTimer = null;
+
+    let imageTaskMovedButtonWrapper = null;
+    let imageTaskButtonParent = null;
+    let imageTaskButtonNextSibling = null;
+
+    function isImageSequenceTask(task) {
+        if (!task) return false;
+        return getImageSequenceUrls(task).length > 0;
+    }
+
+    function getImageSequenceUrls(task) {
+        if (!task) return [];
+        return Array.from(task.getElementsByTagName('image'))
+            .map(el => (el.textContent || el.getAttribute('src') || '').trim())
+            .filter(url => /^https?:\/\//i.test(url));
+    }
+
+    function ensureImageSequenceStyles() {
+        if (document.getElementById('imageSequenceStylesV2')) return;
+
+        const style = document.createElement('style');
+        style.id = 'imageSequenceStylesV2';
+        style.textContent = `
+            #imageBox.image-sequence-box-v2 {
+                order: 10;
+                display: none;
+                width: 100%;
+                padding: 14px 14px 22px;
+                margin-top: 14px;
+                background: rgba(255,255,255,.10);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(255,255,255,.30);
+                border-radius: 24px;
+                box-shadow: 0 12px 30px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.35);
+                overflow: hidden;
+            }
+
+            #imageBox.image-sequence-box-v2 > #resultImage {
+                display: none !important;
+            }
+
+            #imageSequenceFlip {
+                width: 100%;
+                perspective: 1200px;
+            }
+
+            #imageSequenceFlipInner {
+                position: relative;
+                width: 100%;
+                transform-style: preserve-3d;
+                transition: transform ${IMAGE_SEQUENCE_FLIP_DURATION}ms ease-in-out;
+            }
+
+            #imageSequenceFlipInner.is-flipped {
+                transform: rotateY(180deg);
+            }
+
+            .image-sequence-face {
+                width: 100%;
+                backface-visibility: hidden;
+                -webkit-backface-visibility: hidden;
+                border-radius: 18px;
+            }
+
+            .image-sequence-face-back {
+                position: absolute;
+                inset: 0;
+                transform: rotateY(180deg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .image-sequence-front-images,
+            .image-sequence-all-images {
+                display: flex;
+                width: 100%;
+                gap: 12px;
+                align-items: center;
+                justify-content: center;
+                flex-wrap: nowrap;
+            }
+
+            .image-sequence-front-images img,
+            .image-sequence-all-images img,
+            .image-sequence-face-back img {
+                display: block;
+                min-width: 0;
+                object-fit: contain;
+                border-radius: 16px;
+                background: rgba(0,0,0,.10);
+            }
+
+            .image-sequence-front-images img {
+                flex: 1 1 0;
+                width: 0;
+                max-width: 100%;
+                max-height: 48vh;
+            }
+
+            .image-sequence-face-back img {
+                width: 100%;
+                max-width: 100%;
+                max-height: 48vh;
+            }
+
+            .image-sequence-all-images {
+                margin-top: 4px;
+            }
+
+            .image-sequence-all-images img {
+                flex: 1 1 0;
+                width: 0;
+                max-width: 100%;
+                max-height: 48vh;
+            }
+
+            #imageBox.image-sequence-box-v2 #btnContainerWrapper {
+                width: 100%;
+                margin-top: 24px;
+                padding-top: 6px;
+                order: initial;
+            }
+
+            #imageBox.image-sequence-box-v2 #btnGroup {
+                margin-bottom: 2px;
+            }
+
+            #desc-box.image-sequence-layout-v2 #descText {
+                order: 9;
+                width: 100%;
+                white-space: pre-line;
+            }
+
+            #desc-box.image-sequence-layout-v2 #taskTimerWrapper {
+                order: 11;
+            }
+
+            #desc-box.image-sequence-layout-v2 #warningBox {
+                order: 13;
+            }
+
+            @media (max-width: 600px) {
+                #imageBox.image-sequence-box-v2 {
+                    padding: 12px 10px 24px;
+                }
+
+                .image-sequence-front-images,
+                .image-sequence-all-images {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .image-sequence-front-images img,
+                .image-sequence-all-images img {
+                    width: 100%;
+                    max-height: 38vh;
+                }
+
+                .image-sequence-face-back img {
+                    max-height: 55vh;
+                }
+
+                #imageBox.image-sequence-box-v2 #btnContainerWrapper {
+                    margin-top: 28px;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    function ensureImageSequenceContainer() {
+        ensureImageSequenceStyles();
+
+        const box = document.getElementById('imageBox');
+        if (!box) return null;
+
+        box.classList.add('image-sequence-box-v2');
+
+        let flip = document.getElementById('imageSequenceFlip');
+        if (!flip) {
+            flip = document.createElement('div');
+            flip.id = 'imageSequenceFlip';
+            flip.innerHTML = `
+                <div id="imageSequenceFlipInner">
+                    <div class="image-sequence-face image-sequence-face-front" id="imageSequenceFront"></div>
+                    <div class="image-sequence-face image-sequence-face-back" id="imageSequenceBack"></div>
+                </div>
+            `;
+            box.insertBefore(flip, box.firstChild);
+        }
+
+        let all = document.getElementById('imageSequenceAll');
+        if (!all) {
+            all = document.createElement('div');
+            all.id = 'imageSequenceAll';
+            all.className = 'image-sequence-all-images';
+            all.style.display = 'none';
+            box.insertBefore(all, flip.nextSibling);
+        }
+
+        return box;
+    }
+
+    function moveButtonsIntoImageBox() {
+        const box = ensureImageSequenceContainer();
+        const wrapper = document.getElementById('btnContainerWrapper');
+        if (!box || !wrapper) return;
+
+        if (!imageTaskMovedButtonWrapper) {
+            imageTaskMovedButtonWrapper = wrapper;
+            imageTaskButtonParent = wrapper.parentNode;
+            imageTaskButtonNextSibling = wrapper.nextSibling;
+        }
+
+        if (wrapper.parentNode !== box) box.appendChild(wrapper);
+    }
+
+    function restoreButtonsFromImageBox() {
+        const wrapper = imageTaskMovedButtonWrapper;
+        if (!wrapper || !imageTaskButtonParent) return;
+
+        if (imageTaskButtonNextSibling && imageTaskButtonNextSibling.parentNode === imageTaskButtonParent) {
+            imageTaskButtonParent.insertBefore(wrapper, imageTaskButtonNextSibling);
+        } else {
+            imageTaskButtonParent.appendChild(wrapper);
+        }
+
+        imageTaskMovedButtonWrapper = null;
+        imageTaskButtonParent = null;
+        imageTaskButtonNextSibling = null;
+    }
+
+    function clearImageTaskTimer() {
+        if (imageTaskInterval) {
+            clearInterval(imageTaskInterval);
+            imageTaskInterval = null;
+        }
+    }
+
+    function clearImageTaskPenaltyTimeout() {
+        if (imageTaskPenaltyTimeout) {
+            clearTimeout(imageTaskPenaltyTimeout);
+            imageTaskPenaltyTimeout = null;
+        }
+    }
+
+    function playImageFlipSound() {
+        if (!IMAGE_SEQUENCE_FLIP_SOUND_URL || IMAGE_SEQUENCE_FLIP_SOUND_URL.startsWith('ССЫЛКА_')) return;
+        if (typeof playOneShot === 'function') playOneShot(IMAGE_SEQUENCE_FLIP_SOUND_URL, 1);
+    }
+
+    function createImageElement(url, index) {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = `Изображение ${index + 1}`;
+        return img;
+    }
+
+    function renderFrontImages() {
+        const box = ensureImageSequenceContainer();
+        const front = document.getElementById('imageSequenceFront');
+        const back = document.getElementById('imageSequenceBack');
+        const all = document.getElementById('imageSequenceAll');
+        const flipInner = document.getElementById('imageSequenceFlipInner');
+        if (!box || !front || !back || !all || !flipInner) return;
+
+        front.innerHTML = '';
+        const frontImages = document.createElement('div');
+        frontImages.className = 'image-sequence-front-images';
+
+        // Во время таймера намеренно скрываем последнее изображение — это ответ.
+        imageTaskImages.slice(0, -1).forEach((url, index) => {
+            frontImages.appendChild(createImageElement(url, index));
+        });
+
+        if (!imageTaskImages.slice(0, -1).length) {
+            const placeholder = document.createElement('div');
+            placeholder.style.minHeight = '180px';
+            placeholder.style.display = 'flex';
+            placeholder.style.alignItems = 'center';
+            placeholder.style.justifyContent = 'center';
+            placeholder.style.borderRadius = '16px';
+            placeholder.style.background = 'rgba(255,255,255,.06)';
+            placeholder.style.border = '1px solid rgba(255,255,255,.14)';
+            placeholder.innerText = 'Ответ скрыт';
+            frontImages.appendChild(placeholder);
+        }
+
+        front.appendChild(frontImages);
+
+        back.innerHTML = '';
+        back.appendChild(createImageElement(imageTaskImages[imageTaskImages.length - 1], imageTaskImages.length - 1));
+
+        all.style.display = 'none';
+        flipInner.classList.remove('is-flipped');
+        document.getElementById('imageSequenceFlip').style.display = 'block';
+        box.style.display = 'block';
+    }
+
+    function renderLastImageOnly() {
+        const box = ensureImageSequenceContainer();
+        const flip = document.getElementById('imageSequenceFlip');
+        const all = document.getElementById('imageSequenceAll');
+        const img = document.getElementById('resultImage');
+        if (!box || !flip || !all || !imageTaskImages.length) return;
+
+        const front = document.getElementById('imageSequenceFront');
+        const back = document.getElementById('imageSequenceBack');
+        const flipInner = document.getElementById('imageSequenceFlipInner');
+        if (front) front.innerHTML = '';
+        if (back) {
+            back.innerHTML = '';
+            back.appendChild(createImageElement(imageTaskImages[imageTaskImages.length - 1], imageTaskImages.length - 1));
+        }
+        if (flipInner) flipInner.classList.remove('is-flipped');
+        flip.style.display = 'block';
+        all.style.display = 'none';
+        if (img) img.style.display = 'none';
+        box.style.display = 'block';
+    }
+
+    function renderAllImages() {
+        const box = ensureImageSequenceContainer();
+        const flip = document.getElementById('imageSequenceFlip');
+        const all = document.getElementById('imageSequenceAll');
+        const img = document.getElementById('resultImage');
+        if (!box || !flip || !all) return;
+
+        all.innerHTML = '';
+        imageTaskImages.forEach((url, index) => {
+            all.appendChild(createImageElement(url, index));
+        });
+
+        flip.style.display = 'none';
+        all.style.display = 'flex';
+        if (img) img.style.display = 'none';
+        box.style.display = 'block';
+    }
+
+    function updateImageTaskTimerVisual(seconds) {
+        const digits = document.getElementById('taskTimerDigits');
+        const circle = document.getElementById('circularTimer');
+        const total = Math.max(1, parseInt(taskSeconds, 10) || 1);
+        const remaining = Math.max(0, seconds);
+
+        if (digits) digits.innerText = Math.ceil(remaining);
+        if (circle) {
+            const percentage = Math.max(0, Math.min(100, (remaining / total) * 100));
+            circle.style.background = `conic-gradient(rgba(255,255,255,0.3) ${percentage}%, rgba(0,0,0,0.2) ${percentage}%)`;
+        }
+    }
+
+    function finishImageTaskTimer() {
+        clearImageTaskTimer();
+        imageTaskPhase = 'waitingResult';
+        taskWaitingForResult = true;
+        taskTimerRemaining = 0;
+        // Стандартный handleYesClick должен воспринимать следующий клик
+        // как ответ на уже завершенное задание, а не запускать таймер заново.
+        taskSeconds = 0;
+
+        // ВАЖНО: после таймера снова показываем лицевую сторону:
+        // все изображения, кроме последнего.
+        renderFrontImages();
+
+        const timer = document.getElementById('taskTimerWrapper');
+        const desc = document.getElementById('descText');
+        const buttons = document.getElementById('btnGroup');
+        if (timer) timer.style.display = 'none';
+        if (desc) desc.innerText = 'Готовы посмотреть ответ?';
+        if (buttons) buttons.style.display = 'flex';
+
+        if (typeof playOneShot === 'function') {
+            playOneShot(IMAGE_SEQUENCE_NOTIME_SOUND_URL, 1);
+        }
+    }
+
+    function startImageTaskTimer() {
+        clearImageTaskTimer();
+        taskWaitingForResult = false;
+        imageTaskPhase = 'running';
+
+        const totalSeconds = Math.max(0, parseInt(taskSeconds, 10) || 0);
+        const startedAt = Date.now();
+        taskTimerTotal = totalSeconds;
+        taskTimerRemaining = totalSeconds;
+
+        const timer = document.getElementById('taskTimerWrapper');
+        if (timer) timer.style.display = 'flex';
+        updateImageTaskTimerVisual(totalSeconds);
+
+        if (totalSeconds <= 0) {
+            finishImageTaskTimer();
+            return;
+        }
+
+        imageTaskInterval = setInterval(() => {
+            const elapsed = (Date.now() - startedAt) / 1000;
+            const remaining = Math.max(0, totalSeconds - elapsed);
+            taskTimerRemaining = remaining;
+            updateImageTaskTimerVisual(remaining);
+
+            if (remaining <= 0) finishImageTaskTimer();
+        }, 100);
+    }
+
+    function prepareImageTaskAcceptance() {
+        imageTaskImages = getImageSequenceUrls(currentTask);
+        if (!imageTaskImages.length) return false;
+
+        taskAccepted = true;
+        taskTextRenderToken++;
+        taskWaitingForResult = false;
+        imageTaskPhase = 'running';
+
+        stopCurrentAudio();
+        stopVoiceRecording();
+        stopVoicePlayback();
+        clearTaskTimer(false);
+
+        const descBox = document.getElementById('desc-box');
+        if (descBox) descBox.classList.add('image-sequence-layout-v2');
+
+        moveButtonsIntoImageBox();
+
+        document.getElementById('btnGroup').style.display = 'none';
+        document.getElementById('voicePlaybackBox').style.display = 'none';
+        document.getElementById('voiceResultBox').style.display = 'none';
+        document.getElementById('voiceEmptyChoices').style.display = 'none';
+        document.getElementById('warningBox').style.display = 'none';
+
+        document.getElementById('title').innerText = 'Задание принято!';
+        document.getElementById('descText').innerText = '';
+
+        renderFrontImages();
+        startImageTaskTimer();
+        return true;
+    }
+
+    function flipToAnswerAndContinue() {
+        if (imageTaskPhase !== 'waitingResult') return;
+
+        imageTaskPhase = 'flipping';
+        taskWaitingForResult = false;
+        clearImageTaskTimer();
+
+        const flipInner = document.getElementById('imageSequenceFlipInner');
+        const buttons = document.getElementById('btnGroup');
+        if (buttons) buttons.style.display = 'none';
+
+        if (flipInner) {
+            flipInner.classList.add('is-flipped');
+        }
+        playImageFlipSound();
+
+        setTimeout(() => {
+            if (imageTaskPhase !== 'flipping') return;
+
+            imageTaskPhase = 'showingAll';
+
+            const flip = document.getElementById('imageSequenceFlip');
+            const all = document.getElementById('imageSequenceAll');
+            const timer = document.getElementById('taskTimerWrapper');
+            const desc = document.getElementById('descText');
+            if (flip) flip.style.display = 'block';
+            if (all) {
+                all.style.display = 'none';
+                all.innerHTML = '';
+            }
+            if (timer) timer.style.display = 'none';
+            if (desc) desc.innerText = 'Время вышло.\nВыполнил-ли игрок данное задание на время?';
+            if (buttons) buttons.style.display = 'flex';
+        }, IMAGE_SEQUENCE_FLIP_DURATION + 100);
+    }
+
+    imageTaskOriginalHandleYesClick = window.handleYesClick;
+    window.handleYesClick = async function () {
+        if (!isImageSequenceTask(currentTask)) {
+            return imageTaskOriginalHandleYesClick.apply(this, arguments);
+        }
+
+        if (imageTaskPhase === 'waitingResult') {
+            flipToAnswerAndContinue();
+            return;
+        }
+
+        if (imageTaskPhase === 'showingAll') {
+            taskWaitingForResult = false;
+
+            // Перед штатным finish() полностью убираем служебное
+            // отображение изображений задания. Иначе оно могло перекрывать
+            // стандартную картинку награды из finish().
+            const box = document.getElementById('imageBox');
+            const flip = document.getElementById('imageSequenceFlip');
+            const all = document.getElementById('imageSequenceAll');
+            const resultImage = document.getElementById('resultImage');
+            const descBox = document.getElementById('desc-box');
+
+            if (flip) flip.style.display = 'none';
+            if (all) all.style.display = 'none';
+            if (all) all.innerHTML = '';
+            if (box) {
+                box.classList.remove('image-sequence-box-v2');
+                box.style.display = 'none';
+                const oldFlip = document.getElementById('imageSequenceFlip');
+                const oldAll = document.getElementById('imageSequenceAll');
+                if (oldFlip) oldFlip.remove();
+                if (oldAll) oldAll.remove();
+            }
+            if (descBox) descBox.classList.remove('image-sequence-layout-v2');
+            if (resultImage) {
+                resultImage.style.display = '';
+                resultImage.style.visibility = 'visible';
+            }
+
+            imageTaskImages = [];
+            imageTaskPhase = 'none';
+            return await imageTaskOriginalHandleYesClick.apply(this, arguments);
+        }
+
+        if (imageTaskPhase === 'running' || imageTaskPhase === 'none') {
+            prepareImageTaskAcceptance();
+            return;
+        }
+    };
+
+    imageTaskOriginalPenalty = window.penalty;
+    window.penalty = function () {
+        if (!isImageSequenceTask(currentTask)) {
+            return imageTaskOriginalPenalty.apply(this, arguments);
+        }
+
+        const lastImage = imageTaskImages[imageTaskImages.length - 1];
+        clearImageTaskTimer();
+        clearImageTaskPenaltyTimeout();
+        imageTaskPhase = 'none';
+        taskWaitingForResult = false;
+
+        const result = imageTaskOriginalPenalty.apply(this, arguments);
+
+        if (lastImage) {
+            const box = ensureImageSequenceContainer();
+            const flip = document.getElementById('imageSequenceFlip');
+            const all = document.getElementById('imageSequenceAll');
+            const back = document.getElementById('imageSequenceBack');
+            const flipInner = document.getElementById('imageSequenceFlipInner');
+            const desc = document.getElementById('descText');
+            const title = document.getElementById('title');
+            const buttons = document.getElementById('btnGroup');
+            const timer = document.getElementById('taskTimerWrapper');
+
+            if (flipInner) flipInner.classList.remove('is-flipped');
+            if (back) {
+                back.innerHTML = '';
+                back.appendChild(createImageElement(lastImage, imageTaskImages.length - 1));
+            }
+            if (flip) flip.style.display = 'block';
+            if (all) all.style.display = 'none';
+            if (box) box.style.display = 'block';
+            if (timer) timer.style.display = 'none';
+            if (buttons) buttons.style.display = 'none';
+
+            // Чтобы именно последнее изображение было крупно видно после штрафа.
+            const front = document.getElementById('imageSequenceFront');
+            if (front) {
+                front.innerHTML = '';
+                const wrap = document.createElement('div');
+                wrap.className = 'image-sequence-front-images';
+                wrap.appendChild(createImageElement(lastImage, imageTaskImages.length - 1));
+                front.appendChild(wrap);
+            }
+
+            if (title) title.innerText = 'Внимание!';
+            if (desc) desc.innerText = `${(playersList[currentPlayerIndex] || {}).name || 'Игрок'} получает штраф`;
+
+        }
+
+        return result;
+    };
+
+    const imageTaskOriginalLoadRandomTask = window.loadRandomTask;
+    window.loadRandomTask = function () {
+        const box = document.getElementById('imageBox');
+        const flip = document.getElementById('imageSequenceFlip');
+        const all = document.getElementById('imageSequenceAll');
+        if (flip) flip.remove();
+        if (all) all.remove();
+        if (box) {
+            box.classList.remove('image-sequence-box-v2');
+            box.style.display = 'none';
+        }
+        const resultImage = document.getElementById('resultImage');
+        if (resultImage) {
+            resultImage.style.display = '';
+            resultImage.style.visibility = 'visible';
+        }
+        return imageTaskOriginalLoadRandomTask.apply(this, arguments);
+    };
+
+    imageTaskOriginalResetToScanner = window.resetToScanner;
+    window.resetToScanner = function () {
+        clearImageTaskTimer();
+        clearImageTaskPenaltyTimeout();
+        imageTaskImages = [];
+        imageTaskPhase = 'none';
+        taskWaitingForResult = false;
+
+        const descBox = document.getElementById('desc-box');
+        if (descBox) descBox.classList.remove('image-sequence-layout-v2');
+
+        const box = document.getElementById('imageBox');
+        const flip = document.getElementById('imageSequenceFlip');
+        const all = document.getElementById('imageSequenceAll');
+        const flipInner = document.getElementById('imageSequenceFlipInner');
+        if (flipInner) flipInner.classList.remove('is-flipped');
+        if (flip) flip.style.display = 'block';
+        if (all) {
+            all.innerHTML = '';
+            all.style.display = 'none';
+        }
+        if (box) box.classList.remove('image-sequence-box-v2');
+
+        restoreButtonsFromImageBox();
+
+        return imageTaskOriginalResetToScanner.apply(this, arguments);
+    };
+
+    imageTaskOriginalStartTaskTimer = window.startTaskTimer;
+    window.startTaskTimer = function () {
+        if (isImageSequenceTask(currentTask) && imageTaskPhase !== 'none') {
+            startImageTaskTimer();
+            return;
+        }
+        return imageTaskOriginalStartTaskTimer.apply(this, arguments);
+    };
+})();
+</script>
+
+
 </body>
 </html>
+
+<script>
+(function () {
+
+    function cleanupCompletedImageTaskView() {
+        const box = document.getElementById('imageBox');
+        const flip = document.getElementById('imageSequenceFlip');
+        const all = document.getElementById('imageSequenceAll');
+        const front = document.getElementById('imageSequenceFront');
+        const back = document.getElementById('imageSequenceBack');
+        const flipInner = document.getElementById('imageSequenceFlipInner');
+        const resultImage = document.getElementById('resultImage');
+
+        if (flipInner) flipInner.classList.remove('is-flipped');
+        if (flip) flip.style.display = 'none';
+        if (all) {
+            all.style.display = 'none';
+            all.innerHTML = '';
+        }
+        if (front) front.innerHTML = '';
+        if (back) back.innerHTML = '';
+
+        if (box) {
+            box.classList.remove('image-sequence-box-v2');
+        }
+
+        if (resultImage) {
+            resultImage.style.display = '';
+        }
+    }
+
+    const originalFinishV4 = window.finish;
+    if (typeof originalFinishV4 === 'function') {
+        window.finish = function () {
+            const wasImageTask = typeof isImageSequenceTask === 'function' && isImageSequenceTask(currentTask);
+
+            if (wasImageTask) cleanupCompletedImageTaskView();
+
+            const result = originalFinishV4.apply(this, arguments);
+
+            if (wasImageTask) {
+                cleanupCompletedImageTaskView();
+                const rewardImage = document.getElementById('resultImage');
+                if (rewardImage) rewardImage.style.display = 'block';
+            }
+
+            return result;
+        };
+    }
+
+    const originalHandleYesV4 = window.handleYesClick;
+    if (typeof originalHandleYesV4 === 'function') {
+        window.handleYesClick = async function () {
+            const isImage = typeof isImageSequenceTask === 'function' && isImageSequenceTask(currentTask);
+            const wasFinalImageAnswer = isImage && typeof imageTaskPhase !== 'undefined' && imageTaskPhase === 'showingAll';
+
+            const result = await originalHandleYesV4.apply(this, arguments);
+
+            if (wasFinalImageAnswer) {
+                cleanupCompletedImageTaskView();
+                const rewardImage = document.getElementById('resultImage');
+                if (rewardImage) rewardImage.style.display = 'block';
+            }
+
+            return result;
+        };
+    }
+
+    const usedTaskIdsByColor = Object.create(null);
+    let randomizerSessionInitialized = false;
+
+    function resetSmartRandomizer() {
+        usedTaskIdsByColor.green = new Set();
+        usedTaskIdsByColor.yellow = new Set();
+        usedTaskIdsByColor.red = new Set();
+        randomizerSessionInitialized = true;
+    }
+
+    function getOfferStableId(offer, indexFallback) {
+        if (!offer) return `fallback-${indexFallback}`;
+
+        const explicitId = offer.getAttribute('id');
+        if (explicitId) return `id:${explicitId}`;
+
+        const name = offer.getElementsByTagName('name')[0]?.textContent?.trim() || '';
+        const description = offer.getElementsByTagName('description')[0]?.textContent?.trim() || '';
+        const images = Array.from(offer.getElementsByTagName('image'))
+            .map(x => (x.textContent || x.getAttribute('src') || '').trim())
+            .join('|');
+
+        return `content:${name}::${description}::${images}::${indexFallback}`;
+    }
+
+    function getSmartCategoryOffers(color) {
+        if (!Array.isArray(allOffers)) return [];
+
+        return allOffers.filter(offer => {
+            const categoryEl = offer.getElementsByTagName('categoryId')[0];
+            const offerCategory = categoryEl ? categoryEl.textContent.trim() : '';
+
+            return offerCategory === color ||
+                ((color === 'yellow' || color === 'red') && offerCategory === 'voice');
+        });
+    }
+
+    function chooseSmartOffer(color) {
+        if (!randomizerSessionInitialized) resetSmartRandomizer();
+
+        const pool = getSmartCategoryOffers(color);
+        if (!pool.length) return null;
+
+        if (!usedTaskIdsByColor[color]) usedTaskIdsByColor[color] = new Set();
+
+        let unused = pool.filter((offer, index) => {
+            return !usedTaskIdsByColor[color].has(getOfferStableId(offer, index));
+        });
+
+        if (!unused.length) {
+            usedTaskIdsByColor[color].clear();
+            unused = pool.slice();
+        }
+
+        const selected = unused[Math.floor(Math.random() * unused.length)];
+        const selectedIndex = pool.indexOf(selected);
+        usedTaskIdsByColor[color].add(getOfferStableId(selected, selectedIndex));
+
+        return selected;
+    }
+
+    const originalConfirmPlayersV4 = window.confirmPlayers;
+    if (typeof originalConfirmPlayersV4 === 'function') {
+        window.confirmPlayers = async function () {
+            resetSmartRandomizer();
+            return originalConfirmPlayersV4.apply(this, arguments);
+        };
+    }
+
+    const originalLoadRandomTaskV4 = window.loadRandomTask;
+    if (typeof originalLoadRandomTaskV4 === 'function') {
+        window.loadRandomTask = function (forcedOffer = null, forcedCategory = null) {
+            if (forcedOffer) {
+                return originalLoadRandomTaskV4.apply(this, arguments);
+            }
+
+            const color = forcedCategory || cat;
+            const smartOffer = chooseSmartOffer(color);
+
+            if (smartOffer) {
+                return originalLoadRandomTaskV4.call(this, smartOffer, color);
+            }
+
+            return originalLoadRandomTaskV4.apply(this, arguments);
+        };
+    }
+})();
+</script>
+
+
+<script>
+/* ================================================================
+   АЛКОБИРЖА — специальная механика красного задания
+   Не меняет стандартные задания: перехватывается только offer
+   с id=1788454565470 или названием «Алкобиржа».
+   ================================================================ */
+(function () {
+    const ALKO_EXCHANGE_OFFER_ID = '1788454565470';
+    const ALKO_EXCHANGE_NAME = 'Алкобиржа';
+
+    const ALKO_EXCHANGE = {
+        music: 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/Roll%20The%20Dice.mp3',
+        intro: 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/Alcob.wav',
+        closed: 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/AlcobClosed.wav',
+        up: 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/Alcoup.wav',
+        down: 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/Alcodown.wav',
+        images: {
+            '-2': 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/barn1.png',
+            '-1': 'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/barn2.png',
+            '0':  'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/barn3.png',
+            '2':  'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/barn4.png',
+            '4':  'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/barn5.png',
+            '6':  'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/barn6.png',
+            '8':  'https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/bar/barn7.png'
+        },
+        levels: [-2, -1, 0, 2, 4, 6, 8],
+        rareUpChance: 0.02,
+        rareDownChance: 0.02,
+        finalDurationMs: 10000
+    };
+
+    let alkoActive = false;
+    let alkoLevel = 0;
+    let alkoTimer = null;
+    let alkoFinalTimeout = null;
+    let alkoGeneration = 0;
+    let alkoMusic = null;
+    let alkoOneShots = [];
+
+    function isAlkoExchangeTask(task) {
+        if (!task) return false;
+        const id = (task.getAttribute('id') || '').trim();
+        const name = task.getElementsByTagName('name')[0]?.textContent?.trim() || '';
+        return id === ALKO_EXCHANGE_OFFER_ID || name === ALKO_EXCHANGE_NAME;
+    }
+
+    function alkoEl(id) {
+        return document.getElementById(id);
+    }
+
+    function stopAlkoAudio() {
+        if (alkoMusic) {
+            try {
+                alkoMusic.pause();
+                alkoMusic.currentTime = 0;
+                alkoMusic.src = '';
+            } catch (e) {}
+            alkoMusic = null;
+        }
+        alkoOneShots.forEach(audio => {
+            try {
+                audio.pause();
+                audio.currentTime = 0;
+                audio.src = '';
+            } catch (e) {}
+        });
+        alkoOneShots = [];
+    }
+
+    function playAlkoOneShot(url, volume = 1) {
+        if (!url) return null;
+        const audio = new Audio(url);
+        audio.preload = 'auto';
+        audio.playsInline = true;
+        audio.setAttribute('playsinline', '');
+        audio.volume = volume;
+        alkoOneShots.push(audio);
+        const remove = () => {
+            alkoOneShots = alkoOneShots.filter(a => a !== audio);
+        };
+        audio.addEventListener('ended', remove, { once: true });
+        audio.addEventListener('error', remove, { once: true });
+        const promise = audio.play();
+        if (promise?.catch) {
+            promise.catch(err => console.log('Алкобиржа: не удалось запустить звук', err));
+        }
+        return audio;
+    }
+
+    function startAlkoMusic() {
+        if (alkoMusic) return;
+        const audio = new Audio(ALKO_EXCHANGE.music);
+        audio.preload = 'auto';
+        audio.loop = true;
+        audio.playsInline = true;
+        audio.setAttribute('playsinline', '');
+        audio.volume = 0.24;
+        alkoMusic = audio;
+        const promise = audio.play();
+        if (promise?.catch) {
+            promise.catch(err => console.log('Алкобиржа: не удалось запустить фоновую музыку', err));
+        }
+    }
+
+    function fadeOutAlkoMusic(duration = 900) {
+        const audio = alkoMusic;
+        if (!audio) return;
+        const startVolume = audio.volume;
+        const started = performance.now();
+
+        function step(now) {
+            if (!audio || audio !== alkoMusic) return;
+            const progress = Math.min(1, (now - started) / duration);
+            audio.volume = Math.max(0, startVolume * (1 - progress));
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                try {
+                    audio.pause();
+                    audio.currentTime = 0;
+                } catch (e) {}
+                if (alkoMusic === audio) alkoMusic = null;
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    function clearAlkoTimers() {
+        if (alkoTimer) {
+            clearInterval(alkoTimer);
+            alkoTimer = null;
+        }
+        if (alkoFinalTimeout) {
+            clearTimeout(alkoFinalTimeout);
+            alkoFinalTimeout = null;
+        }
+    }
+
+    function formatAlkoTime(seconds) {
+        const s = Math.max(0, Math.ceil(Number(seconds) || 0));
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return `${m}:${String(sec).padStart(2, '0')}`;
+    }
+
+    function renderAlkoCourse() {
+        const img = alkoEl('alkoExchangeScale');
+        const course = alkoEl('alkoExchangeCourse');
+        if (img) {
+            img.src = ALKO_EXCHANGE.images[String(alkoLevel)];
+            img.alt = `Курс Алкобиржи: ${alkoLevel} градусов`;
+        }
+        if (course) {
+            course.innerHTML =
+                `Готов предугадать курс "Алкобиржи" на данный момент <strong>${alkoLevel} градусов</strong>`;
+        }
+    }
+
+    function showAlkoPanel() {
+        const panel = alkoEl('alkoExchangePanel');
+        const standardDesc = alkoEl('descText');
+        const standardButtons = alkoEl('btnGroup');
+        const warning = alkoEl('warningBox');
+        const timer = alkoEl('taskTimerWrapper');
+        const imageBox = alkoEl('imageBox');
+
+        if (standardDesc) standardDesc.style.display = 'none';
+        if (standardButtons) standardButtons.style.display = 'none';
+        if (warning) warning.style.display = 'none';
+        if (timer) timer.style.display = 'none';
+        if (imageBox) imageBox.style.display = 'none';
+
+        if (panel) panel.style.display = 'flex';
+        const actions = alkoEl('alkoExchangeActions');
+        const final = alkoEl('alkoExchangeFinal');
+        const result = alkoEl('alkoExchangeResult');
+        if (actions) actions.style.display = 'flex';
+        if (final) final.style.display = 'none';
+        if (result) result.style.display = 'none';
+
+        renderAlkoCourse();
+    }
+
+    function updateAlkoTimer(remaining) {
+        const timer = alkoEl('alkoExchangeTimer');
+        if (timer) timer.textContent = formatAlkoTime(remaining);
+    }
+
+    function getAlkoNextLevel() {
+        const currentIndex = ALKO_EXCHANGE.levels.indexOf(alkoLevel);
+        const up = ALKO_EXCHANGE.levels[Math.min(ALKO_EXCHANGE.levels.length - 1, currentIndex + 1)];
+        const down = ALKO_EXCHANGE.levels[Math.max(0, currentIndex - 1)];
+
+        if (alkoLevel === 8) return 8;
+        if (alkoLevel === -2) return -2;
+
+        const canUp = currentIndex < ALKO_EXCHANGE.levels.length - 1;
+        const canDown = currentIndex > 0;
+
+        // Если доступны оба направления — случайно выбираем одно.
+        if (canUp && canDown) return Math.random() < 0.5 ? up : down;
+        // На краях остаётся только возможное направление.
+        return canUp ? up : down;
+    }
+
+    function finishAlkoExchange(reason) {
+        if (!alkoActive) return;
+        const generation = alkoGeneration;
+        alkoActive = false;
+        clearAlkoTimers();
+
+        const finalLevel = alkoLevel;
+        const player = playersList[currentPlayerIndex];
+        const rawPlayerName = player?.name || '';
+        const playerName = /^Игрок\s+\d+$/i.test(rawPlayerName) ? 'Игрок' : (rawPlayerName || 'Игрок');
+
+        if (player) {
+            recordTaskCompleted(player, 'red');
+        }
+
+        if (player) {
+            player.alkoExchangeDegrees = (Number(player.alkoExchangeDegrees) || 0) + finalLevel;
+        }
+
+        totalMadnessLevel++;
+        if (totalMadnessLevel > 5) totalMadnessLevel = 5;
+        playMadnessSound(Math.min(totalMadnessLevel - 1, 4));
+        triggerGlobalMadnessAnimation();
+        updateGlobalMadnessUI();
+
+        const reachedEdge = finalLevel === 8 || finalLevel === -2;
+        const actionText = finalLevel > 0
+            ? `${playerName} забирает из Алко-банка ${finalLevel} градусов`
+            : finalLevel < 0
+                ? `${playerName} кладет в Алко-банк ${Math.abs(finalLevel)} градуса`
+                : `${playerName} забирает из Алко-банка 0 градусов`;
+
+        const title = alkoEl('title');
+        const actions = alkoEl('alkoExchangeActions');
+        const timer = alkoEl('alkoExchangeTimer');
+        const result = alkoEl('alkoExchangeResult');
+        const final = alkoEl('alkoExchangeFinal');
+
+        if (actions) actions.style.display = 'none';
+        if (timer) timer.style.display = 'none';
+        if (title) title.textContent = reachedEdge ? 'Алкобиржа закрыта!' : 'Алкобиржа завершена!';
+        if (result) {
+            result.textContent =
+                finalLevel > 0
+                    ? `Выигрыш: +${finalLevel} градусов`
+                    : finalLevel < 0
+                        ? `Потеря: ${Math.abs(finalLevel)} градусов`
+                        : 'Результат: 0 градусов';
+            result.style.display = 'block';
+        }
+        if (final) {
+            final.textContent = actionText;
+            final.style.display = 'block';
+        }
+
+        fadeOutAlkoMusic(1000);
+        playAlkoOneShot(ALKO_EXCHANGE.closed, 1);
+
+        alkoFinalTimeout = setTimeout(() => {
+            if (generation !== alkoGeneration) return;
+            alkoFinalTimeout = null;
+
+            if (totalMadnessLevel >= 5 && !jackpotTaskActive) {
+                window.__fullMadnessCompletions =
+                    (Number(window.__fullMadnessCompletions) || 0) + 1;
+                totalMadnessLevel = 0;
+                updateGlobalMadnessUI();
+                triggerAuctionEvent(player);
+                return;
+            }
+
+            resetToScanner();
+        }, ALKO_EXCHANGE.finalDurationMs);
+    }
+
+    function startAlkoTimer() {
+        clearAlkoTimers();
+        const total = Math.max(
+            1,
+            parseInt(currentTask?.getElementsByTagName('time')[0]?.textContent, 10) || 120
+        );
+        let remaining = total;
+        updateAlkoTimer(remaining);
+
+        alkoTimer = setInterval(() => {
+            remaining -= 1;
+            updateAlkoTimer(remaining);
+            if (remaining <= 0) {
+                clearAlkoTimers();
+                finishAlkoExchange('timeout');
+            }
+        }, 1000);
+    }
+
+    function riskAlko() {
+        if (!alkoActive) return;
+
+        const previous = alkoLevel;
+        const next = getAlkoNextLevel();
+        if (next === previous) return;
+
+        alkoLevel = next;
+        renderAlkoCourse();
+
+        if (alkoLevel > previous) {
+            playAlkoOneShot(ALKO_EXCHANGE.up, 1);
+        } else {
+            playAlkoOneShot(ALKO_EXCHANGE.down, 1);
+        }
+
+        if (alkoLevel === 8 || alkoLevel === -2) {
+            finishAlkoExchange('edge');
+        }
+    }
+
+    function startAlkoExchange() {
+        if (alkoActive || !isAlkoExchangeTask(currentTask)) return;
+
+        alkoGeneration++;
+        alkoActive = true;
+        alkoLevel = 0;
+        clearAlkoTimers();
+        stopAlkoAudio();
+        stopCurrentAudio();
+        startAlkoMusic();
+        playAlkoOneShot(ALKO_EXCHANGE.intro, 1);
+
+        taskAccepted = true;
+        taskTextRenderToken++;
+        taskWaitingForResult = false;
+
+        showAlkoPanel();
+        startAlkoTimer();
+    }
+
+    function takeAlko() {
+        if (!alkoActive) return;
+        finishAlkoExchange('take');
+    }
+
+    function cleanupAlkoView() {
+        const panel = alkoEl('alkoExchangePanel');
+        const standardDesc = alkoEl('descText');
+        if (panel) panel.style.display = 'none';
+        if (standardDesc) standardDesc.style.display = '';
+        clearAlkoTimers();
+        stopAlkoAudio();
+        alkoActive = false;
+        alkoGeneration++;
+    }
+    function preloadAlkoExchangeAssets() {
+        Object.values(ALKO_EXCHANGE.images).forEach(url => {
+            const img = new Image();
+            img.decoding = 'async';
+            img.src = url;
+        });
+        [ALKO_EXCHANGE.music, ALKO_EXCHANGE.intro, ALKO_EXCHANGE.closed,
+         ALKO_EXCHANGE.up, ALKO_EXCHANGE.down].forEach(url => {
+            const audio = new Audio();
+            audio.preload = 'auto';
+            audio.src = url;
+        });
+    }
+
+    const originalHandleYes = window.handleYesClick;
+    if (typeof originalHandleYes === 'function') {
+        window.handleYesClick = async function () {
+            if (isAlkoExchangeTask(currentTask) && !alkoActive && !taskWaitingForResult) {
+                startAlkoExchange();
+                return;
+            }
+            return originalHandleYes.apply(this, arguments);
+        };
+    }
+
+    const originalPenalty = window.penalty;
+    if (typeof originalPenalty === 'function') {
+        window.penalty = function () {
+            if (isAlkoExchangeTask(currentTask) && alkoActive) {
+                cleanupAlkoView();
+            }
+            return originalPenalty.apply(this, arguments);
+        };
+    }
+
+    const originalResetToScanner = window.resetToScanner;
+    if (typeof originalResetToScanner === 'function') {
+        window.resetToScanner = function () {
+            cleanupAlkoView();
+            return originalResetToScanner.apply(this, arguments);
+        };
+    }
+    const riskBtn = alkoEl('alkoExchangeRisk');
+    const takeBtn = alkoEl('alkoExchangeTake');
+    if (riskBtn) riskBtn.addEventListener('click', riskAlko);
+    if (takeBtn) takeBtn.addEventListener('click', takeAlko);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', preloadAlkoExchangeAssets, { once: true });
+    } else {
+        preloadAlkoExchangeAssets();
+    }
+})();
+</script>
