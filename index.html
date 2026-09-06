@@ -801,7 +801,7 @@
             #descText { font-size: 0.95rem; }
             .btn-group { gap: 10px; }
             button.choice { width: 100%; padding: 12px; }
-            #timerContainer { top: 10px; left: 10px; padding: 8px 12px; align-self: flex-start; }
+            #timerContainer { top: 10px; left: 10px; padding: 3px 12px; align-self: flex-start; }
         }
 
         .play-btn .scanner-btn-icon {
@@ -1084,7 +1084,7 @@
             .top-bar-madness { display: none !important; max-width: 120px; }
             .top-bar-madness .madness-meter-img {
                 width: 120px;
-                height: 62px;
+                height: 52px;
                 padding: 6px 9px;
                 border-radius: 14px;
             }
@@ -1759,6 +1759,53 @@ white-space: nowrap;
     .penalty-drink-image { max-height:220px; width:auto; max-width:100%; }
 }
 
+
+/* ================================================================
+   PERFORMANCE: мобильные устройства
+   Убираем дорогой backdrop-filter только на небольших экранах.
+   Визуальный стиль сохраняется за счёт уже существующих полупрозрачных фонов.
+   ================================================================ */
+@media (max-width: 768px) {
+    .main-card,
+    .play-btn,
+    button.choice,
+    #warningBox,
+    #imageBox,
+    .glass-btn,
+    #timerContainer,
+    .player-avatar-wrap,
+    .social-icon,
+    .rules-btn,
+    .modal-overlay,
+    .modal-card,
+    .current-turn-top,
+    .alko-bank-top,
+    .final-end-message,
+    .final-statistics,
+    .alko-exchange-scale-wrap,
+    .alko-exchange-btn,
+    .player-card-item,
+    .money-fly-bubble,
+    .player-state-wrap,
+    .player-states-wrap {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    .bg-animate {
+        animation: none !important;
+    }
+
+    .blob {
+        animation: none !important;
+        filter: blur(45px);
+    }
+
+    .player-state-item.turn-icon img,
+    .player-state-item.risk-blinking img {
+        animation: none !important;
+    }
+}
 </style>
     <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
@@ -2066,7 +2113,7 @@ function animateMoney(direction){
 
     .player-card-item {
         min-height: 137px;
-        padding: 7px 5px 7px;
+        padding: 7px 5px 2px;
         border-radius: 17px 17px 13px 13px;
     }
 
@@ -4039,7 +4086,6 @@ playPlayersScreenVoice();
 
             initPlayersGrid();
             updateActivePlayerUI();
-            renderPlayerStates();
             updateScannerTitle();
         }
 
@@ -4256,8 +4302,8 @@ function toggleMadnessHint(event, idx) {
 })();
 
 function updateActivePlayerUI() {
-            initPlayersGrid();
-
+            // Карточки игроков уже созданы. Здесь меняем только активный класс,
+            // не пересоздавая весь DOM и не запуская повторную отрисовку состояний.
             playersList.forEach((_, idx) => {
                 const card = document.getElementById(`playerCard_${idx}`);
                 if (card) {
