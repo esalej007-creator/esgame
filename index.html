@@ -1281,10 +1281,9 @@ white-space: nowrap;
     border-radius: 999px;
     color: #fff;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 500;
     line-height: 1;
     white-space: nowrap;
-    -webkit-text-stroke: 1px rgba(0, 0, 0, .35);
     text-shadow: 0 0 4px rgba(255,255,255,.8), 0 1px 3px rgba(0,0,0,.7);
     background: rgba(255,255,255,.12);
     border: 1px solid rgba(255,255,255,.35);
@@ -7128,7 +7127,6 @@ function triggerAuctionEvent(player) {
             if (generation !== alkoGeneration) return;
             alkoFinalTimeout = null;
 
-            // Сохраняем штатную механику полной шкалы безумия.
             if (totalMadnessLevel >= 5 && !jackpotTaskActive) {
                 window.__fullMadnessCompletions =
                     (Number(window.__fullMadnessCompletions) || 0) + 1;
@@ -7178,7 +7176,6 @@ function triggerAuctionEvent(player) {
         }
 
         if (alkoLevel === 8 || alkoLevel === -2) {
-            // Край шкалы закрывает раунд сразу — таймер больше не нужен.
             finishAlkoExchange('edge');
         }
     }
@@ -7193,8 +7190,6 @@ function triggerAuctionEvent(player) {
         stopAlkoAudio();
         stopCurrentAudio();
 
-        // После нажатия «Да» обе дорожки запускаются независимо:
-        // фон — циклично, вступительный голос — один раз.
         startAlkoMusic();
         playAlkoOneShot(ALKO_EXCHANGE.intro, 1);
 
@@ -7222,7 +7217,6 @@ function triggerAuctionEvent(player) {
         alkoGeneration++;
     }
 
-    // Кэшируем ресурсы заранее, чтобы первое нажатие не ждало загрузки.
     function preloadAlkoExchangeAssets() {
         Object.values(ALKO_EXCHANGE.images).forEach(url => {
             const img = new Image();
@@ -7271,7 +7265,6 @@ function triggerAuctionEvent(player) {
     if (riskBtn) riskBtn.addEventListener('click', riskAlko);
     if (takeBtn) takeBtn.addEventListener('click', takeAlko);
 
-    // Прогружаем только ресурсы этой механики; остальные механики не затрагиваем.
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', preloadAlkoExchangeAssets, { once: true });
     } else {
