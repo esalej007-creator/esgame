@@ -69,7 +69,7 @@
 
         .main-card {
             width: 100%;
-            max-width: 550px;
+            max-width: 1000px;
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
@@ -148,7 +148,7 @@
         #descText { 
             font-size: 1.05rem; 
             line-height: 1.5; 
-            margin: 0 0 20px 0; 
+            margin: 0 80px 20px 80px; 
             min-height: 40px; 
             padding: 0 10px;
         }
@@ -324,7 +324,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
+            gap: 25px;
             margin-top: 25px;
             padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -341,16 +341,20 @@
             transition: transform 0.3s ease;
         }
 
-        @media (max-width: 480px) {
-            .player-card-item {
-                width: calc(20% - 8px);
-                min-width: 50px;
-            }
-        }
+@media (max-width: 480px) {
+    #descText { 
+        margin: 0 0 20px 0;
+    }
+
+    .player-card-item {
+        width: calc(20% - 8px);
+        min-width: 50px;
+    }
+}
 
         .player-avatar-wrap {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(10px);
@@ -378,78 +382,60 @@
             object-fit: cover;
         }
 
-.player-state-icon {
-    position: absolute;
-    inset: 0;
-    z-index: 100;
+.player-states-wrap {
+    display: grid;
+    grid-template-columns: repeat(var(--state-cols, 1), 22px);
+    grid-auto-rows: 30px;
+    gap: 5px;
+    width: calc(var(--state-cols, 1) * 22px + (var(--state-cols, 1) - 1) * 3px + 18px);
+    min-height: 0;
+    margin-top: 3px;
+    padding: 3px 4px;
+    border-radius: 9px;
+    background: rgba(255,255,255,.10);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+    border: 1px solid rgba(255,255,255,.22);
+    box-shadow: 0 3px 9px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.25);
+    overflow: hidden;
+    transition: width .25s ease, min-height .25s ease, opacity .2s ease;
+}
+
+.player-state-item {
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    overflow: hidden;
+    animation: playerStateIconAppear .28s ease-out both;
 }
 
-.player-state-icon img {
-    width: 65%;
-    height: 65%;
+.player-state-item img {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     display: block;
-
-    filter:
-        drop-shadow(0 2px 6px rgba(0,0,0,.55))
-        drop-shadow(0 0 10px rgba(255,255,255,.25));
-
-    /* Появление */
-    animation: playerStateIconAppear 0.55s cubic-bezier(.16,1,.3,1) forwards;
+    filter: drop-shadow(0 1px 4px rgba(0,0,0,.55))
+            drop-shadow(0 0 5px rgba(255,255,255,.18));
 }
 
-
-/* =========================================================
-   ПОЯВЛЕНИЕ
-   ========================================================= */
-
-@keyframes playerStateIconAppear {
-
-    0% {
-        opacity: 0;
-        transform: scale(0.55) rotate(-6deg);
-    }
-
-    55% {
-        opacity: 1;
-        transform: scale(1.10) rotate(2deg);
-    }
-
-    75% {
-        transform: scale(0.97) rotate(-0.5deg);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1) rotate(0deg);
-    }
+.player-state-item.turn-icon img {
+    animation: playerTurnPulse 1.2s ease-in-out infinite;
 }
 
-
-/* =========================================================
-   ИСЧЕЗНОВЕНИЕ
-   ========================================================= */
-
-.player-state-icon-hide img {
-    animation: playerStateIconDisappear 0.5s ease-in forwards;
+.player-state-item.risk-blinking img {
+    animation: playerRiskBlink 1.05s ease-in-out infinite;
 }
 
-@keyframes playerStateIconDisappear {
+@keyframes playerTurnPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.10); opacity: .82; }
+}
 
-    0% {
-        opacity: 1;
-        transform: scale(1) rotate(0deg);
-    }
-
-    100% {
-        opacity: 0;
-        transform: scale(0.80) rotate(4deg);
-    }
+@keyframes playerRiskBlink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .25; transform: scale(.92); }
 }
 
         .player-name-badge {
@@ -609,10 +595,6 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .modal-overlay.active .modal-card {
-            transform: scale(1);
-        }
-
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -664,7 +646,7 @@
         @media (max-width: 480px) {
             body { padding: 10px 10px 0 10px; }
             .main-card { padding: 20px 15px; border-radius: 24px; }
-            h1 { font-size: 1.2rem; }
+            h1 { font-size: 1.1rem; }
             #descText { font-size: 0.95rem; }
             .btn-group { gap: 10px; }
             button.choice { width: 100%; padding: 12px; }
@@ -681,8 +663,11 @@
 
         @media (max-width: 480px) {
             .logo { width: 70%; }
+        .player-avatar-wrap {
+            width: 70px;
+            height: 70px;
         }
-
+}
         .alko-bank-top {display:none;align-items:center;gap:8px;background:rgba(255,255,255,.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:5px 10px 5px 5px;box-shadow:0 8px 20px rgba(0,0,0,.2);}
 .alko-bank-top .bank-avatar-wrap{width:96px;height:96px;margin:0;}
 .alko-bank-top .player-name-badge{width:auto;font-size:.75rem;padding:3px 8px;}
@@ -912,7 +897,7 @@
         .top-bar-madness .madness-meter-wrap { margin-top: 0; }
         .top-bar-madness .madness-meter-img {
             height: 60px;
-            width: 140px;
+            width: 180px;
             object-fit: contain;
             background: rgba(255,255,255,0.1);
             padding: 8px 12px;
@@ -948,7 +933,7 @@
             .top-bar-madness { display: none !important; max-width: 120px; }
             .top-bar-madness .madness-meter-img {
                 width: 120px;
-                height: 52px;
+                height: 62px;
                 padding: 6px 9px;
                 border-radius: 14px;
             }
@@ -1676,6 +1661,339 @@ function animateMoney(direction){
 }
 </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ================================================================
+   НОВЫЙ ВИЗУАЛ ИГРОВОГО ПОЛЯ
+   Золотая рамка + более крупные карточки игроков.
+   Логика/JS игры не изменяется.
+   ================================================================ */
+
+:root {
+    --game-gold: #d6ad45;
+    --game-gold-bright: #f4d77a;
+    --game-gold-soft: rgba(214,173,69,.62);
+    --game-green-card: rgba(7, 82, 63, .30);
+}
+
+/* Внешняя рамка игрового контейнера */
+.main-card {
+    border: 0 !important;
+    overflow: visible !important;
+    isolation: isolate;
+    padding: 35px 35px 34px !important;
+}
+
+/* Тонкая золотая рамка. Нижняя часть визуально закрывается орнаментом. */
+.main-card::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid var(--game-gold-soft);
+    border-radius: 25px;
+    pointer-events: none;
+    z-index: -1;
+    box-shadow:
+        0 0 0 1px rgba(244,215,122,.06),
+        inset 0 0 18px rgba(214,173,69,.025);
+}
+
+
+
+/* Разделитель перед игроками — тонкий, с мягким золотым уходом к краям */
+.players-container-grid {
+    position: relative;
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    flex-wrap: nowrap !important;
+    align-items: start;
+    justify-content: stretch;
+    gap: 16px;
+    margin-top: 30px;
+    padding: 34px 2px 8px !important;
+    border-top: 0 !important;
+}
+
+.players-container-grid::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(214,173,69,.12) 5%,
+        rgba(214,173,69,.68) 18%,
+        rgba(244,215,122,.88) 50%,
+        rgba(214,173,69,.68) 82%,
+        rgba(214,173,69,.12) 95%,
+        transparent 100%);
+    box-shadow: 0 0 7px rgba(214,173,69,.16);
+}
+
+/* Карточка игрока */
+.player-card-item {
+    position: relative;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 168px;
+    padding: 10px 8px 9px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border: 1px solid rgba(214,173,69,.62);
+    border-radius: 22px 22px 16px 16px;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+        rgba(5, 73, 56, .34);
+    backdrop-filter: blur(11px);
+    -webkit-backdrop-filter: blur(11px);
+    box-shadow:
+        0 9px 20px rgba(0,0,0,.20),
+        inset 0 1px 0 rgba(244,215,122,.13);
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+
+.player-card-item:hover {
+    transform: translateY(-3px);
+    border-color: rgba(244,215,122,.88);
+}
+
+.player-card-item.active {
+    border-color: var(--game-gold-bright);
+    box-shadow:
+        0 0 20px rgba(244,215,122,.20),
+        0 10px 24px rgba(0,0,0,.26),
+        inset 0 1px 0 rgba(255,255,255,.20);
+}
+
+/* Аватар — крупнее, но уже находится ВНУТРИ карточки */
+.player-avatar-wrap {
+    width: 86px !important;
+    height: 86px !important;
+    flex: 0 0 auto;
+    margin: 0 0 7px !important;
+    border: 1px solid rgba(214,173,69,.78) !important;
+    background: rgba(255,255,255,.08);
+    box-shadow:
+        0 5px 13px rgba(0,0,0,.27),
+        0 0 0 2px rgba(214,173,69,.07);
+}
+
+.player-card-item.active .player-avatar-wrap {
+    border-color: var(--game-gold-bright) !important;
+    transform: scale(1.045) !important;
+    box-shadow:
+        0 0 18px rgba(244,215,122,.38),
+        0 6px 15px rgba(0,0,0,.3) !important;
+}
+
+/* Имя игрока — отдельная аккуратная золотая плашка */
+.player-name-badge {
+    width: calc(100% - 4px) !important;
+    min-height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 2px !important;
+    padding: 4px 7px !important;
+    border: 1px solid rgba(214,173,69,.72) !important;
+    border-radius: 9px !important;
+    background: rgba(6, 74, 56, .42) !important;
+    color: #fff !important;
+    font-size: .76rem !important;
+    font-weight: 650 !important;
+    line-height: 1.1;
+    box-shadow:
+        inset 0 1px 0 rgba(244,215,122,.10),
+        0 3px 8px rgba(0,0,0,.15) !important;
+}
+
+.player-card-item.active .player-name-badge {
+    border-color: var(--game-gold-bright) !important;
+    background: rgba(214,173,69,.20) !important;
+    color: #fff !important;
+}
+
+/* Состояния — без подписей, цифр и отдельной рамки */
+.player-states-wrap {
+    width: 100% !important;
+    min-height: 31px !important;
+    margin-top: 1px !important;
+    padding: 2px 2px 0 !important;
+    display: grid;
+    grid-template-columns: repeat(var(--state-cols, 1), 29px) !important;
+    grid-auto-rows: 29px !important;
+    gap: 3px !important;
+    align-content: start;
+    justify-content: center;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    overflow: visible !important;
+}
+
+.player-state-item {
+    width: 29px !important;
+    height: 29px !important;
+}
+
+.player-state-item img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+    filter:
+        drop-shadow(0 2px 3px rgba(0,0,0,.55))
+        drop-shadow(0 0 5px rgba(244,215,122,.10));
+}
+
+/* Убираем старую тесноту на больших экранах */
+@media (min-width: 900px) {
+    .main-card {
+        max-width: 1000px;
+    }
+
+    /* На ПК карточки всегда собираются в компактную группу по центру.
+       Если игроков меньше шести, они не прижимаются к левому краю. */
+    .players-container-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 140px));
+        justify-content: center !important;
+        gap: 17px;
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+    }
+
+    .player-card-item {
+        min-height: 174px;
+        padding: 11px 9px 10px;
+    }
+
+    .player-avatar-wrap {
+        width: 92px !important;
+        height: 92px !important;
+    }
+
+    .player-name-badge {
+        font-size: .78rem !important;
+    }
+}
+
+
+@media (max-width: 700px) {
+    body {
+        padding: 10px 8px 0 !important;
+    }
+
+    .main-card {
+        padding: 10px 18px 31px !important;
+        border-radius: 24px;
+    }
+
+    .main-card::before {
+        inset: 9px;
+        border-radius: 20px;
+    }
+
+    .main-card-ornament {
+        bottom: 0;
+        width: 72px;
+        height: 28px;
+        background: transparent;
+    }
+
+    .players-container-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 9px;
+        margin-top: 24px;
+        padding: 28px 1px 5px !important;
+    }
+
+    .player-card-item {
+        min-height: 137px;
+        padding: 7px 5px 7px;
+        border-radius: 17px 17px 13px 13px;
+    }
+
+    .player-avatar-wrap {
+        width: 64px !important;
+        height: 64px !important;
+        margin-bottom: 5px !important;
+    }
+
+    .player-name-badge {
+        min-height: 24px;
+        width: calc(100% - 2px) !important;
+        padding: 3px 4px !important;
+        border-radius: 7px !important;
+        font-size: .66rem !important;
+    }
+
+    .player-states-wrap {
+        grid-template-columns: repeat(var(--state-cols, 1), 24px) !important;
+        grid-auto-rows: 24px !important;
+        gap: 2px !important;
+        padding-top: 1px !important;
+    }
+
+    .player-state-item {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    .players-container-grid::before {
+        background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(214,173,69,.18) 8%,
+            rgba(214,173,69,.72) 30%,
+            rgba(244,215,122,.88) 50%,
+            rgba(214,173,69,.72) 70%,
+            rgba(214,173,69,.18) 92%,
+            transparent 100%);
+    }
+}
+
+/* Совсем узкие телефоны — сохраняем 3 колонки, но делаем всё чуть компактнее */
+@media (max-width: 380px) {
+    .main-card {
+        padding-left: 9px !important;
+        padding-right: 9px !important;
+    }
+
+    .players-container-grid {
+        gap: 7px;
+    }
+
+    .player-card-item {
+        min-height: 128px;
+        padding: 6px 3px;
+    }
+
+    .player-avatar-wrap {
+        width: 58px !important;
+        height: 58px !important;
+    }
+
+    .player-name-badge {
+        font-size: .60rem !important;
+    }
+
+    .player-states-wrap {
+        grid-template-columns: repeat(var(--state-cols, 1), 22px) !important;
+        grid-auto-rows: 22px !important;
+    }
+
+    .player-state-item {
+        width: 22px !important;
+        height: 22px !important;
+    }
+}
+</style>
+
 </head>
 <body>
     <div class="bg-animate" id="bg">
@@ -1684,6 +2002,7 @@ function animateMoney(direction){
     </div>
     
     <div class="main-card" id="mainContainer">
+        <div class="main-card-ornament" aria-hidden="true"></div>
 <div class="top-bar-container">
             <div id="timerContainer">
                 <div class="bottle-icon">
@@ -2301,85 +2620,254 @@ const CARD_LEVEL_VOICES = {
 // courage   — красное задание, случайно одна из двух, 4 секунды
 // surrender — игрок нажал «Сдаться» → «Да», 3 секунды
 // ================================================================
-const PLAYER_STATE_ICONS = {
-    waiting: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/wait.png",
+// ================================================================
+        // СОСТОЯНИЯ ИГРОКОВ
+        // Постоянные состояния + состояния до следующего собственного хода.
+        // В контейнере максимум 3 иконки в ряд. Иконка «ход» всегда первая
+        // только у активного игрока и исчезает при переходе хода.
+        // ================================================================
+        const PLAYER_STATE_ICONS = {
+            turn: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/roll.png",
+            sober: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/Energy.png",
+            alcohol: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/alcohol.png",
+            noRisk: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/norisk.png",
+            risk: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/risk.png",
+            whisper: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/nowolume.png",
+            noYesWord: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/yes.png",
+            noYesNo: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/noyesno.png",
+            underTable: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/thumle.png",
+            grim: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/grim.png",
+            glass: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/alcoholr.png",
+            king: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/image/icon/king.png"
+        };
 
-    scared: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/fear2.png",
+        const STATE_NAMES = {
+            turn: "Ход игрока",
+            sober: "Трезвый",
+            alcohol: "Пью",
+            noRisk: "Только зелёные",
+            risk: "Риск",
+            whisper: "Говорю шёпотом",
+            noYesWord: "Запрещено говорить «Да»",
+            noYesNo: "Нельзя говорить «Да» и «Нет»",
+            underTable: "Сижу под столом",
+            grim: "Образ до конца игры",
+            glass: "Держу стакан до конца игры",
+            king: "Я Властелин для кого-то до конца игры"
+        };
 
-    reset: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/fear.png",
+        const SPECIAL_STATE_OFFERS = {
+            whisper: "1786641465116",
+            noYesWord: "1786641526096",
+            noYesNo: "1786877560485",
+            underTable: "1786878616971",
+            grim: ["1786642146070", "1786713440437"],
+            glass: "1788531908161",
+            king: "1786649650864"
+        };
 
-    courage: [
-        "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/red.png",
-        "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/red1.png"
-    ],
+        function createPlayerState() {
+            return {
+                sober: true,
+                alcohol: false,
+                noRisk: false,
+                risk: false,
+                riskBlinking: false,
+                timeoutPending: false,
+                temporary: [],
+                greenStreak: 0,
+                redStreak: 0
+            };
+        }
 
-    surrender: "https://s3.twcstorage.ru/df06c409-d71b78f0-64cf-4b11-a85a-d2bdbccb2f77/esgame/Players/moji/sabotage.png"
-};
+        function ensurePlayerState(player) {
+            if (!player) return null;
+            if (!player.state) player.state = createPlayerState();
 
-let playerStateIconTimer = null;
+            const defaults = createPlayerState();
+            Object.keys(defaults).forEach(key => {
+                if (player.state[key] === undefined) {
+                    player.state[key] = Array.isArray(defaults[key]) ? [] : defaults[key];
+                }
+            });
+            return player.state;
+        }
 
-function hidePlayerStateIcon() {
-    if (playerStateIconTimer) {
-        clearTimeout(playerStateIconTimer);
-        playerStateIconTimer = null;
-    }
+        function getOfferId(task) {
+            if (!task) return "";
+            const attr = task.getAttribute?.("id");
+            if (attr) return String(attr).trim();
 
-    document.querySelectorAll('.player-state-icon').forEach(el => el.remove());
-}
+            const idEl = task.getElementsByTagName?.("id")[0];
+            if (idEl?.textContent) return idEl.textContent.trim();
 
-function showPlayerStateIcon(state, durationMs) {
-    hidePlayerStateIcon();
+            const offerIdEl = task.getElementsByTagName?.("offerId")[0];
+            return offerIdEl?.textContent?.trim() || "";
+        }
 
-    const avatar = document.querySelector(
-        '.player-card-item.active .player-avatar-wrap'
-    );
-    if (!avatar) return;
+        function offerMatches(task, ids) {
+            const id = getOfferId(task);
+            const list = Array.isArray(ids) ? ids : [ids];
+            return list.map(String).includes(String(id));
+        }
 
-    let iconUrl = PLAYER_STATE_ICONS[state];
+        function addTemporaryPlayerState(player, stateKey) {
+            const st = ensurePlayerState(player);
+            if (!st) return;
+            if (!st.temporary.includes(stateKey)) st.temporary.push(stateKey);
+            renderPlayerStates();
+        }
 
-    // Для красного задания случайно выбираем одну из двух PNG.
-    if (state === 'courage' && Array.isArray(PLAYER_STATE_ICONS.courage)) {
-        const variants = PLAYER_STATE_ICONS.courage.filter(url =>
-            url && !url.startsWith('ВСТАВЬТЕ_')
-        );
+        function addPermanentPlayerState(player, stateKey) {
+            const st = ensurePlayerState(player);
+            if (!st) return;
 
-        if (!variants.length) return;
+            if (stateKey === 'alcohol') {
+                st.alcohol = true;
+                st.sober = false;
+            } else {
+                st[stateKey] = true;
+            }
+            renderPlayerStates();
+        }
 
-        iconUrl = variants[Math.floor(Math.random() * variants.length)];
-    }
+        function applyAlcoholState(player) {
+            addPermanentPlayerState(player, 'alcohol');
+        }
 
-    if (!iconUrl || iconUrl.startsWith('ВСТАВЬТЕ_')) return;
+        function expireTemporaryPlayerStates(player) {
+            const st = ensurePlayerState(player);
+            if (!st) return;
+            st.temporary = [];
+            st.riskBlinking = false;
+            renderPlayerStates();
+        }
 
-    avatar.style.position = 'relative';
+        function getPlayerStateKeys(player, includeTurn = true) {
+            const st = ensurePlayerState(player);
+            if (!st) return [];
 
-    const overlay = document.createElement('div');
-    overlay.className = 'player-state-icon';
+            const keys = [];
+            if (includeTurn) keys.push('turn');
 
-    const img = document.createElement('img');
-    img.src = iconUrl;
-    img.alt = 'Состояние игрока';
-    img.draggable = false;
+            if (st.alcohol) keys.push('alcohol');
+            else if (st.sober !== false) keys.push('sober');
 
-    overlay.appendChild(img);
-    avatar.appendChild(overlay);
+            if (st.noRisk) keys.push('noRisk');
+            if (st.risk) keys.push('risk');
 
-    // За 0.5 секунды до окончания запускаем красивое исчезновение.
-    const fadeOutTime = 500;
+            st.temporary.forEach(key => {
+                if (!keys.includes(key)) keys.push(key);
+            });
 
-    playerStateIconTimer = setTimeout(() => {
-        overlay.classList.add('player-state-icon-hide');
+            return keys;
+        }
 
-        // Ждём окончания анимации исчезновения,
-        // затем удаляем элемент.
-        setTimeout(() => {
-            overlay.remove();
-            playerStateIconTimer = null;
-        }, fadeOutTime);
+        function renderPlayerStates() {
+            document.querySelectorAll('.player-card-item').forEach(card => {
+                const idMatch = card.id.match(/^playerCard_(\d+)$/);
+                if (!idMatch) return;
 
-    }, Math.max(0, durationMs - fadeOutTime));
-}
+                const idx = Number(idMatch[1]);
+                const player = playersList[idx];
+                const container = card.querySelector('.player-states-wrap');
+                if (!player || !container) return;
 
-// ======================================================
+                const keys = getPlayerStateKeys(player, idx === currentPlayerIndex);
+                const cols = Math.min(3, Math.max(1, keys.length));
+                container.style.setProperty('--state-cols', cols);
+
+                container.innerHTML = keys.map(key => {
+                    const blinking = key === 'risk' && ensurePlayerState(player).riskBlinking;
+                    const itemClass = [
+                        'player-state-item',
+                        key === 'turn' ? 'turn-icon' : '',
+                        blinking ? 'risk-blinking' : ''
+                    ].filter(Boolean).join(' ');
+
+                    return `
+                        <div class="${itemClass}" title="${STATE_NAMES[key] || key}">
+                            <img src="${PLAYER_STATE_ICONS[key]}" alt="${STATE_NAMES[key] || key}" draggable="false">
+                        </div>
+                    `;
+                }).join('');
+
+                container.style.display = keys.length ? 'grid' : 'none';
+            });
+        }
+
+        // Совместимость со старыми вызовами.
+        function hidePlayerStateIcon() {
+            renderPlayerStates();
+        }
+
+        function showPlayerStateIcon() {
+            renderPlayerStates();
+        }
+
+        function applySpecialOfferState(task, player) {
+            if (!task || !player) return false;
+
+            let changed = false;
+
+            Object.entries(SPECIAL_STATE_OFFERS).forEach(([stateKey, ids]) => {
+                if (!offerMatches(task, ids)) return;
+
+                if (['grim', 'glass', 'king'].includes(stateKey)) {
+                    addPermanentPlayerState(player, stateKey);
+                } else {
+                    addTemporaryPlayerState(player, stateKey);
+                }
+                changed = true;
+            });
+
+            return changed;
+        }
+
+        function updateStateStreaksOnTake(player, category) {
+            const st = ensurePlayerState(player);
+            if (!st) return;
+
+            if (category === 'green') {
+                st.greenStreak++;
+                st.redStreak = 0;
+
+                if (st.greenStreak >= 2) st.noRisk = true;
+
+                // Один зелёный снимает «Риск».
+                if (st.risk) {
+                    st.risk = false;
+                    st.riskBlinking = false;
+                }
+            } else if (category === 'red') {
+                st.redStreak++;
+                st.greenStreak = 0;
+
+                // Красное после зелёной серии снимает «Только зелёные».
+                st.noRisk = false;
+
+                if (st.redStreak >= 2) {
+                    st.risk = true;
+                    st.riskBlinking = false;
+                }
+            } else if (category === 'yellow') {
+                st.greenStreak = 0;
+                st.redStreak = 0;
+
+                // Желтое после двух красных оставляет риск мигающим
+                // до следующего задания этого игрока.
+                if (st.risk) st.riskBlinking = true;
+
+                st.noRisk = false;
+            }
+
+            renderPlayerStates();
+        }
+
+        function onPlayerTaskTaken(player, category) {
+            updateStateStreaksOnTake(player, category);
+        }
+
 // МОБИЛЬНАЯ АУДИОСИСТЕМА
 // ======================================================
 
@@ -2697,6 +3185,8 @@ function recordTaskTaken(player, category) {
     if (category === 'red') st.redTaken++;
     else if (category === 'yellow') st.yellowTaken++;
     else if (category === 'green') st.greenTaken++;
+
+    onPlayerTaskTaken(player, category);
 }
 
 function recordTaskYes() {
@@ -3301,7 +3791,8 @@ playPlayersScreenVoice();
                     name, 
                     avatar, 
                     hasWhiteCard: true,
-                    stats: createPlayerStats()
+                    stats: createPlayerStats(),
+                    state: createPlayerState()
                 };
                 playersList.push(player);
             }
@@ -3330,6 +3821,7 @@ playPlayersScreenVoice();
 
             initPlayersGrid();
             updateActivePlayerUI();
+            renderPlayerStates();
             updateScannerTitle();
         }
 
@@ -3354,11 +3846,13 @@ visualPlayers.forEach(({ player: p, originalIndex: idx }) => {
                     <img src="${p.avatar}" alt="${p.name}">
                 </div>
                 <div class="player-name-badge">${p.name}</div>
+                <div class="player-states-wrap" style="--state-cols:1;"></div>
             </div>
         `;
     });
 
     // Шкала безумия больше не дублируется под аватарками игроков.
+    renderPlayerStates();
 }
 
 // Функция для показа хинта по клику на телефоне
@@ -3583,14 +4077,11 @@ function endGame() {
                 if (gameContent) gameContent.style.display = 'block';
             }
 
-            // Если камера запускается раньше 5 секунд, убираем ожидание сразу.
-            hidePlayerStateIcon();
-
             fadeOutMenuMusic();
             document.getElementById('scannerBtn').style.display = 'none';
             const readerDiv = document.getElementById('reader');
             readerDiv.style.display = 'block';
-            document.getElementById('title').innerText = "Наведите камеру на QR-код...";
+            document.getElementById('title').innerText = "Наведите камеру на QR-код карты согласно выбранному уровню сложности...";
 
             html5QrCode = new Html5Qrcode("reader");
             html5QrCode.start(
@@ -3631,13 +4122,7 @@ function processScannedData(data) {
 
     // QR-код отсканирован — сразу включаем Алко-Властелина.
     // Это происходит ДО озвучки уровня карты, поэтому флип начинается мгновенно.
-    hidePlayerStateIcon();
     showTaskPresenter();
-
-    // Красное задание — случайная иконка отваги на 4 секунды.
-    if (cat === 'red') {
-        showPlayerStateIcon('courage', 4000);
-    }
 
     applyTheme(cat);
     loadRandomTask();
@@ -4120,6 +4605,8 @@ function resumeTaskTimer() {
                 document.getElementById('descText').innerText =
                     "Время вышло.\nВыполнил-ли игрок данное задание на время?";
                 taskWaitingForResult = true;
+                const timeoutPlayer = playersList[currentPlayerIndex];
+                if (timeoutPlayer) ensurePlayerState(timeoutPlayer).timeoutPending = true;
                 document.getElementById('btnGroup').style.display = 'flex';
             }
         }
@@ -4254,6 +4741,8 @@ async function handleYesClick() {
         taskAccepted = true;
         taskTextRenderToken++;
 
+        applySpecialOfferState(currentTask, playersList[currentPlayerIndex]);
+
         stopCurrentAudio();
         stopVoiceRecording();
         stopVoicePlayback();
@@ -4294,6 +4783,8 @@ async function handleYesClick() {
     // Это предотвращает появление «левых» кусочков текста после клика.
     taskAccepted = true;
     taskTextRenderToken++;
+
+    applySpecialOfferState(currentTask, playersList[currentPlayerIndex]);
 
     // Награда летит только после ответа на задание, а не при запуске таймера
     if (taskWaitingForResult) {
@@ -4368,10 +4859,12 @@ if (auctionTimerInterval) {
             }
 
             updateActivePlayerUI();
-            updateScannerTitle();
 
-            // Новый игрок получил ход: иконка ожидания на 5 секунд.
-            showPlayerStateIcon('waiting', 5000);
+            // Временные состояния живут до следующего собственного хода.
+            expireTemporaryPlayerStates(playersList[currentPlayerIndex]);
+
+            updateScannerTitle();
+            renderPlayerStates();
 
             playRandomTurnVoice();
 
@@ -4433,9 +4926,6 @@ if (auctionTimerInterval) {
 
             // После «Нет» ведущий синхронно возвращается в Алко-банк.
             hideTaskPresenter();
-
-            // Игрок отказался от задания («Нет») — испуг на 4 секунды.
-            showPlayerStateIcon('scared', 4000);
 
             const penaltyConfig = configs[cat] || configs.green;
             document.getElementById('resultImage').src = penaltyConfig.image;
@@ -4503,11 +4993,12 @@ if (auctionTimerInterval) {
             document.getElementById('taskTimerWrapper').style.display = 'none';
 
             // Игрок отказался — оставляем ведущего на экране, показываем новый текст и голос.
-            showPlayerStateIcon('scared', 4000);
             playVoice(PENALTY_VOICE_URL, 1);
         }
 
         function penaltyPay() {
+            const player = playersList[currentPlayerIndex];
+            if (player) ensurePlayerState(player).timeoutPending = false;
             // Оплата штрафа — полностью существующая анимация и переход хода.
             applyPenaltyAndContinue();
         }
@@ -4535,6 +5026,19 @@ if (auctionTimerInterval) {
             const player = playersList[currentPlayerIndex];
             const playerName = player && player.name ? String(player.name).trim() : '';
             const isGreen = cat === 'green';
+
+            // «Пью!» после 4 отказов подряд/за игру (по счётчику «Нет»)
+            // либо после невыполнения задания по таймеру навсегда заменяет
+            // состояние «Трезвый» на «Пью».
+            if (player) {
+                const state = ensurePlayerState(player);
+                const noCount = ensurePlayerStats(player).noCount || 0;
+                if (state.timeoutPending || noCount >= 4) {
+                    applyAlcoholState(player);
+                }
+                state.timeoutPending = false;
+                renderPlayerStates();
+            }
 
             if (!box || !flip || !title || !name || !image) {
                 applyPenaltyAndContinue();
@@ -4601,10 +5105,6 @@ if (auctionTimerInterval) {
             taskTimerTotal = 0;
             playSound(CONFIRM_YES_SOUND_URL);
             closeSurrenderModal();
-
-            // Игрок подтвердил «Сдаться» — иконка на 3 секунды.
-            // Показываем её до удаления игрока из списка.
-            showPlayerStateIcon('surrender', 3000);
 
             const activePlayer = playersList[currentPlayerIndex];
             if (activePlayer) {
@@ -5518,6 +6018,7 @@ function triggerAuctionEvent(player) {
 
         taskAccepted = true;
         taskTextRenderToken++;
+        applySpecialOfferState(currentTask, playersList[currentPlayerIndex]);
         taskWaitingForResult = false;
         imageTaskPhase = 'running';
 
@@ -5561,9 +6062,13 @@ function triggerAuctionEvent(player) {
         }
         playImageFlipSound();
 
+        // Даем игроку увидеть перевернутую карточку с последним изображением.
         setTimeout(() => {
             if (imageTaskPhase !== 'flipping') return;
 
+            // После флипа НЕ показываем остальные изображения.
+            // Перевернутая сторона карточки уже содержит только последнее
+            // изображение — именно его и оставляем на экране до следующего ДА/НЕТ.
             imageTaskPhase = 'showingAll';
 
             const flip = document.getElementById('imageSequenceFlip');
@@ -6059,7 +6564,7 @@ function triggerAuctionEvent(player) {
         }
         if (course) {
             course.innerHTML =
-                `Готов предугадать курс "Алкобиржи" на данный момент <strong>${alkoLevel} градусов</strong>`;
+                `Обязательно перед каждым нажатием на кнопку "Риск" игроку нужно пить свой напиток! Предугадай курс "Алкобиржи", на данный момент <strong>${alkoLevel} градусов</strong>`;
         }
     }
 
@@ -6098,6 +6603,8 @@ function triggerAuctionEvent(player) {
         const up = ALKO_EXCHANGE.levels[Math.min(ALKO_EXCHANGE.levels.length - 1, currentIndex + 1)];
         const down = ALKO_EXCHANGE.levels[Math.max(0, currentIndex - 1)];
 
+        // Каждый риск меняет курс только на ОДНО соседнее деление.
+        // Никаких прыжков через несколько уровней — ни вверх, ни вниз.
         if (alkoLevel === 8) return 8;
         if (alkoLevel === -2) return -2;
 
@@ -6121,10 +6628,13 @@ function triggerAuctionEvent(player) {
         const rawPlayerName = player?.name || '';
         const playerName = /^Игрок\s+\d+$/i.test(rawPlayerName) ? 'Игрок' : (rawPlayerName || 'Игрок');
 
+        // Учитываем выполненное красное задание так же, как штатный finish().
         if (player) {
             recordTaskCompleted(player, 'red');
         }
 
+        // Сохраняем результат самой Алкобиржи у игрока.
+        // Это отдельное поле и не меняет существующие механики начислений.
         if (player) {
             player.alkoExchangeDegrees = (Number(player.alkoExchangeDegrees) || 0) + finalLevel;
         }
@@ -6165,13 +6675,16 @@ function triggerAuctionEvent(player) {
             final.style.display = 'block';
         }
 
+        // Фоновая музыка приглушается, финальный звук остаётся отдельной дорожкой.
         fadeOutAlkoMusic(1000);
         playAlkoOneShot(ALKO_EXCHANGE.closed, 1);
 
+        // Через 10 секунд продолжаем стандартную игру.
         alkoFinalTimeout = setTimeout(() => {
             if (generation !== alkoGeneration) return;
             alkoFinalTimeout = null;
 
+            // Сохраняем штатную механику полной шкалы безумия.
             if (totalMadnessLevel >= 5 && !jackpotTaskActive) {
                 window.__fullMadnessCompletions =
                     (Number(window.__fullMadnessCompletions) || 0) + 1;
@@ -6221,6 +6734,7 @@ function triggerAuctionEvent(player) {
         }
 
         if (alkoLevel === 8 || alkoLevel === -2) {
+            // Край шкалы закрывает раунд сразу — таймер больше не нужен.
             finishAlkoExchange('edge');
         }
     }
@@ -6234,6 +6748,9 @@ function triggerAuctionEvent(player) {
         clearAlkoTimers();
         stopAlkoAudio();
         stopCurrentAudio();
+
+        // После нажатия «Да» обе дорожки запускаются независимо:
+        // фон — циклично, вступительный голос — один раз.
         startAlkoMusic();
         playAlkoOneShot(ALKO_EXCHANGE.intro, 1);
 
@@ -6260,6 +6777,7 @@ function triggerAuctionEvent(player) {
         alkoActive = false;
         alkoGeneration++;
     }
+
     function preloadAlkoExchangeAssets() {
         Object.values(ALKO_EXCHANGE.images).forEach(url => {
             const img = new Image();
@@ -6302,10 +6820,12 @@ function triggerAuctionEvent(player) {
             return originalResetToScanner.apply(this, arguments);
         };
     }
+
     const riskBtn = alkoEl('alkoExchangeRisk');
     const takeBtn = alkoEl('alkoExchangeTake');
     if (riskBtn) riskBtn.addEventListener('click', riskAlko);
     if (takeBtn) takeBtn.addEventListener('click', takeAlko);
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', preloadAlkoExchangeAssets, { once: true });
     } else {
