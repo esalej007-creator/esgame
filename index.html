@@ -7127,6 +7127,7 @@ function triggerAuctionEvent(player) {
             if (generation !== alkoGeneration) return;
             alkoFinalTimeout = null;
 
+            // Сохраняем штатную механику полной шкалы безумия.
             if (totalMadnessLevel >= 5 && !jackpotTaskActive) {
                 window.__fullMadnessCompletions =
                     (Number(window.__fullMadnessCompletions) || 0) + 1;
@@ -7176,6 +7177,7 @@ function triggerAuctionEvent(player) {
         }
 
         if (alkoLevel === 8 || alkoLevel === -2) {
+            // Край шкалы закрывает раунд сразу — таймер больше не нужен.
             finishAlkoExchange('edge');
         }
     }
@@ -7190,6 +7192,8 @@ function triggerAuctionEvent(player) {
         stopAlkoAudio();
         stopCurrentAudio();
 
+        // После нажатия «Да» обе дорожки запускаются независимо:
+        // фон — циклично, вступительный голос — один раз.
         startAlkoMusic();
         playAlkoOneShot(ALKO_EXCHANGE.intro, 1);
 
@@ -7217,6 +7221,7 @@ function triggerAuctionEvent(player) {
         alkoGeneration++;
     }
 
+    // Кэшируем ресурсы заранее, чтобы первое нажатие не ждало загрузки.
     function preloadAlkoExchangeAssets() {
         Object.values(ALKO_EXCHANGE.images).forEach(url => {
             const img = new Image();
@@ -7265,6 +7270,7 @@ function triggerAuctionEvent(player) {
     if (riskBtn) riskBtn.addEventListener('click', riskAlko);
     if (takeBtn) takeBtn.addEventListener('click', takeAlko);
 
+    // Прогружаем только ресурсы этой механики; остальные механики не затрагиваем.
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', preloadAlkoExchangeAssets, { once: true });
     } else {
